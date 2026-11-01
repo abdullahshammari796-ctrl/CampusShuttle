@@ -205,7 +205,7 @@ async function onTripEndedElsewhere() {
   state.vehicle = null;
   stopLocalTrip();
   log('This trip is no longer active (ended by the transport office or after a long signal loss).');
-  toast('Your trip was ended by the transport office.', 'error', 7000);
+  toast('Your trip is no longer active (office termination or prolonged signal loss).', 'error', 7000);
   await showStartForm();
 }
 

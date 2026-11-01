@@ -251,7 +251,7 @@ The instructor's recommended reading (RBC Borealis, *Field Guide to Machine Lear
 | Production | Forecasts are computed on request from the live database; every live waiting request automatically becomes training/evaluation data. |
 | Support & maintenance | The backtest table is the monitoring tool: when enough real data exists (we suggest at least one full semester), rerun the evaluation on live data only; introduce a trained model only if it beats the seasonal baseline on held-out real weeks. |
 
-Backtest on the deterministic synthetic history (14 days, 1,890 stop-hours): seasonal average MAE 1.45, weighted seasonal 1.44, same-weekday median 1.42, hour-of-day mean 1.98 requests per stop-hour. The fourth model was evaluated directly with the generator and backtest modules on Node 22.16, reproducing the earlier three figures; a full Node 24 `npm run evaluate` recheck is pending before merging. **These numbers only show that the pipeline works and that weekday seasonality matters in data generated with weekday seasonality; they are not evidence of real-world accuracy.** Full description, assumptions of the generator and limitations: `docs/demand-prediction.md`.
+Backtest on the deterministic synthetic history (14 days, 1,890 stop-hours): seasonal average MAE 1.45, weighted seasonal 1.44, same-weekday median 1.42, hour-of-day mean 1.98 requests per stop-hour. The full `npm run evaluate` command was reproduced on Node 24.22.1 in ChatGPT Work on 1 November 2026. **These numbers only show that the pipeline works and that weekday seasonality matters in data generated with weekday seasonality; they are not evidence of real-world accuracy.** Full description, assumptions of the generator and limitations: `docs/demand-prediction.md`.
 
 ## 7. Design patterns applied
 
@@ -352,7 +352,7 @@ Factual engineering observations recorded while building the prototype, which th
 * **Tool**: Claude Code (Anthropic) desktop application, model Claude Opus 5.5.
 * **When**: 31 October – 1 November 2026, in one working session started by the team.
 * **What it was used for**: reading the official project description and the Module 02 slides; analysing architecture alternatives; generating the application code, automated tests, load test and demo scripts; writing the PlantUML diagram sources; drafting this report, the proposal, ADRs, test plan and presentation materials; running the type checker, tests and load tests and fixing the defects they revealed.
-* **What it was not used for**: it did not create the team, choose the topic for the team, submit anything, make Git commits or publish anything. It did not invent rubric details, signatures, timelines, contributions or real-world data; those are marked OUTSTANDING.
+* **What it was not used for**: it did not create the team, choose the topic for the team, submit anything for marking. Repository setup and later AI-assisted commits were explicitly requested by the respective account owners; see the current AI-use statement. It did not invent rubric details, signatures, timelines, contributions or real-world data; those are marked OUTSTANDING.
 * **What we changed / verified ourselves**: **OUTSTANDING — the team must list the reviews, corrections and additions they made.**
 
 ---

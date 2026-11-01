@@ -62,12 +62,14 @@ UC2L -- GPS
 Clock -- UCSIG
 Clock -- UCEXP
 Clock -- UCABN
+Driver -- UC2E
 Clock -- UCRET
 
 UC1 ..> UCETA : <<include>>
 UC2 ..> UC2S : <<include>>
 UC2 ..> UC2L : <<include>>
-UC2 ..> UC2E : <<include>>
+UC2E ..> UC2 : <<extend>>
+' A trip can also be terminated by office/scheduler; a driver end is not mandatory.
 UC4T ..> UC4 : <<extend>>
 UC6 ..> UC4 : <<extend>>
 UC5X ..> UC5 : <<extend>>

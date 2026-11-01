@@ -54,6 +54,6 @@ Status: ✅ done and verified · ◐ done, with a limitation · ⏳ OUTSTANDING 
 | UML with a proper tool, editable sources, exported diagrams where supported | PlantUML sources | ◐ exports blocked in this environment (see README "Rendering the UML diagrams") |
 | Proposal, report, UML set, README, ADRs, QA scenarios, test plan, presentation/demo materials | `docs/` | ✅ drafts (⏳ PDFs need rendered diagrams) |
 | Free, local stack; reproducible setup; demo data; automated tests | `package.json`, seed, tests | ✅ |
-| Tests: main workflows, roles, simultaneous connections, ETA, GPS interruption/recovery, demand calculations, edge cases | `test/` (103 tests, incl. driver trip ending, live-stream session expiry, review packaging) | ✅ |
+| Tests: main workflows, roles, simultaneous connections, ETA, GPS interruption/recovery, demand calculations, edge cases | `test/` (113 tests) and `e2e/` (browser role/use-case/accessibility checks; see test plan for executed results) | ✅ |
 | No remote repository, pushes, commits or Git config changes without explicit authorisation | Repository created, baseline pushed and Zuhair invited only on Abdullah's explicit request (1 Nov 2026), after a public-release audit; commits use Abdullah's GitHub no-reply address, no Git configuration was changed, no AI co-author | ✅ |
 | Work-ownership plan with genuine future contributions | `docs/team/work-ownership-plan.md` | ✅ |

@@ -10,7 +10,7 @@ One deployable Node.js process, internally split into components (`identity`, `n
 
 ## Consequences
 * + Simplest operation (`npm start`, one database file); lowest latency (in-process).
-* + Boundaries are enforced by `test/architecture.test.ts`, so they cannot silently erode.
+* + Permitted source imports are checked by `test/architecture.test.ts`; this does not prove all runtime boundaries or UML details.
 * + Every business rule is unit-testable with in-memory adapters and a manual clock.
 * − Single point of failure; mitigated by persisting before updating memory and by `TrackingService.recover()` on restart.
 * − Vertical scaling only, until the event bus is replaced by a broker (see ADR-0002).

@@ -148,3 +148,13 @@ No licence has been chosen yet, so default copyright applies. Others can view an
 
 ## AI assistance
 The baseline code and documents were produced with an AI assistant (Claude Code). See [`docs/team/ai-use-statement.md`](docs/team/ai-use-statement.md); the team's own contributions are recorded in the contribution statement.
+
+### Automated browser checks
+
+Use Node 24. Install locked dependencies with `npm ci`, then install the test browser once with `npx playwright install chromium` (Linux CI: `npx playwright install --with-deps chromium`). Run `npm run test:browser`. The suite starts an isolated in-memory application on an unused loopback port for each test and never resets your demo database. `npm test` still runs the unit/integration/architecture suite. `npm run typecheck` also checks the browser test sources.
+
+An optional `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` selects an already-installed Chromium binary in restricted runners; leave it unset for the bundled Playwright browser. Failure traces/screenshots in `test-results/` stay local and are excluded from Git and review packages.
+
+### Continuous verification
+
+`.github/workflows/verify.yml` runs type checking, unit/integration tests, Chromium browser tests, synthetic evaluation and a production-dependency audit on PRs to `main` and branch pushes. It uses Node 24, read-only repository permissions, pinned official actions and no deployment steps. Fork PR runs may need the repository owner's normal GitHub approval. A successful local test run is not a GitHub Actions pass; inspect the actual run before merging.

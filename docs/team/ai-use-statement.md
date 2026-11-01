@@ -32,12 +32,14 @@ The project description requires a statement of *which AI tools were used, for w
   * invited `zuhairhalawa` as a collaborator (pending until he accepts);
   * opened issues #1–#11 describing work for each student and shared tasks, and made the documentation commit that records this.
 
-  It has not worked on any of those issues.
+  That setup session did not implement the assigned issues; subsequent work is recorded below.
 
 * **Zuhair's issue #6 (1 November 2026).** At Zuhair's request, ChatGPT (OpenAI), connected to his GitHub account, prepared the six-week same-weekday median forecaster, added unit tests, reproduced the synthetic backtest with the project generator and backtest modules, and updated the architecture documentation and UML sources. The changes were made with AI assistance; Zuhair and Abdullah must review and be able to explain them. This is not a claim of independently hand-written student code or a completed human code review.
 
+* **Zuhair’s Work-mode contributions (1 November 2026).** At Zuhair’s explicit request, ChatGPT Work verified the forecast branch under Node 24, opened PR #12, assigned issues #5–#8 to `zuhairhalawa`, and implemented substantive follow-up work: executable role/browser and simulated-GPS tests; mobile accessibility and keyboard fixes; waiting-request expiry/reconnect repairs; use-case/source evidence; and a technical ADR review. A GitHub Actions workflow automates the repeatable checks. Changes are published as AI-assisted contributions from Zuhair’s authenticated account, in his fork because the connected integration could not write upstream. This does not claim that Zuhair personally wrote the generated code, listened with a screen reader, performed field GPS testing, signed an architecture review, or approved a PR. Abdullah’s independent review and merge remain pending.
+
 ## What it did not do
-* It did not register the team, choose the topic on the team's behalf, contact the instructor or submit anything for marking. Git and GitHub actions were taken only when Abdullah explicitly asked (see above); nothing was ever committed under Zuhair Halawa's name, and the app was not deployed.
+* It did not register the team, choose the topic on the team's behalf, contact the instructor or submit anything for marking. Git and GitHub actions were taken only when Abdullah explicitly asked (see above); Zuhair later requested issue #6 and published commits b5cbdbf and cb90511 under his own authenticated GitHub identity. ChatGPT continued verification and implementation at his request in Work mode. The app was not deployed.
 * It did not invent rubric details, signatures, student IDs, dates, contributions or real-world data. Missing information is marked **OUTSTANDING**; all demo and historical data is labelled synthetic/demonstration.
 
 ## What the team changed, verified or added

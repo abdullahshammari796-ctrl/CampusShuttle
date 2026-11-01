@@ -38,7 +38,7 @@ Reproducible run on the deterministic synthetic history as of Monday 5 Oct 2026 
 | Same-weekday median (6 weeks) | 1.42 | 2.01 | −0.22 | 83 % | 1,890 |
 | Hour-of-day mean (naive reference) | 1.98 | 2.69 | −0.04 | 97 % | 1,890 |
 
-**Reproduction for issue #6 (1 Nov 2026):** the synthetic generator, `HourlySeries` and `backtest()` were run directly under Node 22.16, matching all three previously documented baseline results and producing the fourth row. This environment did not have the full project's dependencies or required Node 24 setup, so the complete `npm run evaluate` command and server integration should be repeated by Abdullah before merging.
+**Reproduction for issue #6 (1 Nov 2026):** ChatGPT Work reran `npm ci --ignore-scripts`, `npm run typecheck`, all **109/109** tests and `npm run evaluate` on Node **24.22.1**, Linux. The complete command reproduces the four rows above. Logs are in `docs/evidence/issue-6-node24-*`. Independent reviewer verification remains required before merge.
 
 **How to read this honestly.** The median had slightly lower MAE (1.42 versus 1.44 weighted seasonal) but slightly worse RMSE (2.01 versus 1.99) and more negative bias (−0.22 versus −0.06) on this *synthetic* history. The data was generated with weekday seasonality, so models that use the weekday beat the one that does not — the evaluation confirms the pipeline behaves as designed and nothing more. These figures must not be presented as the accuracy of the system on a real campus. The hour-of-day mean's high coverage comes from its wide range, not from accuracy.
 

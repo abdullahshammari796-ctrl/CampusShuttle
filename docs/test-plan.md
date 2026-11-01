@@ -25,7 +25,7 @@ npm run evaluate      # reproducible demand backtest on synthetic data
 
 ## 4. Automated test inventory and results
 
-Last full run: 1 Nov 2026, Windows 11, Node 24.14.1 — **103 tests, 103 passed, 0 failed, ≈ 4.7 s** (`docs/evidence/test-run.txt`).
+Historical baseline run: 1 Nov 2026, Windows 11, Node 24.14.1 — **103 tests, 103 passed, 0 failed, ≈ 4.7 s** (`docs/evidence/test-run.txt`).
 
 | Area (requirement / scenario) | Tests |
 |---|---|
@@ -35,7 +35,7 @@ Last full run: 1 Nov 2026, Windows 11, Node 24.14.1 — **103 tests, 103 passed,
 | ETA behaviour | nominal speed + dwell arithmetic; blended speed fallback, blending and clamping; speed smoothing ignores standing still; no backward jitter; stops reached once, including passed between fixes; lane-correct snapping on a two-way road; corner snapping regression |
 | Simultaneous connections (QA-1/2) | 200 concurrent SSE viewers all receive each update within 1 s (measured ≈ 19–21 ms); batch coalescing (one message per viewer); signal changes pushed without polling; waiting counts and arrivals pushed; ended trips removed; disconnected viewers forgotten; slow-client skip and resync |
 | Waiting requests (FR-05/19, UC3) | register, idempotent repeat, switch stop, cancel, 404 on second cancel, route-does-not-serve-stop rejected, SERVED on arrival, EXPIRED after 20 min, rate limit (429) |
-| Demand calculations (FR-16/17, UC5) | unknown vs zero demand; seasonal and weighted averages with exact values and basis; hour-of-day mean; six-week median including outliers, even/odd counts, zero-covered days and missing weeks; no forecast without history; no look-ahead; backtest MAE/RMSE/bias/coverage on a hand-computed case; skipped cells reported; forecast API (9 stops × 15 hours, synthetic label); explanation basis; evaluation of 4 models (full Node 24 run pending for issue #6); unknown model → 400 |
+| Demand calculations (FR-16/17, UC5) | unknown vs zero demand; seasonal and weighted averages with exact values and basis; hour-of-day mean; six-week median including outliers, even/odd counts, zero-covered days and missing weeks; no forecast without history; no look-ahead; backtest MAE/RMSE/bias/coverage on a hand-computed case; skipped cells reported; forecast API (9 stops × 15 hours, synthetic label); explanation basis; evaluation of 4 models (Node 24 verification below); unknown model → 400 |
 | Synthetic data | deterministic per seed; labelled synthetic; within date range; encodes its weekday pattern |
 | Office operations (FR-13/14/21, UC4) | terminate requires reason, is audited, driver's next upload gets 409; route validation (colour, speed); out-of-service route refuses trips and disappears for drivers; new route created inactive; audit entries |
 | Privacy (FR-20, QA-6) | public views contain no driver identity; student API never returns the pseudonym; pseudonym erased 24 h after closing |
@@ -92,14 +92,40 @@ Re-verified on 1 Nov 2026 after the review fixes (fresh server, fleet simulator 
 ## 6. Not tested (known gaps)
 * Real phone GPS on a moving vehicle (only the simulator and the API were exercised).
 * Browsers other than Chromium; small-screen phones beyond the responsive layout check; screen readers.
-* Automated UI tests (the browser code was verified manually).
+* Additional browser engines and real assistive-technology sessions (Chromium automation is now covered below).
 * Load beyond 3,000 viewers; long-running (multi-day) operation; database growth over a semester.
 * **UML rendering.** On 1 Nov 2026 the official `plantuml-mit` 1.2026.9 jar was downloaded from Maven Central and its SHA-1, SHA-256 and SHA-512 matched the published checksums. Running it (Java 21 from the DataGrip installation) was refused by the authoring environment's permission policy, so no diagram has been rendered or syntax-checked by a real renderer, and the PDFs still show placeholders. See README "Rendering the UML diagrams".
-* Session expiry in a real browser (the 8-hour lifetime is not configurable; covered by the deterministic integration test with a manual clock).
+* Session expiry is now covered in Chromium with the server clock advanced; a real eight-hour soak remains untested.
 * HTTPS deployment.
 
 ## Issue #6 — same-weekday median extension (1 November 2026)
 * Added six unit tests: outlier resistance (including even-number median), odd sample sizes, covered zeros vs unknown weeks, insufficient history, no future/other-stop/other-hour leakage, and a hand-checked rolling-origin backtest.
 * Independent local check with Node 22.16.0: predictor suite **16/16 passed** and all runnable unit/architecture tests **84/84 passed** (see `docs/evidence/issue-6-local-tests.txt`). This is not the project's required Node 24 environment and does **not** include integration tests or TypeScript checking.
 * Reproduced baseline synthetic backtest figures by importing the same generator and backtest modules directly, then added the median results (MAE 1.42, RMSE 2.01, bias −0.22, 83% range coverage; see `docs/evidence/issue-6-median-evaluation.txt`). This is not a real-world accuracy measurement.
-* **Pending before merge:** Abdullah's Node 24 `npm run typecheck`, `npm test`, `npm run evaluate` and live office selector/explanation check; the PlantUML rendering remains separately blocked.
+* **Full recheck (ChatGPT Work, 1 November 2026, Linux, Node 24.22.1):** `npm ci --ignore-scripts`, `npm run typecheck`, `npm test` (**109/109**, no skips) and `npm run evaluate` all passed. Evidence: `docs/evidence/issue-6-node24-*`. Office browser coverage is added in issue #7. Abdullah's independent review and UML rendering remain separate.
+
+## Issue #7 — executable role and simulator coverage
+
+ChatGPT Work on 1 Nov 2026, Node 24.22.1/Linux: 113/113 unit/integration/architecture tests and 5/5 role browser tests passed. Playwright 1.64.1 used Chromium 138.0.7204.0 from the registry-distributed `@sparticuz/chromium` package because the standard browser download returned an invalid archive in this environment. The optional executable-path setting is documented; normal environments install Playwright's bundled Chromium.
+
+`e2e/roles.spec.ts` drives real forms and a fresh SQLite-backed in-memory server: stop selection/persistence, request creation/cancellation, simulated network loss with failed trip end and recovery, office termination with audit reason, median forecast/explanation, and live updates across separate role sessions. No API response stubs are used in these five tests. `test/unit/simulated-gps.test.ts` uses a controlled clock for projection, route boundaries, dwell, outage and stop cleanup. These are automated checks, not a human rehearsal or device GPS field test.
+
+## Issue #8 — accessibility and mobile corrections
+
+The first automated audit reproduced light-mode text contrast failures and interactive map children hidden under an image role. A controlled-browser-clock test separately reproduced keyboard focus being lost when the waiting card refreshed. The driver confirmation dialog also lacked an accessible name.
+
+Fixes: darker muted text in light mode; map groups expose stop buttons only when they perform an action; noninteractive maps have no dead tab stops; labelled trip-end dialog; skip links and a student page heading; narrow-screen wrapping; reduced-motion support; and a stable waiting card whose countdown updates without rebuilding its controls. After create/cancel, focus moves to the next relevant action.
+
+Verified in Chromium 138, 390×844, light/dark: four axe WCAG-tagged audits, one periodic-refresh keyboard regression and one keyboard-only map/skip-link regression pass. This is **not** WCAG certification or a real NVDA/Narrator session. Actual assistive-technology listening and physical-device checks remain a team task. Automated results are in `docs/evidence/issue-8-accessibility.txt`; before-fix evidence is retained in the review package.
+
+## Issue #5 — use-case validation
+
+See `docs/use-case-validation.md` for a step/extension evidence matrix. Two failing-before browser cases reproduced stale private waiting-request state after expiry and after an offline served event; the student now refreshes its private request on relevant waiting events and reconnect snapshots, and ignores stale reads after a newer mutation. A screen-reader status region announces closures without repeatedly announcing the countdown. The driver no longer attributes every remote closure to the office (the timeout scheduler can also end trips). Seven use-case browser checks passed; production 20s/60s and 30-minute rules were exercised through the existing clock port, not weakened in production.
+
+## Final combined verification (Zuhair’s Work session, 1 November 2026)
+
+Node 24.22.1, Linux: `npm run typecheck` passed; `npm test` passed **113/113**, zero failed/cancelled/skipped; `npm run test:browser` passed **18/18** (6 accessibility/keyboard, 5 roles, 7 use cases); `npm run evaluate` completed. Chromium was 138.0.7204.0 using the documented executable-path override. The reconnect regression now explicitly closes existing HTTP connections while the browser is offline, verifies the Reconnecting banner, marks the request served, restores connectivity and verifies the refreshed private request. Offline emulation alone did not reliably sever an already-open SSE connection. Test runs are sequential because simultaneous Playwright runs share the output directory. Exact final command output and earlier failing evidence are included in the handoff bundle, outside the source tree.
+
+`npm audit --omit=dev --audit-level=high` found **0 production vulnerabilities**. The full audit reported **2 high development-dependency findings** involving `image-size` through `pptxgenjs`; document-generation tooling remediation and regenerated artifact verification remain for the owner’s document work. No forced dependency upgrade was applied. The workflow defines repeatable CI; its existence alone does not establish that GitHub Actions ran or passed.
+
+Visual QA of the 390px student page found the legend/note covering stop labels. On phone widths these now follow the SVG in document flow; the existing four light/dark role audits also assert non-overlapping map/legend/note bounds. Light and dark mobile screenshots were inspected locally. The first GitHub fork CI run passed all steps at `cc728dd` ([run 41327986414](https://github.com/zuhairhalawa/CampusShuttle/actions/runs/41327986414)); the final head must be checked separately. No upstream PR workflow run was present at that observation.

@@ -16,6 +16,8 @@ const state = {
   selectedStop: null,
   routeFilter: null,
   request: null,
+  waitingRenderKey: null,
+  requestRevision: 0,
 };
 
 const user = await requireUser('student');
@@ -40,6 +42,7 @@ async function start() {
     map.setVehicles(s.vehicles);
     map.setWaiting(s.waiting);
     renderAll();
+    refreshRequest(); // A reconnect snapshot must also reconcile this student's private request.
   });
   feed.on('vehicle', (v) => {
     state.vehicles.set(v.tripId, v);
@@ -55,6 +58,7 @@ async function start() {
     state.waiting = { ...state.waiting, [stopId]: waiting };
     map.setWaiting(state.waiting);
     renderStopInfo();
+    if (state.request?.stopId === stopId) refreshRequest();
   });
   feed.on('arrival', async ({ stopId, routeId }) => {
     if (state.request && state.request.status === 'WAITING' && state.request.stopId === stopId) {
@@ -127,9 +131,17 @@ function selectStop(stopId, persist = true) {
 }
 
 async function refreshRequest() {
+  const revision = ++state.requestRevision;
+  const previousStatus = state.request?.status;
   try {
     const { request } = await api('/api/student/waiting');
+    if (revision !== state.requestRevision) return;
     state.request = request;
+    if (previousStatus === 'WAITING' && request?.status !== 'WAITING') {
+      $('#waiting-status').textContent = request?.status === 'SERVED'
+        ? 'A shuttle reached your stop. Your waiting request is closed.'
+        : request?.status === 'EXPIRED' ? 'Your waiting request expired.' : 'Your waiting request is no longer active.';
+    }
   } catch (e) {
     if (!(e instanceof ApiError)) throw e;
   }
@@ -266,6 +278,14 @@ function renderWaiting() {
   const request = state.request;
   const now = state.feed ? state.feed.now() : Date.now();
   const routes = [...state.routes.values()].filter((r) => r.stopIds.includes(stop.id));
+  const minutesLeft = request?.status === 'WAITING' ? Math.max(0, Math.round((request.expiresAt - now) / 60000)) : null;
+  const renderKey = JSON.stringify([request, state.selectedStop, [...state.stops.values()], routes]);
+  if (renderKey === state.waitingRenderKey) {
+    const countdown = card.querySelector('[data-countdown]');
+    if (countdown && countdown.textContent !== String(minutesLeft)) countdown.textContent = String(minutesLeft);
+    return; // Keep the same controls and keyboard focus while only time changes.
+  }
+  state.waitingRenderKey = renderKey;
   const routeOptions = html`<label class="field">Route (optional)
     <select id="waiting-route"><option value="">Any route</option>${routes.map((r) => html`<option value="${r.id}">${r.name}</option>`)}</select>
   </label>`;
@@ -273,10 +293,9 @@ function renderWaiting() {
   if (request && request.status === 'WAITING') {
     const here = request.stopId === stop.id;
     const where = state.stops.get(request.stopId)?.name ?? 'a stop';
-    const minutesLeft = Math.max(0, Math.round((request.expiresAt - now) / 60000));
     render(card, html`<div class="stack">
       <div class="banner banner-info">${icon('check')}<div><strong>You're on the waiting list at ${where}</strong><br>
-        <span class="small">Since ${formatClock(request.createdAt)} · expires in ${minutesLeft} min. Drivers and the transport office see the number of people waiting, not who you are.</span></div></div>
+        <span class="small">Since ${formatClock(request.createdAt)} · expires in <span data-countdown>${minutesLeft}</span> min. Drivers and the transport office see the number of people waiting, not who you are.</span></div></div>
       <div class="row">
         <button class="btn btn-danger" type="button" data-action="cancel">Cancel request</button>
         ${here ? '' : html`<button class="btn" type="button" data-action="create">Wait at ${stop.name} instead</button>`}
@@ -304,15 +323,18 @@ async function onWaitingAction(event) {
   const button = event.target.closest('[data-action]');
   if (!button) return;
   button.disabled = true;
+  state.requestRevision++; // Invalidate earlier reads before changing the request.
   try {
     if (button.dataset.action === 'create') {
       const routeSelect = document.getElementById('waiting-route');
       const body = { stopId: state.selectedStop, routeId: routeSelect && routeSelect.value ? routeSelect.value : null };
       const { request } = await api('/api/student/waiting', { method: 'POST', body });
+      state.requestRevision++;
       state.request = request;
       toast(`You're on the waiting list at ${state.stops.get(request.stopId)?.name}.`);
     } else if (button.dataset.action === 'cancel' && state.request) {
       const { request } = await api(`/api/student/waiting/${encodeURIComponent(state.request.id)}`, { method: 'DELETE' });
+      state.requestRevision++;
       state.request = request;
       toast('Waiting request cancelled.');
     }
@@ -321,5 +343,7 @@ async function onWaitingAction(event) {
   } finally {
     button.disabled = false;
     renderWaiting();
+    const nextAction = state.request?.status === 'WAITING' ? 'cancel' : 'create';
+    $(`#waiting-card [data-action="${nextAction}"]`)?.focus();
   }
 }

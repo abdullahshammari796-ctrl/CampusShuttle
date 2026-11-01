@@ -10,7 +10,7 @@ Server code is TypeScript limited to *erasable syntax* (`erasableSyntaxOnly`), w
 
 ## Consequences
 * + `npm install && npm start` is the whole setup; stack traces point to real source lines.
-* + Interfaces in the code match the class diagrams.
+* + Explicit interfaces make comparison with the class-diagram sources easier; rendering and member-level comparison remain separate checks.
 * − No enums, namespaces or parameter properties (constructor assignments are written out).
 * − Browser code has no type checking and no component framework; UI updates are hand-written with an escaping template helper.
 * − Requires Node ≥ 22.18 (24 LTS recommended).
