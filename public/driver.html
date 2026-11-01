@@ -52,6 +52,16 @@
               </div>
               <div id="server-signal"></div>
             </div>
+            <div id="resume-source" class="banner banner-warn hidden" role="group" aria-labelledby="resume-source-title">
+              <div class="stack">
+                <strong id="resume-source-title">Choose how to continue sharing your location</strong>
+                <span class="small">The server has no position for this trip yet, so the app cannot tell which source you started with. Nothing is shared until you choose.</span>
+                <div class="row">
+                  <button class="btn" type="button" data-source="device">This device's GPS</button>
+                  <button class="btn" type="button" data-source="simulator">Simulated GPS (demonstration)</button>
+                </div>
+              </div>
+            </div>
             <div class="next-stop" aria-live="polite">
               <div class="section-title">Next stop</div>
               <div class="row between"><div class="name" id="next-stop-name">—</div><div class="eta"><div class="value" id="next-stop-eta">–</div><div class="note" id="next-stop-note"></div></div></div>

@@ -19,7 +19,9 @@ export function driverRoutes(deps: WebDeps): express.Router {
   });
 
   router.get('/trip', (_req, res) => {
-    res.json({ vehicle: deps.tracking.activeTripFor(principalOf(res).userId), serverTime: deps.clock.now() });
+    const vehicle = deps.tracking.activeTripFor(principalOf(res).userId);
+    const locationSource = vehicle ? deps.tracking.lastFixSource(vehicle.tripId) : null;
+    res.json({ vehicle, locationSource, serverTime: deps.clock.now() });
   });
 
   router.post('/trips', (req, res) => {

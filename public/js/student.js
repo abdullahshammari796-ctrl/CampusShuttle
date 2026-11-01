@@ -55,10 +55,14 @@ async function start() {
     renderAll();
   });
   feed.on('waiting', ({ stopId, waiting }) => {
+    const previous = state.waiting[stopId] ?? 0;
     state.waiting = { ...state.waiting, [stopId]: waiting };
     map.setWaiting(state.waiting);
     renderStopInfo();
-    if (state.request?.stopId === stopId) refreshRequest();
+    // Only a falling count can mean this student's own request closed (expired, served or cancelled
+    // elsewhere). Refreshing on every change would make each waiting student re-fetch whenever
+    // anyone joins the same stop.
+    if (state.request?.status === 'WAITING' && state.request.stopId === stopId && waiting < previous) refreshRequest();
   });
   feed.on('arrival', async ({ stopId, routeId }) => {
     if (state.request && state.request.status === 'WAITING' && state.request.stopId === stopId) {
