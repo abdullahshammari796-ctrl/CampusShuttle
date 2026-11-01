@@ -46,7 +46,7 @@ export class CampusMap {
   draw() {
     this.container.innerHTML = '';
     this.container.classList.add('map-wrap');
-    const svg = el('svg', { viewBox: `0 0 ${WIDTH} ${this.height}`, role: 'img', 'aria-label': 'Schematic map of shuttle routes, stops and live shuttle positions' });
+    const svg = el('svg', { viewBox: `0 0 ${WIDTH} ${this.height}`, role: this.options.onStopClick ? 'group' : 'img', 'aria-label': 'Schematic map of shuttle routes, stops and live shuttle positions' });
     this.svg = svg;
 
     const grid = el('g', { class: 'map-grid' }, svg);
@@ -70,7 +70,7 @@ export class CampusMap {
     const labelled = [];
     for (const stop of this.network.stops.filter((s) => servedStops.has(s.id))) {
       const p = this.project(stop);
-      const g = el('g', { class: 'map-stop', 'data-stop': stop.id, tabindex: 0, role: 'button', 'aria-label': `Stop: ${stop.name}` }, this.stopLayer);
+      const g = el('g', { class: 'map-stop', 'data-stop': stop.id, ...(this.options.onStopClick ? { tabindex: 0, role: 'button', 'aria-label': `Stop: ${stop.name}` } : {}) }, this.stopLayer);
       el('title', {}, g).textContent = stop.name;
       el('circle', { class: 'hit', cx: p.x, cy: p.y, r: 30 }, g);
       el('circle', { class: 'ring', cx: p.x, cy: p.y, r: 11 }, g);

@@ -8,7 +8,7 @@
   --border: #dfe3e9;
   --text: #0f172a;
   --text-2: #475569;
-  --text-3: #64748b;
+  --text-3: #526174;
   --brand: #0f766e;
   --brand-strong: #0b5f59;
   --brand-ink: #ffffff;
@@ -334,3 +334,15 @@ dialog form { padding: 18px; display: flex; flex-direction: column; gap: 14px; }
 .stop-picker { display: flex; flex-wrap: wrap; gap: 6px; min-height: 36px; padding: 6px; border: 1px dashed var(--border); border-radius: var(--radius-sm); }
 .toggle { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.88rem; cursor: pointer; }
 .toggle input { width: 18px; height: 18px; accent-color: var(--brand); }
+
+/* Keep the app bar and map filters within a narrow phone viewport. */
+@media (max-width: 480px) {
+  .appbar { flex-wrap: wrap; gap: 8px; }
+  .appbar .conn { order: 1; width: 100%; }
+  .card-header { flex-wrap: wrap; }
+}
+.skip-link { position: absolute; left: 12px; top: -100px; z-index: 100; background: var(--surface); padding: 10px; }
+.skip-link:focus { top: 10px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}

@@ -16,6 +16,7 @@ const state = {
   selectedStop: null,
   routeFilter: null,
   request: null,
+  waitingRenderKey: null,
 };
 
 const user = await requireUser('student');
@@ -266,6 +267,14 @@ function renderWaiting() {
   const request = state.request;
   const now = state.feed ? state.feed.now() : Date.now();
   const routes = [...state.routes.values()].filter((r) => r.stopIds.includes(stop.id));
+  const minutesLeft = request?.status === 'WAITING' ? Math.max(0, Math.round((request.expiresAt - now) / 60000)) : null;
+  const renderKey = JSON.stringify([request, state.selectedStop, [...state.stops.values()], routes]);
+  if (renderKey === state.waitingRenderKey) {
+    const countdown = card.querySelector('[data-countdown]');
+    if (countdown && countdown.textContent !== String(minutesLeft)) countdown.textContent = String(minutesLeft);
+    return; // Keep the same controls and keyboard focus while only time changes.
+  }
+  state.waitingRenderKey = renderKey;
   const routeOptions = html`<label class="field">Route (optional)
     <select id="waiting-route"><option value="">Any route</option>${routes.map((r) => html`<option value="${r.id}">${r.name}</option>`)}</select>
   </label>`;
@@ -273,10 +282,9 @@ function renderWaiting() {
   if (request && request.status === 'WAITING') {
     const here = request.stopId === stop.id;
     const where = state.stops.get(request.stopId)?.name ?? 'a stop';
-    const minutesLeft = Math.max(0, Math.round((request.expiresAt - now) / 60000));
     render(card, html`<div class="stack">
       <div class="banner banner-info">${icon('check')}<div><strong>You're on the waiting list at ${where}</strong><br>
-        <span class="small">Since ${formatClock(request.createdAt)} · expires in ${minutesLeft} min. Drivers and the transport office see the number of people waiting, not who you are.</span></div></div>
+        <span class="small">Since ${formatClock(request.createdAt)} · expires in <span data-countdown>${minutesLeft}</span> min. Drivers and the transport office see the number of people waiting, not who you are.</span></div></div>
       <div class="row">
         <button class="btn btn-danger" type="button" data-action="cancel">Cancel request</button>
         ${here ? '' : html`<button class="btn" type="button" data-action="create">Wait at ${stop.name} instead</button>`}
@@ -321,5 +329,7 @@ async function onWaitingAction(event) {
   } finally {
     button.disabled = false;
     renderWaiting();
+    const nextAction = state.request?.status === 'WAITING' ? 'cancel' : 'create';
+    $(`#waiting-card [data-action="${nextAction}"]`)?.focus();
   }
 }

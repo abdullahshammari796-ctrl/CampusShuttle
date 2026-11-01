@@ -109,3 +109,11 @@ Re-verified on 1 Nov 2026 after the review fixes (fresh server, fleet simulator 
 ChatGPT Work on 1 Nov 2026, Node 24.22.1/Linux: 113/113 unit/integration/architecture tests and 5/5 role browser tests passed. Playwright 1.64.1 used Chromium 138.0.7204.0 from the registry-distributed `@sparticuz/chromium` package because the standard browser download returned an invalid archive in this environment. The optional executable-path setting is documented; normal environments install Playwright's bundled Chromium.
 
 `e2e/roles.spec.ts` drives real forms and a fresh SQLite-backed in-memory server: stop selection/persistence, request creation/cancellation, simulated network loss with failed trip end and recovery, office termination with audit reason, median forecast/explanation, and live updates across separate role sessions. No API response stubs are used in these five tests. `test/unit/simulated-gps.test.ts` uses a controlled clock for projection, route boundaries, dwell, outage and stop cleanup. These are automated checks, not a human rehearsal or device GPS field test.
+
+## Issue #8 — accessibility and mobile corrections
+
+The first automated audit reproduced light-mode text contrast failures and interactive map children hidden under an image role. A controlled-browser-clock test separately reproduced keyboard focus being lost when the waiting card refreshed. The driver confirmation dialog also lacked an accessible name.
+
+Fixes: darker muted text in light mode; map groups expose stop buttons only when they perform an action; noninteractive maps have no dead tab stops; labelled trip-end dialog; skip links and a student page heading; narrow-screen wrapping; reduced-motion support; and a stable waiting card whose countdown updates without rebuilding its controls. After create/cancel, focus moves to the next relevant action.
+
+Verified in Chromium 138, 390×844, light/dark: four axe WCAG-tagged audits and one periodic-refresh keyboard regression pass. This is **not** WCAG certification or a real NVDA/Narrator session. Actual assistive-technology listening and physical-device checks remain a team task. Automated results are in `docs/evidence/issue-8-accessibility.txt`; before-fix evidence is retained in the review package.
