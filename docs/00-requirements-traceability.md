@@ -34,7 +34,7 @@ Status: ✅ done and verified · ◐ done, with a limitation · ⏳ OUTSTANDING 
 | §4.3 | Component boundaries visible in code | `src/<component>/`; allowed imports enforced by `test/architecture.test.ts` (imports only — UML operations and associations are checked by hand) | ✅ |
 | §4.3 | ≥ 2 primary use cases end to end | UC2+UC1 and UC3→UC4/UC5 (tests + browser walkthrough) | ✅ |
 | §4.3 | Technology justified in one paragraph | Report §8.4 | ✅ |
-| §4.3 | Source code submitted with a README explaining how to run it | `README.md`; public repository https://github.com/abdullahshammari796-ctrl/CampusShuttle | ✅ (repository created 1 Nov 2026; ⏳ Zuhair's collaborator invitation pending; ⏳ Moodle submission by the team) |
+| §4.3 | Source code submitted with a README explaining how to run it | `README.md`; public repository https://github.com/abdullahshammari796-ctrl/CampusShuttle | ✅ (repository created 1 Nov 2026; Zuhair accepted his invitation; PRs #12 and #13 merged after review; `main` protected: pull request, 1 approving review and the `verify` check required; ⏳ Moodle submission by the team) |
 | §4.4 | Presentation; every member speaks; strict timing | `docs/presentation/`, `docs/demo-script.md` | ◐ ⏳ official time limit unknown |
 | §8 | Grading rubric | Not in the provided document | ⏳ obtain from the instructor |
 
@@ -47,13 +47,13 @@ Status: ✅ done and verified · ◐ done, with a limitation · ⏳ OUTSTANDING 
 | Driver: start/end trips, location updates, status, GPS interruption handling and recovery, realistic GPS simulation | Driver UI, `gps.js` | ✅ (◐ device GPS not field-tested) |
 | Office: routes and trips, active shuttles, waiting demand, trends, predictions | Office UI | ✅ |
 | ≥ 2 architecture alternatives vs measurable QAs; simplest adequate architecture | Report §6 | ✅ |
-| Separated responsibilities, defined interfaces, data models, patterns; docs match code | `src/`, ports, architecture test (imports only), UML compared with the code by hand on 1 Nov | ✅ (◐ manual comparison can drift) |
+| Separated responsibilities, defined interfaces, data models, patterns; docs match code | `src/`, ports, architecture test (imports only), UML compared with the code member by member on 1 Nov (again after PRs #12/#13 and the owner fixes) | ✅ (◐ manual comparison can drift; diagrams not yet rendered) |
 | Real-time & concurrency; ETA; outages; persistence & consistency; security & RBAC; privacy; performance & scalability; maintainability & testability | Report §6.6 | ✅ |
 | ≥ 3 patterns with UML class diagrams | 5 patterns | ◐ rendering pending |
 | Demand prediction: baseline first, ML only if justified; synthetic data labelled; no fabricated accuracy; ML lifecycle link | `docs/demand-prediction.md`, ADR-0005 | ✅ |
 | UML with a proper tool, editable sources, exported diagrams where supported | PlantUML sources | ◐ exports blocked in this environment (see README "Rendering the UML diagrams") |
 | Proposal, report, UML set, README, ADRs, QA scenarios, test plan, presentation/demo materials | `docs/` | ✅ drafts (⏳ PDFs need rendered diagrams) |
 | Free, local stack; reproducible setup; demo data; automated tests | `package.json`, seed, tests | ✅ |
-| Tests: main workflows, roles, simultaneous connections, ETA, GPS interruption/recovery, demand calculations, edge cases | `test/` (113 tests) and `e2e/` (browser role/use-case/accessibility checks; see test plan for executed results) | ✅ |
+| Tests: main workflows, roles, simultaneous connections, ETA, GPS interruption/recovery, demand calculations, edge cases | `test/` (114 Node tests) and `e2e/` (21 Chromium tests: roles, use cases, accessibility, driver location source); both run in GitHub Actions on every PR to `main` | ✅ |
 | No remote repository, pushes, commits or Git config changes without explicit authorisation | Repository created, baseline pushed and Zuhair invited only on Abdullah's explicit request (1 Nov 2026), after a public-release audit; commits use Abdullah's GitHub no-reply address, no Git configuration was changed, no AI co-author | ✅ |
 | Work-ownership plan with genuine future contributions | `docs/team/work-ownership-plan.md` | ✅ |

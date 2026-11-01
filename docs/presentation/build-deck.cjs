@@ -274,7 +274,7 @@ pres.addSection({ title: 'Prototype' });
     ['Discovery', 'Question: requests per stop and hour'],
     ['Feasibility', 'No real data → no trained model yet'],
     ['Design', 'Explanations and ranges for staff'],
-    ['Development', 'Naive → seasonal → weighted baselines'],
+    ['Development', 'Naive → seasonal → weighted → median'],
     ['Production', 'Live requests become history automatically'],
     ['Maintenance', 'Backtest = monitoring; retrain only if it wins'],
   ];
@@ -290,7 +290,7 @@ pres.addSection({ title: 'Prototype' });
 {
   const s = content('Prototype');
   s.addText('Synthetic backtest: the method works, accuracy unproven', { placeholder: 'title' });
-  s.addChart(pres.ChartType.bar, [{ name: 'MAE (requests per stop-hour)', labels: ['Weighted seasonal (6 weeks)', 'Seasonal average (4 weeks)', 'Hour-of-day mean (naive)'], values: [1.44, 1.45, 1.98] }], {
+  s.addChart(pres.ChartType.bar, [{ name: 'MAE (requests per stop-hour)', labels: ['Same-weekday median (6 weeks)', 'Weighted seasonal (6 weeks)', 'Seasonal average (4 weeks)', 'Hour-of-day mean (naive)'], values: [1.42, 1.44, 1.45, 1.98] }], {
     x: M, y: 1.45, w: 6.8, h: 4.6, barDir: 'bar', catAxisOrientation: 'maxMin', chartColors: [THEME.colors.accent1],
     showValue: true, dataLabelPosition: 'outEnd', dataLabelFormatCode: '0.00', dataLabelFontSize: 16, dataLabelColor: THEME.colors.dk1, dataLabelFontFace: '+mn-lt',
     catAxisLabelFontSize: 14, catAxisLabelColor: THEME.colors.dk1, catAxisLabelFontFace: '+mn-lt', valAxisHidden: true, valAxisMinVal: 0, valAxisMaxVal: 2.5,
@@ -331,14 +331,14 @@ pres.addSection({ title: 'Evidence' });
 {
   const s = content('Evidence');
   s.addText('Tested, measured — and honest about the gaps', { placeholder: 'title' });
-  stat(s, { x: M, y: 1.35, w: 2.8, value: '103', label: 'automated tests, all passing (unit, integration, architecture)' });
+  stat(s, { x: M, y: 1.35, w: 2.8, value: '135', label: '114 Node + 21 Chromium tests, all passing' });
   stat(s, { x: 3.7, y: 1.35, w: 2.8, value: '26 × 4', label: 'endpoints × caller types checked for role access' });
   stat(s, { x: 6.8, y: 1.35, w: 2.8, value: '113 ms', label: 'worst of 3,000 simulated viewers (local benchmark)' });
-  stat(s, { x: 9.9, y: 1.35, w: 2.8, value: '6', label: 'code defects found by tests and review, all fixed', color: C.accent2 });
+  stat(s, { x: 9.9, y: 1.35, w: 2.8, value: '12', label: 'defects and corrections in the test plan, all resolved', color: C.accent2 });
   card(s, { x: M, y: 3.6, w: 5.9, h: 2.6, title: 'Found by tests and independent review', body: [
-    { text: 'Shuttle snapped a few metres behind at route corners (load test)', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
-    { text: 'Real-time hub ran work after shutdown (integration test)', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
-    { text: 'Driver app gave up a trip the server had not ended; live streams outlived their session (review)', options: { bullet: true, paraSpaceAfter: 8 } },
+    { text: 'Shuttle snapped behind at route corners (load test); hub worked after shutdown (integration test)', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
+    { text: 'Driver app gave up a trip the server had not ended; live streams outlived their session (review)', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
+    { text: 'Stale waiting state, lost keyboard focus (browser tests); reloaded GPS trip switched to the simulator (PR review)', options: { bullet: true, paraSpaceAfter: 8 } },
   ] });
   card(s, { x: 6.8, y: 3.6, w: 5.9, h: 2.6, title: 'Not done yet', body: [
     { text: 'Field test with a real phone on a real shuttle', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
@@ -346,7 +346,7 @@ pres.addSection({ title: 'Evidence' });
     { text: 'Real demand data — forecasts shown on synthetic data only', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
     { text: 'UML diagrams rendered and checked visually; deployment load test', options: { bullet: true, paraSpaceAfter: 8 } },
   ] });
-  s.addNotes('Numbers from docs/evidence. Mention the V-model pairing: unit ↔ module design, architecture test ↔ architectural design, integration ↔ system design, demo ↔ requirements.');
+  s.addNotes('Numbers from docs/evidence and docs/test-plan.md section 4. The 21 Chromium tests drive the real pages against a fresh server; the same checks run in GitHub Actions on every pull request. Mention the V-model pairing: unit ↔ module design, architecture test ↔ architectural design, integration ↔ system design, demo ↔ requirements.');
 }
 {
   const s = pres.addSlide({ masterName: 'Closing dark', sectionTitle: 'Evidence' });
@@ -363,7 +363,7 @@ pres.addSection({ title: 'Evidence' });
     tb(s, body, { x: x + 0.3, y: 2.45, w: 3.25, h: 1.6, fontSize: 15, color: C.background1 });
   });
   tb(s, 'Questions?', { x: M, y: 4.3, w: 12.1, h: 1.0, fontSize: 40, bold: true, color: C.background1, fontFace: THEME.headFontFace });
-  tb(s, 'The prototype baseline was built with AI assistance (Claude Code); what we reviewed, changed and added is stated in our AI-use statement.', { x: M, y: 5.6, w: 12.1, h: 0.6, fontSize: 14, color: C.background2 });
+  tb(s, 'The prototype was built with AI assistance (Claude Code; ChatGPT for Zuhair’s pull requests); what we reviewed, changed and added is stated in our AI-use statement.', { x: M, y: 5.6, w: 12.1, h: 0.6, fontSize: 14, color: C.background2 });
   s.addNotes('Keep this slide up during questions. The AI-use line must match the final AI-use statement in the report.');
 }
 

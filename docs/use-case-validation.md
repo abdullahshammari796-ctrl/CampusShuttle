@@ -15,7 +15,7 @@ Performed by ChatGPT Work at Zuhair's request on the actual application, with is
 | UC2 3a: GPS outage | B: `UC1/UC2` test with real stream and simulated GPS. Device GPS field evidence is still Abdullah's #3. |
 | UC2 3b: network queue | B: simulated mobile-data loss, positive queued count, failed end, recovery and end. U: queue, retry, backoff, drain and limits. No restart durability guarantee. |
 | UC2 4a: bad fixes | B: injected glitch visibly rejected; U: invalid/accuracy/area/age rejection plus duplicate/order/jump tests. |
-| UC2 4b: reload | B: active trip title preserved, resumed-trip log observed. Source uses simulator on reload, including trips previously started with device GPS; this limitation is documented below. |
+| UC2 4b: reload | B: active trip title preserved, resumed-trip log observed. **Corrected in the owner review (PR from `abdullah/owner-completion`):** the page now resumes the source of the trip's latest accepted position. B: `e2e/driver-location-source.spec.ts` shows that a device-GPS trip stays on device GPS after reload, with only `device` positions stored, and that a trip with no accepted position shares nothing until the driver chooses a source. I: `GET /api/driver/trip` returns `locationSource`, also after a server restart. |
 | UC2 7a: office ends | B: office reason entry, audit record, driver's start form returns; I: terminal trips reject further uploads. |
 | UC2 7b: auto-close | B: after 31 minutes via clock port, driver returns to start form; U: timeout rule. |
 | UC2 7c: failed end/retry | B: simulated network failure leaves active UI; U: failed request, already-ended and queued/in-flight recovery. |
@@ -37,4 +37,4 @@ Text corrected: simulator/device update cadence; loop versus non-loop arrivals; 
 
 ## Remaining bounded limitations
 
-A driver page reload always resumes with simulated GPS, even if the trip originally used device GPS (`driver.js:start`). This is acceptable only for the local prototype and must be explained before any device demonstration; it is not a safe public-deployment behaviour. Session logout does not implement full token revocation. Queues are memory-only and fixes older than ten minutes are rejected. Human screen-reader listening, full browser lap/trace walkthrough, physical GPS, presentation rehearsal and signatures are not performed by this automation.
+The earlier reload limitation (every reload resumed simulated GPS, even for a device-GPS trip) was corrected in the owner review; see UC2 4b above. Device GPS on a real phone is still untested (issue #3). Session logout does not implement full token revocation. Queues are memory-only and fixes older than ten minutes are rejected. Human screen-reader listening, full browser lap/trace walkthrough, physical GPS, presentation rehearsal and signatures are not performed by this automation.
