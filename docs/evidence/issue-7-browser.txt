@@ -1,0 +1,17 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> campus-shuttle@0.1.0 test:browser
+> playwright test
+
+
+Running 5 tests using 1 worker
+
+(node:31) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 e2e/roles.spec.ts:3:1 › student selects and remembers a stop, registers and cancels a waiting request (866ms)
+  ✓  2 e2e/roles.spec.ts:15:1 › driver keeps an offline trip active, sends queued fixes and ends after recovery (4.3s)
+  ✓  3 e2e/roles.spec.ts:31:1 › office terminates a live driver trip with an audited reason (3.8s)
+  ✓  4 e2e/roles.spec.ts:47:1 › office selects the fourth forecast model and inspects its actual explanation (850ms)
+  ✓  5 e2e/roles.spec.ts:58:1 › student receives driver updates and remote removal over a real live stream (1.3s)
+
+  5 passed (12.1s)

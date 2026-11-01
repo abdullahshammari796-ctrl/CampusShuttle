@@ -67,6 +67,8 @@ const EXCLUDED_DIRS: Record<string, string> = {
   '.claude': 'local Claude Code tool configuration (not part of the application)',
   'review-packages': 'earlier review archives',
   coverage: 'temporary cache',
+  'test-results': 'browser test traces and temporary screenshots (may contain sessions)',
+  'playwright-report': 'generated browser report (may contain sessions)',
   '.cache': 'temporary cache',
   tmp: 'temporary files',
   temp: 'temporary files',

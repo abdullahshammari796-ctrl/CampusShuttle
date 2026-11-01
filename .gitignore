@@ -39,3 +39,7 @@ Thumbs.db
 desktop.ini
 ~$*
 .claude/
+
+# Browser test artifacts (may include local sessions; never publish)
+test-results/
+playwright-report/
