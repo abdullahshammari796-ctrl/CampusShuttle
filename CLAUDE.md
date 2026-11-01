@@ -4,7 +4,8 @@ Team: Abdullah (GitHub `abdullahshammari796-ctrl`, repository owner) and Zuhair 
 Read `README.md` for setup and `docs/00-requirements-traceability.md` for what is done and outstanding.
 
 ## Standing rules
-- Do **not** create or publish a remote repository, push, deploy, make Git commits or change Git author configuration unless Abdullah explicitly authorises that specific action.
+- The repository is **public**: https://github.com/abdullahshammari796-ctrl/CampusShuttle (created 1 Nov 2026 at Abdullah's request). Anything committed and pushed there is published. Do **not** commit, push, deploy, change repository settings, create issues or pull requests, or change Git configuration unless Abdullah explicitly authorises that specific action. Never commit as Zuhair Halawa, and never work on a student's assigned issue unless that student asks.
+- Before anything new is pushed, re-check it for secrets and personal data. A commit made on Abdullah's behalf uses his GitHub no-reply address and must say in its message that the AI assistant made it.
 - Never attribute commits or co-authorship to Claude, Anthropic or any AI identity, and never impersonate a team member or invent contributions. AI use is disclosed only in `docs/team/ai-use-statement.md`, which must stay truthful.
 - Never fabricate rubric details, signatures, dates, student IDs, timelines, real-world data or accuracy figures; mark missing information as **OUTSTANDING**. Synthetic demo data must stay labelled as synthetic.
 - Keep documentation consistent with the code. `test/architecture.test.ts` checks only the allowed imports between components; it does not check UML operations, attributes, associations or messages. Compare and update the UML sources in `docs/uml/` by hand whenever classes, signatures or flows change.

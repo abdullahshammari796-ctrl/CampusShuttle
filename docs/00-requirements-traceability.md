@@ -34,7 +34,7 @@ Status: ✅ done and verified · ◐ done, with a limitation · ⏳ OUTSTANDING 
 | §4.3 | Component boundaries visible in code | `src/<component>/`; allowed imports enforced by `test/architecture.test.ts` (imports only — UML operations and associations are checked by hand) | ✅ |
 | §4.3 | ≥ 2 primary use cases end to end | UC2+UC1 and UC3→UC4/UC5 (tests + browser walkthrough) | ✅ |
 | §4.3 | Technology justified in one paragraph | Report §8.4 | ✅ |
-| §4.3 | Source code submitted with a README explaining how to run it | `README.md` | ✅ (⏳ repository/archive to be created by the team) |
+| §4.3 | Source code submitted with a README explaining how to run it | `README.md`; public repository https://github.com/abdullahshammari796-ctrl/CampusShuttle | ✅ (repository created 1 Nov 2026; ⏳ Zuhair's collaborator invitation pending; ⏳ Moodle submission by the team) |
 | §4.4 | Presentation; every member speaks; strict timing | `docs/presentation/`, `docs/demo-script.md` | ◐ ⏳ official time limit unknown |
 | §8 | Grading rubric | Not in the provided document | ⏳ obtain from the instructor |
 
@@ -55,5 +55,5 @@ Status: ✅ done and verified · ◐ done, with a limitation · ⏳ OUTSTANDING 
 | Proposal, report, UML set, README, ADRs, QA scenarios, test plan, presentation/demo materials | `docs/` | ✅ drafts (⏳ PDFs need rendered diagrams) |
 | Free, local stack; reproducible setup; demo data; automated tests | `package.json`, seed, tests | ✅ |
 | Tests: main workflows, roles, simultaneous connections, ETA, GPS interruption/recovery, demand calculations, edge cases | `test/` (103 tests, incl. driver trip ending, live-stream session expiry, review packaging) | ✅ |
-| No remote repository, pushes, commits or Git config changes | none performed | ✅ |
+| No remote repository, pushes, commits or Git config changes without explicit authorisation | Repository created, baseline pushed and Zuhair invited only on Abdullah's explicit request (1 Nov 2026), after a public-release audit; commits use Abdullah's GitHub no-reply address, no Git configuration was changed, no AI co-author | ✅ |
 | Work-ownership plan with genuine future contributions | `docs/team/work-ownership-plan.md` | ✅ |

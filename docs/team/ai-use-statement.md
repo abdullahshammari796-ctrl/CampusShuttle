@@ -27,6 +27,13 @@ The project description requires a statement of *which AI tools were used, for w
 
 * **Repository preparation (1 November 2026).** At Abdullah's request it ran a public-release audit (secrets, personal data, document metadata, ignored files), initialised Git and made the initial import commit. The commit was made from Abdullah's GitHub identity, using his GitHub no-reply address, and its message states that the AI assistant made it and that it represents neither student's individual contribution.
 
+* **GitHub set-up (1 November 2026).** At Abdullah's request, using the GitHub CLI that Abdullah signed in to himself, it:
+  * created the **public** repository `abdullahshammari796-ctrl/CampusShuttle` and pushed the initial commit;
+  * invited `zuhairhalawa` as a collaborator (pending until he accepts);
+  * opened issues #1–#11 describing work for each student and shared tasks, and made the documentation commit that records this.
+
+  It has not worked on any of those issues.
+
 ## What it did not do
 * It did not register the team, choose the topic on the team's behalf, contact the instructor or submit anything for marking. Git and GitHub actions were taken only when Abdullah explicitly asked (see above); nothing was ever committed under Zuhair Halawa's name, and the app was not deployed.
 * It did not invent rubric details, signatures, student IDs, dates, contributions or real-world data. Missing information is marked **OUTSTANDING**; all demo and historical data is labelled synthetic/demonstration.
