@@ -73,7 +73,7 @@ Six-part scenarios (Bass, Clements & Kazman). Every response measure is checked 
 * **Source:** developer. **Stimulus:** adds a new ETA or forecasting algorithm. **Artifact:** tracking / demand.
 * **Response:** added without changing services, API or UI.
 * **Measure:** one new class + one line in `src/container.ts`.
-* **Verification:** design review (Strategy pattern); the office model selector is filled from `/api/office/demand/models`. **Met by design** (not exercised by adding a fourth model).
+* **Verification:** design review (Strategy pattern); the office model selector is filled from `/api/office/demand/models`. **Exercised in issue #6** by adding `SameWeekdayMedianPredictor` and registering it in `src/container.ts`, with six targeted unit tests. Full Node 24 integration recheck remains pending.
 
 ### QA-8 Testability
 * **Source:** developer. **Stimulus:** runs the test suite. **Artifact:** code base. **Environment:** developer PC, no network.

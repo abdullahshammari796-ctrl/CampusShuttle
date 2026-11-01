@@ -1,0 +1,33 @@
+CampusShuttle — Issue #6: same-weekday median demand predictor
+2026-11-01 · Independent local reproduction on Node.js 22.16.0
+
+Method: imported the project's generateSyntheticDemand(), HourlySeries and
+backtest() modules directly (no database, server or Express dependency).
+Seed: 305 (unchanged). Generated 56 synthetic days through 2026-10-04.
+Evaluation: 2026-09-21 to 2026-10-04, 9 stops x 15 hours x 14 days
+= 1,890 stop-hours; all four models use earlier dates only.
+These numbers exactly reproduce the previously reported three baseline rows.
+
+Model                            MAE    RMSE   Bias    Range coverage  Samples
+Seasonal average (4 weeks)       1.45   1.99  -0.03    75%             1,890
+Weighted seasonal (6 weeks)      1.44   1.99  -0.06    83%             1,890
+Hour-of-day mean (naive)         1.98   2.69  -0.04    97%             1,890
+Same-weekday median (6 weeks)    1.42   2.01  -0.22    83%             1,890
+
+The median slightly improves MAE compared with the weighted mean but has
+worse RMSE and a stronger underforecast bias on this synthetic dataset.
+The interval is the min/max of historical observations, not a calibrated
+confidence interval. This does not establish real-world forecast accuracy.
+
+What was NOT run here:
+- The project's full 'npm run evaluate' command, because dependencies and
+  the required Node 24 environment were unavailable in this container.
+- A running-office UI check of the fourth model; the office model selector
+  is driven by the service's models() API, so this is expected but unverified.
+
+Required follow-up on Abdullah's Node 24 machine before merging:
+  npm ci
+  npm run typecheck
+  npm test
+  npm run evaluate
+  npm start  (then confirm the fourth model and its explanation in Office UI)

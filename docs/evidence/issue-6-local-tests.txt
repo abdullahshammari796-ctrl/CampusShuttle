@@ -1,0 +1,11 @@
+CampusShuttle Issue #6 — independent local tests, 2026-11-01
+Environment: Node.js 22.16.0, without the project's Express/Node 24 dependencies.
+
+node --experimental-strip-types --test test/unit/prediction.test.ts
+  16 tests; 16 passed; 0 failed (6 new median tests).
+
+node --experimental-strip-types --test test/unit/*.test.ts test/architecture.test.ts
+  84 tests; 84 passed; 0 failed; 0 cancelled; 0 skipped.
+
+Full integration tests and TypeScript typecheck NOT RUN on this machine;
+therefore the suite is not claimed to be fully verified. Re-run on Node 24.

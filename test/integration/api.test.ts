@@ -306,7 +306,7 @@ describe('Use case: transport office operations', () => {
     assert.match(explain.explanation, /Average of 4 previous Mondays/);
 
     const evaluation = (await office.get('/api/office/demand/evaluation?days=14')).body;
-    assert.deepEqual(evaluation.results.map((r: { predictorId: string }) => r.predictorId), ['seasonal-average', 'weighted-seasonal', 'hour-of-day-mean']);
+    assert.deepEqual(evaluation.results.map((r: { predictorId: string }) => r.predictorId), ['seasonal-average', 'weighted-seasonal', 'hour-of-day-mean', 'same-weekday-median']);
     assert.ok(evaluation.results.every((r: { samples: number; mae: number }) => r.samples > 0 && r.mae >= 0));
     assert.ok(evaluation.dataSources.includes('synthetic'));
     assert.equal((await office.get('/api/office/demand/forecast?model=crystal-ball')).status, 400);

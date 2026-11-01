@@ -1,6 +1,7 @@
 import type { AppConfig } from './config.ts';
 import { DemandService } from './demand/demand-service.ts';
 import { HourOfDayMeanPredictor, SeasonalAveragePredictor, WeightedSeasonalPredictor } from './demand/prediction/predictors.ts';
+import { SameWeekdayMedianPredictor } from './demand/prediction/same-weekday-median.ts';
 import { WaitingService } from './demand/waiting-service.ts';
 import { AuthService } from './identity/auth-service.ts';
 import { TokenService } from './identity/token-service.ts';
@@ -93,7 +94,7 @@ export async function buildContainer(config: AppConfig, options: { clock?: Clock
   const demand = new DemandService({
     history: new SqliteDemandHistoryRepository(db, config.timezoneOffsetMinutes),
     network,
-    predictors: [new SeasonalAveragePredictor(), new WeightedSeasonalPredictor(), new HourOfDayMeanPredictor()],
+    predictors: [new SeasonalAveragePredictor(), new WeightedSeasonalPredictor(), new HourOfDayMeanPredictor(), new SameWeekdayMedianPredictor()],
     clock,
     timezoneOffsetMinutes: config.timezoneOffsetMinutes,
     serviceHours: config.serviceHours,

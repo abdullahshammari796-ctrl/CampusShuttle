@@ -8,8 +8,8 @@
 
 ## Repository set-up — status on 1 November 2026
 * **Public repository:** https://github.com/abdullahshammari796-ctrl/CampusShuttle (owner: Abdullah). At Abdullah's request, the AI assistant ran a public-release audit, created the repository from his account and imported the AI-assisted baseline in the initial commit `8d11ad60` (see `ai-use-statement.md`). Neither student's own work is in that commit.
-* **Collaborator:** `zuhairhalawa` was invited with write access on 1 Nov 2026. The invitation is **pending until he accepts** it (GitHub notification or the repository's invitation page).
-* **Work items:** GitHub issues #1–#11, labelled `owner: Abdullah`, `owner: Zuhair` or `owner: both`; each one names its issue number below. Zuhair's issues can be assigned to him only after he accepts.
+* **Collaborator:** `zuhairhalawa` was invited with write access on 1 Nov 2026. Zuhair **accepted** the invitation on 1 Nov 2026; connected GitHub access confirms write permission.
+* **Work items:** GitHub issues #1–#11, labelled `owner: Abdullah`, `owner: Zuhair` or `owner: both`; each one names its issue number below. Zuhair's issues can now be assigned to him. His first AI-assisted contribution is issue #6; human code review is still required.
 * **Still to do by Abdullah (issue #4):** protect `main` (pull request + one review, no force pushes) once Zuhair has joined; assign Zuhair's issues to him; agree on a licence (none yet).
 
 ## Ownership areas

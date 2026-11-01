@@ -3,6 +3,7 @@ import { describe, it } from 'node:test';
 import type { HourlyDemand } from '../../src/demand/model.ts';
 import { backtest } from '../../src/demand/prediction/backtest.ts';
 import { HourlySeries } from '../../src/demand/prediction/hourly-series.ts';
+import { SameWeekdayMedianPredictor } from '../../src/demand/prediction/same-weekday-median.ts';
 import { HourOfDayMeanPredictor, SeasonalAveragePredictor, WeightedSeasonalPredictor } from '../../src/demand/prediction/predictors.ts';
 import { SYNTHETIC_STOP_WEIGHTS } from '../../src/seed/demo-data.ts';
 import { generateSyntheticDemand } from '../../src/seed/synthetic-demand.ts';
@@ -61,6 +62,79 @@ describe('Demand predictors (Strategy pattern, explainable)', () => {
     for (const predictor of [new SeasonalAveragePredictor(), new WeightedSeasonalPredictor(), new HourOfDayMeanPredictor()]) {
       assert.deepEqual(predictor.predict(withFuture, target).expected, predictor.predict(history, target).expected, predictor.id);
     }
+  });
+});
+
+
+describe('Same-weekday median predictor (6 weeks)', () => {
+  const target = { stopId: 'lib', date: '2026-10-12', hour: 8 }; // Monday
+  const priorMondays = Array.from({ length: 6 }, (_, i) => addDays(target.date, -7 * (i + 1)));
+  const predictor = new SameWeekdayMedianPredictor();
+
+  it('uses the median of six same-stop/same-hour Mondays, not the mean, despite an outlier', () => {
+    const counts = [200, 12, 9, 10, 7, 4]; // most recent to oldest; median = (9 + 10) / 2
+    const history = new HourlySeries(priorMondays.map((date, i) => row(date, counts[i])), []);
+    const forecast = predictor.predict(history, target);
+    assert.equal(forecast.expected, 9.5);
+    assert.equal(forecast.low, 4);
+    assert.equal(forecast.high, 200);
+    assert.deepEqual(forecast.basis.map(({ date, count, weight }) => ({ date, count, weight })),
+      priorMondays.map((date, i) => ({ date, count: counts[i], weight: 1 })));
+    assert.match(forecast.explanation, /Median of 6 previous Mondays.*9\.5/);
+    assert.equal(predictor.id, 'same-weekday-median');
+  });
+
+  it('returns the middle count when an odd number of weeks have history', () => {
+    const history = new HourlySeries(priorMondays.slice(0, 3).map((date, i) => row(date, [9, 2, 7][i])), []);
+    const forecast = predictor.predict(history, target);
+    assert.equal(forecast.expected, 7);
+    assert.equal(forecast.low, 2);
+    assert.equal(forecast.high, 9);
+    assert.equal(forecast.basis.length, 3);
+  });
+
+  it('treats a covered zero as a real observation and ignores uncovered weeks', () => {
+    const history = new HourlySeries([row(priorMondays[0], 8)], [priorMondays[1]]);
+    const forecast = predictor.predict(history, target);
+    assert.equal(forecast.expected, 4); // median of 8 and the observed 0
+    assert.equal(forecast.low, 0);
+    assert.equal(forecast.high, 8);
+    assert.deepEqual(forecast.basis.map(({ count }) => count), [8, 0]);
+    assert.equal(forecast.basis.length, 2);
+  });
+
+  it('returns no forecast without data, rather than a fake zero', () => {
+    const forecast = predictor.predict(new HourlySeries([], []), target);
+    assert.equal(forecast.expected, null);
+    assert.equal(forecast.low, null);
+    assert.equal(forecast.high, null);
+    assert.deepEqual(forecast.basis, []);
+    assert.match(forecast.explanation, /No Monday history/);
+  });
+
+  it('does not leak current/future observations, older-than-six-week data, other stops or hours', () => {
+    const base = new HourlySeries(priorMondays.map((date, i) => row(date, [8, 10, 12, 14, 16, 18][i])), []);
+    const extra = new HourlySeries([
+      ...priorMondays.map((date, i) => row(date, [8, 10, 12, 14, 16, 18][i])),
+      row(target.date, 1000), row(addDays(target.date, 7), 1000),
+      row(addDays(target.date, -49), 1000), row(priorMondays[0], 1000, 9),
+      row(priorMondays[0], 1000, 8, 'another-stop'),
+    ], []);
+    assert.equal(predictor.predict(base, target).expected, 13);
+    assert.deepEqual(predictor.predict(extra, target), predictor.predict(base, target));
+  });
+
+  it('works with the rolling-origin backtest and keeps the synthetic evaluation explicit', () => {
+    const history = new HourlySeries([
+      ...priorMondays.map((date, i) => row(date, [8, 10, 12, 14, 16, 18][i])),
+      row(target.date, 20),
+    ], []);
+    const result = backtest(predictor, history, { testDates: [target.date], stopIds: ['lib'], hours: [8] });
+    assert.equal(result.samples, 1);
+    assert.equal(result.mae, 7);
+    assert.equal(result.rmse, 7);
+    assert.equal(result.bias, -7);
+    assert.equal(result.intervalCoverage, 0);
   });
 });
 
