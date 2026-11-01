@@ -8,6 +8,9 @@ The office wants expected waiting demand per stop and hour. No real historical d
 ## Decision
 Implement three explainable strategies behind `DemandPredictor` — seasonal average (4 weeks), weighted seasonal (6 weeks, decay 0.7) and a naive hour-of-day mean as the reference to beat — plus a rolling-origin backtest (MAE, RMSE, bias, range coverage). Use a deterministic **synthetic** history only to demonstrate and test the pipeline; label it in the database (`source = 'synthetic'`), the API (`dataSources`) and the UI (warning banners). Do **not** train an ML model on synthetic data.
 
+## Extension — 1 November 2026 (issue #6)
+A fourth strategy, `SameWeekdayMedianPredictor`, was added as a separate implementation of `DemandPredictor` without changing `DemandService`, the HTTP API or office UI. It uses the median of up to six earlier same-weekday/same-hour counts and illustrates QA-7; synthetic backtesting and its limitations remain unchanged. This is an extension to the accepted decision, not a rewriting of the original three-model baseline.
+
 ## Consequences
 * + Every forecast can be explained to a non-expert (the exact past values and weights are shown).
 * + Live waiting requests automatically become real history; the same backtest will evaluate real data.

@@ -76,6 +76,9 @@ package "demand" {
     -weeks: number = 6
     -decay: number = 0.7
   }
+  class SameWeekdayMedianPredictor {
+    +predict(history: HourlySeries, target: PredictionTarget): DemandPrediction
+  }
   class HourOfDayMeanPredictor {
     -days: number = 28
   }
@@ -160,6 +163,7 @@ DemandPrediction --|> PredictionTarget
 DemandPrediction "1" *-- "0..*" BasisPoint : basis
 SeasonalAveragePredictor ..|> DemandPredictor
 WeightedSeasonalPredictor ..|> DemandPredictor
+SameWeekdayMedianPredictor ..|> DemandPredictor
 HourOfDayMeanPredictor ..|> DemandPredictor
 
 AuthService --> "1" UserRepository
