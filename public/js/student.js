@@ -17,6 +17,7 @@ const state = {
   routeFilter: null,
   request: null,
   waitingRenderKey: null,
+  requestRevision: 0,
 };
 
 const user = await requireUser('student');
@@ -41,6 +42,7 @@ async function start() {
     map.setVehicles(s.vehicles);
     map.setWaiting(s.waiting);
     renderAll();
+    refreshRequest(); // A reconnect snapshot must also reconcile this student's private request.
   });
   feed.on('vehicle', (v) => {
     state.vehicles.set(v.tripId, v);
@@ -56,6 +58,7 @@ async function start() {
     state.waiting = { ...state.waiting, [stopId]: waiting };
     map.setWaiting(state.waiting);
     renderStopInfo();
+    if (state.request?.stopId === stopId) refreshRequest();
   });
   feed.on('arrival', async ({ stopId, routeId }) => {
     if (state.request && state.request.status === 'WAITING' && state.request.stopId === stopId) {
@@ -128,9 +131,17 @@ function selectStop(stopId, persist = true) {
 }
 
 async function refreshRequest() {
+  const revision = ++state.requestRevision;
+  const previousStatus = state.request?.status;
   try {
     const { request } = await api('/api/student/waiting');
+    if (revision !== state.requestRevision) return;
     state.request = request;
+    if (previousStatus === 'WAITING' && request?.status !== 'WAITING') {
+      $('#waiting-status').textContent = request?.status === 'SERVED'
+        ? 'A shuttle reached your stop. Your waiting request is closed.'
+        : request?.status === 'EXPIRED' ? 'Your waiting request expired.' : 'Your waiting request is no longer active.';
+    }
   } catch (e) {
     if (!(e instanceof ApiError)) throw e;
   }
@@ -312,15 +323,18 @@ async function onWaitingAction(event) {
   const button = event.target.closest('[data-action]');
   if (!button) return;
   button.disabled = true;
+  state.requestRevision++; // Invalidate earlier reads before changing the request.
   try {
     if (button.dataset.action === 'create') {
       const routeSelect = document.getElementById('waiting-route');
       const body = { stopId: state.selectedStop, routeId: routeSelect && routeSelect.value ? routeSelect.value : null };
       const { request } = await api('/api/student/waiting', { method: 'POST', body });
+      state.requestRevision++;
       state.request = request;
       toast(`You're on the waiting list at ${state.stops.get(request.stopId)?.name}.`);
     } else if (button.dataset.action === 'cancel' && state.request) {
       const { request } = await api(`/api/student/waiting/${encodeURIComponent(state.request.id)}`, { method: 'DELETE' });
+      state.requestRevision++;
       state.request = request;
       toast('Waiting request cancelled.');
     }

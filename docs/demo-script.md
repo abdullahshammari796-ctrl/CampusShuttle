@@ -44,3 +44,6 @@ After *Simulate GPS outage* is pressed, the driver's shuttle produces no positio
 * How do you know the ETA is right? (Arithmetic is unit-tested; real accuracy has **not** been measured — needs a field test.)
 * Is the forecast accurate? (Only on synthetic data, which proves nothing about reality — say so.)
 * Which parts did the AI write, and what did you change? (Answer from the AI-use statement — honestly.)
+
+### Verification additions (1 November 2026)
+Before rehearsing, run `npm run typecheck`, `npm test`, `npm run test:browser` and `npm run evaluate`. The browser tests start their own ephemeral server. In the live demo, keep the default 20 s / 60 s signal thresholds: use **Simulate GPS outage**, observe delayed then lost/no ETA, and restore it. **Simulate network loss** is a different demo: GPS keeps producing positions; attempt End trip, observe **Trip NOT ended**, restore the network and retry. Forecasts have four models, including Same-weekday median (6 weeks). None of this records a human rehearsal or a timed presentation.

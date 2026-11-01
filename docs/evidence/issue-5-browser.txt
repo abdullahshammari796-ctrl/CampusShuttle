@@ -1,0 +1,19 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> campus-shuttle@0.1.0 test:browser
+> playwright test e2e/use-cases.spec.ts
+
+
+Running 7 tests using 1 worker
+
+(node:31) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 e2e/use-cases.spec.ts:3:1 › UC1/UC2: real stream shows delayed, lost without ETA, and recovered GPS (4.6s)
+  ✓  2 e2e/use-cases.spec.ts:24:1 › UC3: a waiting request visibly expires without a reload (550ms)
+  ✓  3 e2e/use-cases.spec.ts:33:1 › UC1: expired sessions stop an already-open real browser stream (486ms)
+  ✓  4 e2e/use-cases.spec.ts:42:1 › UC3: served request is reconciled after the student reconnects (609ms)
+  ✓  5 e2e/use-cases.spec.ts:54:1 › UC5: an empty historical period produces no invented forecast (914ms)
+  ✓  6 e2e/use-cases.spec.ts:66:1 › UC2: reload resumes a trip, a GPS glitch is rejected, and prolonged loss closes it (10.6s)
+  ✓  7 e2e/use-cases.spec.ts:81:1 › UC4: office edits and disables a route through the real form (699ms)
+
+  7 passed (19.3s)

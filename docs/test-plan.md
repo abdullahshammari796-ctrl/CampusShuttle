@@ -92,10 +92,10 @@ Re-verified on 1 Nov 2026 after the review fixes (fresh server, fleet simulator 
 ## 6. Not tested (known gaps)
 * Real phone GPS on a moving vehicle (only the simulator and the API were exercised).
 * Browsers other than Chromium; small-screen phones beyond the responsive layout check; screen readers.
-* Automated UI tests (the browser code was verified manually).
+* Additional browser engines and real assistive-technology sessions (Chromium automation is now covered below).
 * Load beyond 3,000 viewers; long-running (multi-day) operation; database growth over a semester.
 * **UML rendering.** On 1 Nov 2026 the official `plantuml-mit` 1.2026.9 jar was downloaded from Maven Central and its SHA-1, SHA-256 and SHA-512 matched the published checksums. Running it (Java 21 from the DataGrip installation) was refused by the authoring environment's permission policy, so no diagram has been rendered or syntax-checked by a real renderer, and the PDFs still show placeholders. See README "Rendering the UML diagrams".
-* Session expiry in a real browser (the 8-hour lifetime is not configurable; covered by the deterministic integration test with a manual clock).
+* Session expiry is now covered in Chromium with the server clock advanced; a real eight-hour soak remains untested.
 * HTTPS deployment.
 
 ## Issue #6 — same-weekday median extension (1 November 2026)
@@ -117,3 +117,7 @@ The first automated audit reproduced light-mode text contrast failures and inter
 Fixes: darker muted text in light mode; map groups expose stop buttons only when they perform an action; noninteractive maps have no dead tab stops; labelled trip-end dialog; skip links and a student page heading; narrow-screen wrapping; reduced-motion support; and a stable waiting card whose countdown updates without rebuilding its controls. After create/cancel, focus moves to the next relevant action.
 
 Verified in Chromium 138, 390×844, light/dark: four axe WCAG-tagged audits and one periodic-refresh keyboard regression pass. This is **not** WCAG certification or a real NVDA/Narrator session. Actual assistive-technology listening and physical-device checks remain a team task. Automated results are in `docs/evidence/issue-8-accessibility.txt`; before-fix evidence is retained in the review package.
+
+## Issue #5 — use-case validation
+
+See `docs/use-case-validation.md` for a step/extension evidence matrix. Two failing-before browser cases reproduced stale private waiting-request state after expiry and after an offline served event; the student now refreshes its private request on relevant waiting events and reconnect snapshots, and ignores stale reads after a newer mutation. A screen-reader status region announces closures without repeatedly announcing the countdown. The driver no longer attributes every remote closure to the office (the timeout scheduler can also end trips). Seven use-case browser checks passed; production 20s/60s and 30-minute rules were exercised through the existing clock port, not weakened in production.

@@ -1,14 +1,18 @@
 import { test as base, expect, type Page } from '@playwright/test';
-import { buildContainer } from '../src/container.ts';
+import { buildContainer, type Container } from '../src/container.ts';
 import { loadConfig } from '../src/config.ts';
 
-export const test = base.extend<{ appURL: string }>({
-  appURL: async ({}, use) => {
-    const app = await buildContainer(loadConfig({}, {
-      dbFile: ':memory:', port: 0,
-      // Faster transitions in this isolated test server; production stays 20s/60s.
-      monitorIntervalMs: 100,
-    }));
+type TestClock = { now(): number; advance(ms: number): void };
+export const test = base.extend<{ appURL: string; app: Container; clock: TestClock }>({
+  clock: async ({}, use) => {
+    let offset = 0;
+    await use({ now: () => Date.now() + offset, advance: ms => { offset += ms; } });
+  },
+  app: async ({ clock }, use) => {
+    const app = await buildContainer(loadConfig({}, { dbFile: ':memory:', port: 0 }), { clock });
+    try { await use(app); } finally { app.stop(); }
+  },
+  appURL: async ({ app }, use) => {
     const server = app.app.listen(0, '127.0.0.1');
     await new Promise<void>(resolve => server.once('listening', resolve));
     app.startBackgroundJobs();
@@ -19,7 +23,6 @@ export const test = base.extend<{ appURL: string }>({
       app.hub.close();
       server.closeAllConnections();
       await new Promise<void>(resolve => server.close(() => resolve()));
-      app.stop();
     }
   },
 });
