@@ -1,0 +1,34 @@
+{
+  "name": "campus-shuttle",
+  "version": "0.1.0",
+  "private": true,
+  "description": "BCS 305 course project: Campus Shuttle Tracking & Demand Prediction (working prototype)",
+  "type": "module",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning src/main.ts",
+    "dev": "node --watch --disable-warning=ExperimentalWarning src/main.ts",
+    "seed": "node --disable-warning=ExperimentalWarning scripts/seed.ts --reset",
+    "simulate": "node scripts/simulate-fleet.ts",
+    "test": "node --disable-warning=ExperimentalWarning --test --test-concurrency=1 \"test/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm test",
+    "load-test": "node --disable-warning=ExperimentalWarning scripts/load-test.ts",
+    "evaluate": "node --disable-warning=ExperimentalWarning scripts/evaluate-demand.ts",
+    "docs:build": "node scripts/build-docs.ts",
+    "uml": "node scripts/render-uml.ts",
+    "review:package": "node scripts/review-package.ts"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.10.0",
+    "marked": "^16.4.0",
+    "pptxgenjs": "^4.0.1",
+    "typescript": "~5.9.3"
+  }
+}

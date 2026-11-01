@@ -1,0 +1,60 @@
+@startuml 15-pattern-repository
+!pragma layout smetana
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam classAttributeIconSize 0
+title Design pattern 4 — Repository (ports and adapters for persistence)
+
+package "tracking (business rules)" {
+  class TrackingService
+  interface TripRepository <<repository>> {
+    +insert(trip: Trip): void
+    +update(trip: Trip): void
+    +get(id: string): Trip | null
+    +listActive(): Trip[]
+    +listRecent(options): Trip[]
+  }
+  interface LocationFixRepository <<repository>> {
+    +appendMany(fixes: LocationFix[]): void
+    +lastForTrip(tripId: string): LocationFix | null
+    +listForTrip(tripId: string): LocationFix[]
+    +purgeOlderThan(cutoffMs: number): number
+  }
+}
+
+package "persistence (technology)" {
+  class SqliteTripRepository {
+    -db: DatabaseSync
+  }
+  class SqliteLocationFixRepository {
+    -db: DatabaseSync
+  }
+  class InMemoryTripRepository {
+    -trips: Map<string, Trip>
+  }
+  class InMemoryLocationFixRepository {
+    +fixes: LocationFix[]
+  }
+  class "DatabaseSync\n(node:sqlite)" as Sqlite
+}
+
+TrackingService --> "1" TripRepository
+TrackingService --> "1" LocationFixRepository
+TripRepository <|.. SqliteTripRepository
+TripRepository <|.. InMemoryTripRepository
+LocationFixRepository <|.. SqliteLocationFixRepository
+LocationFixRepository <|.. InMemoryLocationFixRepository
+SqliteTripRepository --> Sqlite
+SqliteLocationFixRepository --> Sqlite
+
+note bottom of InMemoryTripRepository
+  Used by the unit tests of TrackingService:
+  business rules are tested without a database.
+end note
+note bottom of SqliteTripRepository
+  Translates "UNIQUE constraint failed" on the
+  one-active-trip indexes (per shuttle and per
+  driver) into a CONFLICT error.
+end note
+note "The same pattern is used for routes, stops, shuttles,\nusers, waiting requests, demand history and the audit log." as N1
+@enduml

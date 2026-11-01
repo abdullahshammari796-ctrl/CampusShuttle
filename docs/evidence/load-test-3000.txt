@@ -1,0 +1,9 @@
+Opening 3000 live connections…
+  3000 connected in 0.9 s
+
+Results (3000 viewers × 30 location updates = 90000 deliveries)
+  delivery latency  p50 70.2 ms · p95 89.9 ms · p99 98.0 ms · max 107.5 ms
+  time until ALL viewers had an update: worst 107.6 ms
+  messages sent 99000 · skipped for slow clients 0
+  process memory (server + 3000 test clients) 332 MB
+  node v24.14.1 on win32

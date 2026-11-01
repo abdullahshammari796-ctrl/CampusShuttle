@@ -1,0 +1,184 @@
+@startuml 09-class-diagram-demand-identity
+!pragma layout smetana
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam classAttributeIconSize 0
+title Design class diagram (2 of 2) — demand, forecasting and identity components
+
+package "demand" {
+  class WaitingRequest <<record>> {
+    +id: string
+    +stopId: string
+    +routeId: string | null
+    +requesterRef: string | null
+    +status: WaitingStatus
+    +createdAt: number
+    +expiresAt: number
+    +closedAt: number | null
+  }
+  class WaitingService {
+    -pseudonymize: (userId: string) => string
+    +current(userId: string): WaitingRequest | null
+    +latest(userId: string, recentMs = 15 min): WaitingRequest | null
+    +create(userId: string, input: {stopId, routeId?}): WaitingRequest
+    +cancel(userId: string, requestId: string): WaitingRequest
+    +markServed(stopId: string, routeId: string): number
+    +expireDue(): number
+    +countsByStop(): Record<string, number>
+    +deidentifyClosed(olderThanMs: number): number
+  }
+  interface WaitingRequestRepository <<repository>> {
+    +insert(r: WaitingRequest): void
+    +update(r: WaitingRequest): void
+    +get(id: string): WaitingRequest | null
+    +findActiveByRequester(ref: string): WaitingRequest | null
+    +latestByRequester(ref: string): WaitingRequest | null
+    +listActive(): WaitingRequest[]
+    +countCreatedSince(ref: string, since: number): number
+    +deidentifyClosedBefore(cutoff: number): number
+  }
+  class HourlyDemand <<record>> {
+    +stopId: string
+    +date: string
+    +hour: number
+    +count: number
+    +source: DemandSource
+  }
+  interface DemandHistoryRepository <<repository>> {
+    +load(from: string, to: string): {rows: HourlyDemand[], coveredDates: string[]}
+    +replaceSynthetic(rows: HourlyDemand[]): void
+  }
+  class HourlySeries {
+    -counts: Map<string, number>
+    +sources: Set<DemandSource>
+    +count(stopId: string, date: string, hour: number): number | undefined
+    +hasDate(date: string): boolean
+    +dates(): string[]
+  }
+  class DemandService {
+    +models(): {id, label, description}[]
+    +today(): string
+    +forecast(date: string, modelId?: string): ForecastView
+    +explain(stopId: string, date: string, hour: number, modelId?: string): DemandPrediction
+    +history(weeks: number): HistoryView
+    +evaluate(testDays = 14): EvaluationView
+  }
+  interface DemandPredictor <<strategy>> {
+    +id: string
+    +label: string
+    +description: string
+    +predict(history: HourlySeries, target: PredictionTarget): DemandPrediction
+  }
+  class SeasonalAveragePredictor {
+    -weeks: number = 4
+  }
+  class WeightedSeasonalPredictor {
+    -weeks: number = 6
+    -decay: number = 0.7
+  }
+  class HourOfDayMeanPredictor {
+    -days: number = 28
+  }
+  class PredictionTarget <<record>> {
+    +stopId: string
+    +date: string
+    +hour: number
+  }
+  class DemandPrediction <<record>> {
+    +expected: number | null
+    +low: number | null
+    +high: number | null
+    +explanation: string
+  }
+  class BasisPoint <<record>> {
+    +date: string
+    +count: number
+    +weight: number
+  }
+  class Backtest <<module>> {
+    {static} +backtest(p: DemandPredictor, s: HourlySeries, o: BacktestOptions): BacktestResult
+  }
+}
+
+package "identity" {
+  enum Role {
+    student
+    driver
+    office
+  }
+  class User <<record>> {
+    +id: string
+    +username: string
+    +displayName: string
+    +role: Role
+    +passwordHash: string
+  }
+  class Principal <<record>> {
+    +userId: string
+    +role: Role
+    +displayName: string
+  }
+  class Session <<record>> {
+    +principal: Principal
+    +expiresAt: number
+  }
+  class AuthService {
+    -failures: Map<string, {count, firstAt}>
+    +login(username: string, password: string): Promise<{principal, token, expiresAt}>
+    +authenticate(token: string | undefined): Session | null
+    +displayName(userId: string): string | null
+  }
+  class TokenService {
+    -secret: Buffer
+    -ttlMs: number
+    +issue(p: Principal, now: number): {token, expiresAt}
+    +verify(token: string, now: number): Principal | null
+    +verifySession(token: string, now: number): Session | null
+    +pseudonymize(purpose: string, value: string): string
+  }
+  interface UserRepository <<repository>> {
+    +findByUsername(username: string): User | null
+    +get(id: string): User | null
+    +insert(user: User): void
+  }
+  class "password-hasher" as PasswordHasher <<module>> {
+    {static} +hashPassword(password: string): Promise<string>
+    {static} +verifyPassword(password: string, stored: string): Promise<boolean>
+  }
+}
+
+WaitingService --> "1" WaitingRequestRepository
+WaitingService ..> WaitingRequest : creates
+WaitingRequestRepository "1" o-- "0..*" WaitingRequest : stores
+DemandService --> "1" DemandHistoryRepository
+DemandService o--> "1..*" DemandPredictor : predictors
+DemandService ..> HourlySeries : builds
+DemandService ..> Backtest : uses
+HourlySeries ..> HourlyDemand : built from (rows folded into counts)
+DemandPredictor ..> DemandPrediction : creates
+DemandPrediction --|> PredictionTarget
+DemandPrediction "1" *-- "0..*" BasisPoint : basis
+SeasonalAveragePredictor ..|> DemandPredictor
+WeightedSeasonalPredictor ..|> DemandPredictor
+HourOfDayMeanPredictor ..|> DemandPredictor
+
+AuthService --> "1" UserRepository
+AuthService --> "1" TokenService
+AuthService ..> PasswordHasher : uses
+AuthService ..> Session : returns
+Session *-- "1" Principal
+User --> "1" Role
+Principal --> "1" Role
+note bottom of WaitingService
+  pseudonymize is a function injected by the composition root
+  (backed by TokenService.pseudonymize). The demand component
+  does not import the identity component. WaitingService also
+  uses NetworkReader (stop and route checks) and EventPublisher
+  (waiting.changed) — see diagram 08.
+end note
+note bottom of DemandPrediction
+  expected is null when there is no usable history
+  ("no forecast is made"). Types written as {…} are
+  inline TypeScript object types.
+end note
+@enduml

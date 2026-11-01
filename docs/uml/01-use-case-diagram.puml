@@ -1,0 +1,80 @@
+@startuml 01-use-case-diagram
+!pragma layout smetana
+left to right direction
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam defaultFontName Arial
+title Campus Shuttle Tracking & Demand Prediction — Use case diagram
+
+actor "Campus user" as User
+actor "Student" as Student
+actor "Driver" as Driver
+actor "Transport office\nstaff" as Office
+actor "GPS receiver\n(phone GPS or simulator)" as GPS <<system>>
+actor "Scheduler\n(server clock)" as Clock <<system>>
+
+User <|-- Student
+User <|-- Driver
+User <|-- Office
+
+rectangle "Campus Shuttle System" {
+  usecase "Sign in" as UC0
+  usecase "UC1 Track shuttles and\nview arrival times" as UC1
+  usecase "Calculate arrival\nestimates (ETA)" as UCETA
+  usecase "UC3 Register\nwaiting request" as UC3
+  usecase "Cancel waiting\nrequest" as UC3C
+  usecase "UC2 Run a trip" as UC2
+  usecase "Start trip" as UC2S
+  usecase "Share location\nupdates" as UC2L
+  usecase "End trip" as UC2E
+  usecase "Report passenger\nload" as UC2O
+  usecase "Detect delayed /\nlost GPS signal" as UCSIG
+  usecase "Expire unattended\nwaiting requests" as UCEXP
+  usecase "Close abandoned trips\n(30 min without a position)" as UCABN
+  usecase "Apply data retention\n(GPS 30 days, pseudonyms 24 h)" as UCRET
+  usecase "UC4 Monitor fleet and\nwaiting demand" as UC4
+  usecase "End a trip\nremotely" as UC4T
+  usecase "Inspect trip\nhistory and tracks" as UC4H
+  usecase "Manage routes" as UC6
+  usecase "View system status\nand audit log" as UC4S
+  usecase "UC5 View demand\nforecast" as UC5
+  usecase "Explain a\nforecast" as UC5X
+  usecase "View demand\ntrends" as UC5T
+  usecase "Evaluate forecast\nmodels" as UC5E
+}
+
+User -- UC0
+Student -- UC1
+Student -- UC3
+Student -- UC3C
+Driver -- UC2
+Driver -- UC2O
+Office -- UC4
+Office -- UC4T
+Office -- UC4H
+Office -- UC6
+Office -- UC4S
+Office -- UC5
+Office -- UC5T
+Office -- UC5E
+
+UC2L -- GPS
+Clock -- UCSIG
+Clock -- UCEXP
+Clock -- UCABN
+Clock -- UCRET
+
+UC1 ..> UCETA : <<include>>
+UC2 ..> UC2S : <<include>>
+UC2 ..> UC2L : <<include>>
+UC2 ..> UC2E : <<include>>
+UC4T ..> UC4 : <<extend>>
+UC6 ..> UC4 : <<extend>>
+UC5X ..> UC5 : <<extend>>
+
+note right of UC3
+  Students choose a stop;
+  their own location is
+  never collected.
+end note
+@enduml

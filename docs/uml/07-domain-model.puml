@@ -1,0 +1,108 @@
+@startuml 07-domain-model
+!pragma layout smetana
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam classAttributeIconSize 0
+hide methods
+hide circle
+title Domain model (conceptual classes)
+
+class User {
+  username
+  displayName
+  role
+}
+class Student
+class Driver
+class "Transport office staff" as TransportOfficer
+User <|-- Student
+User <|-- Driver
+User <|-- TransportOfficer
+
+class Stop {
+  name
+  {field} location (lat, lng)
+  description
+}
+class Route {
+  name
+  colour
+  loop
+  plannedSpeed
+  dwellTimePerStop
+  inService
+  {field} road geometry (path)
+}
+class RouteStop {
+  sequence
+}
+class Shuttle {
+  label
+  plate
+  capacity
+  active
+}
+class Trip {
+  status
+  passengerLoad
+  startedAt
+  endedAt
+  endReason
+}
+class LocationFix {
+  {field} location (lat, lng)
+  speed
+  accuracy
+  recordedAt
+  receivedAt
+  {field} source (device / simulator)
+  {field} heading
+}
+class WaitingRequest {
+  status
+  createdAt
+  expiresAt
+  closedAt
+}
+class HourlyDemand {
+  date
+  hour
+  count
+  {field} source (synthetic / live)
+}
+class DemandForecast {
+  date
+  hour
+  expected
+  {field} range (low, high)
+  explanation
+}
+class AuditEntry {
+  at
+  action
+  target
+  details
+}
+
+Route "0..*" -- "2..*" Stop : visits in order >
+(Route, Stop) .. RouteStop
+Trip "0..*" -- "1" Route : runs on >
+Trip "0..*" -- "1" Shuttle : uses >
+Driver "1" -- "0..*" Trip : drives >
+Trip "1" *-- "0..*" LocationFix : records >
+Student "0..1" -- "0..*" WaitingRequest : places (pseudonymously;
+link erased 24 h after closing) >
+WaitingRequest "0..*" -- "1" Stop : at >
+WaitingRequest "0..*" -- "0..1" Route : for >
+HourlyDemand "0..*" -- "1" Stop : measured at >
+DemandForecast "0..*" -- "1" Stop : predicted for >
+DemandForecast "0..*" ..> "0..*" HourlyDemand : derived from >
+HourlyDemand "0..*" ..> "0..*" WaitingRequest : live counts aggregated from >
+TransportOfficer "1" -- "0..*" AuditEntry : performs >
+
+note bottom of Trip
+  Invariants: a shuttle and a driver are each on
+  at most one ACTIVE trip; an ended trip never
+  changes again.
+end note
+@enduml

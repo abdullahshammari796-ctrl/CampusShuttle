@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Campus Shuttle · Sign in</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/app.css">
+  <script type="module" src="/js/login.js"></script>
+</head>
+<body>
+  <div class="login-shell">
+    <section class="login-hero">
+      <div class="brand">
+        <span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 17h12M6 17a2 2 0 1 0 4 0m4 0a2 2 0 1 0 4 0M5 17V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v11M5 11h14"/></svg></span>
+        Campus Shuttle
+      </div>
+      <div class="stack">
+        <h1>Know where the shuttle is, and when it will reach your stop.</h1>
+        <p>Live shuttle tracking, honest arrival estimates, and demand forecasts for campus transport.</p>
+        <ul>
+          <li>Students: live map, arrival times and "I'm waiting here"</li>
+          <li>Drivers: start and end trips and share location, with a built-in GPS simulator</li>
+          <li>Transport office: fleet monitoring, routes, trends and forecasts</li>
+        </ul>
+      </div>
+      <p class="small">BCS 305 course prototype. All routes, accounts and historical demand are demonstration data.</p>
+    </section>
+
+    <section class="login-panel">
+      <div class="card login-card">
+        <div class="card-body stack">
+          <h2>Sign in</h2>
+          <form id="login-form" class="stack" novalidate>
+            <label class="field">Username
+              <input type="text" name="username" id="username" autocomplete="username" required>
+            </label>
+            <label class="field">Password
+              <input type="password" name="password" id="password" autocomplete="current-password" required>
+            </label>
+            <div id="login-error" class="banner banner-critical hidden" role="alert"></div>
+            <button class="btn btn-primary btn-lg" type="submit">Sign in</button>
+          </form>
+          <div class="demo-accounts">
+            <div class="section-title">Demo accounts (local prototype only)</div>
+            <p class="small muted">Choose a role to fill in its demo username. Passwords are listed in the README.</p>
+            <div class="stack" id="demo-accounts">
+              <button class="btn btn-block" type="button" data-user="student1">Student · student1</button>
+              <button class="btn btn-block" type="button" data-user="driver1">Driver · driver1</button>
+              <button class="btn btn-block" type="button" data-user="office1">Transport office · office1</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

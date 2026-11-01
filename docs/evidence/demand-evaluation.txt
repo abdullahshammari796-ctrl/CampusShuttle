@@ -1,0 +1,6 @@
+Backtest 2026-09-21 → 2026-10-04 · data sources: synthetic (SYNTHETIC demo data)
+| Model | MAE | RMSE | Bias | Range coverage | Stop-hours |
+|---|---:|---:|---:|---:|---:|
+| Seasonal average (4 weeks) | 1.45 | 1.99 | -0.03 | 75 % | 1890 |
+| Weighted seasonal (6 weeks) | 1.44 | 1.99 | -0.06 | 83 % | 1890 |
+| Hour-of-day mean (naive reference) | 1.98 | 2.69 | -0.04 | 97 % | 1890 |

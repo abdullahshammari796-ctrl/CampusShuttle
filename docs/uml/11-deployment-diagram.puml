@@ -1,0 +1,52 @@
+@startuml 11-deployment-diagram
+!pragma layout smetana
+skinparam shadowing false
+skinparam defaultFontName Arial
+title Deployment diagram — prototype as demonstrated (production recommendations in note)
+
+node "Student phone or laptop" as StudentDev <<device>> {
+  node "Web browser" as StudentBrowser <<executionEnvironment>> {
+    artifact "index.html, student.html\njs/student.js, map.js, live-feed.js,\napi.js, ui.js" as StudentArt
+  }
+}
+
+node "Driver phone or laptop" as DriverDev <<device>> {
+  node "Web browser" as DriverBrowser <<executionEnvironment>> {
+    artifact "index.html, driver.html\njs/driver.js, gps.js, trip-ending.js,\nmap.js, api.js, ui.js" as DriverArt
+  }
+  node "GPS receiver" as Gps <<device>>
+}
+
+node "Transport office PC" as OfficeDev <<device>> {
+  node "Web browser" as OfficeBrowser <<executionEnvironment>> {
+    artifact "index.html, office.html\njs/office.js, charts.js, map.js,\nlive-feed.js, api.js, ui.js" as OfficeArt
+  }
+}
+
+node "Application server\n(team laptop for the demo)" as ServerDev <<device>> {
+  node "Node.js 24 LTS" as NodeEnv <<executionEnvironment>> {
+    artifact "campus-shuttle\n(src/main.ts + public/)\nlistens on 127.0.0.1:3000 by default\n(HOST=0.0.0.0 for other devices)" as AppArt
+  }
+  node "Node.js (second process)" as SimEnv <<executionEnvironment>> {
+    artifact "fleet simulator\n(npm run simulate)" as SimArt
+  }
+  artifact "campus-shuttle.db\n(SQLite, WAL mode)" as DbArt
+  artifact "session-secret" as SecretArt
+}
+
+StudentBrowser -- NodeEnv : <<HTTP>>\nREST + SSE
+DriverBrowser -- NodeEnv : <<HTTP>>\nREST
+OfficeBrowser -- NodeEnv : <<HTTP>>\nREST + SSE
+SimEnv -- NodeEnv : <<HTTP>>\nREST (as demo drivers)
+DriverBrowser -- Gps : Geolocation API\n(only over HTTPS or localhost;\nthe demo uses the simulator in gps.js)
+AppArt ..> DbArt : <<file I/O>>
+AppArt ..> SecretArt : <<reads>>
+
+note bottom of ServerDev
+  Production (recommended, not built): campus VM behind a
+  TLS reverse proxy (HTTPS is required for phone GPS and for
+  Secure cookies), daily backup of the database file, and a
+  shared message broker only if more than one server
+  instance is ever needed (see ADR-0002).
+end note
+@enduml

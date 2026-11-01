@@ -1,0 +1,41 @@
+# Dependencies (reinstall with `npm install`)
+node_modules/
+
+# Local runtime data: SQLite database and the generated session-signing secret
+data/
+*.db
+*.db-wal
+*.db-shm
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Environment files and key material — never commit real credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+session-secret
+
+# Logs, caches and archives (review packages live outside the repository)
+*.log
+npm-debug.log*
+coverage/
+.cache/
+*.zip
+*.7z
+*.tgz
+review-packages/
+
+# Build intermediates (the PDFs built from them are committed)
+docs/build/*.html
+
+# Editor, OS and local tool files
+.DS_Store
+Thumbs.db
+desktop.ini
+~$*
+.claude/

@@ -1,0 +1,23 @@
+[
+  {
+    "rule": "credential-assignment",
+    "value": "student-demo",
+    "reason": "Public password of the local demo student accounts, documented in README; not a real credential"
+  },
+  {
+    "rule": "credential-assignment",
+    "value": "driver-demo",
+    "reason": "Public password of the local demo driver accounts, documented in README; not a real credential"
+  },
+  {
+    "rule": "credential-assignment",
+    "value": "office-demo",
+    "reason": "Public password of the local demo office account, documented in README; not a real credential"
+  },
+  {
+    "rule": "credential-assignment",
+    "path": "test/unit/security-and-events.test.ts",
+    "value": "a-test-secret-that-is-long-enough-for-hmac",
+    "reason": "Fixed signing key used only inside unit tests"
+  }
+]

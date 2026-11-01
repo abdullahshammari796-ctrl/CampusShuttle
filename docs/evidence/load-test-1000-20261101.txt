@@ -1,0 +1,12 @@
+Opening 1000 live connections…
+  1000 connected in 0.3 s
+
+Results (1000 viewers × 60 location updates)
+  deliveries received 60000 of 60000 expected
+  delivery latency  p50 24.6 ms · p95 37.0 ms · p99 48.1 ms · max 55.1 ms
+  time until ALL viewers had an update: worst 55.1 ms
+  throughput: 2608 deliveries/s averaged over 23.0 s (paced: 3 uploads/s); at least 18133 deliveries/s within the slowest single update
+  messages sent 65000 · skipped for slow clients 0
+  process memory (server + 1000 test clients) 182 MB
+  environment: node v24.14.1 · win32 10.0.26200 · Intel(R) Core(TM) i7-14700F (28 logical cores) · 16 GB RAM
+  method: server and all viewers in ONE Node process over loopback; one shared demo student session; no browsers, no TLS (see the header of scripts/load-test.ts)

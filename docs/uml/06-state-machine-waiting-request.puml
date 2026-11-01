@@ -1,0 +1,25 @@
+@startuml 06-state-machine-waiting-request
+!pragma layout smetana
+skinparam shadowing false
+skinparam defaultFontName Arial
+title State machine — Waiting request ("I'm waiting here")
+
+[*] --> Waiting : register(stop, route?)\n[< 6 requests in the last hour]
+Waiting : entry / publish waiting count
+Waiting --> Waiting : register(same stop and route)\n/ return the existing request
+Waiting --> Served : shuttle of a matching route\nreaches the stop
+Waiting --> Cancelled : cancel()
+Waiting --> Cancelled : register(different stop or route)\n[< 6 requests in the last hour]\n/ a new request replaces it
+Waiting --> Expired : after(20 min)
+Served --> [*]
+Cancelled --> [*]
+Expired --> [*]
+
+note as Retention
+  For Served, Cancelled and Expired requests:
+  24 h after closing, the pseudonymous requester
+  reference is erased (retention job). The remaining
+  row (stop, route, time, outcome) is non-personal
+  demand data used for trends and forecasts.
+end note
+@enduml

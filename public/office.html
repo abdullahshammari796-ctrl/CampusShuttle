@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Campus Shuttle · Transport Office</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/app.css">
+  <script type="module" src="/js/office.js"></script>
+</head>
+<body>
+  <header class="appbar">
+    <a class="brand" href="/office.html"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 17h12M6 17a2 2 0 1 0 4 0m4 0a2 2 0 1 0 4 0M5 17V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v11M5 11h14"/></svg></span>Campus Shuttle</a>
+    <span class="role-tag">Transport office</span>
+    <span class="spacer"></span>
+    <span class="conn" id="conn" aria-live="polite"></span>
+    <span class="user-name" id="user-name"></span>
+    <button class="btn btn-ghost btn-sm" id="logout" type="button">Sign out</button>
+  </header>
+
+  <main class="page">
+    <nav class="tabs" role="tablist" aria-label="Office sections">
+      <button role="tab" type="button" data-tab="live" aria-selected="true">Live operations</button>
+      <button role="tab" type="button" data-tab="demand" aria-selected="false">Demand &amp; forecast</button>
+      <button role="tab" type="button" data-tab="routes" aria-selected="false">Routes</button>
+      <button role="tab" type="button" data-tab="trips" aria-selected="false">Trip history</button>
+      <button role="tab" type="button" data-tab="system" aria-selected="false">System</button>
+    </nav>
+
+    <!-- LIVE -->
+    <section id="tab-live" class="stack" role="tabpanel">
+      <div class="kpis">
+        <div class="card kpi"><div class="label">Shuttles on trip</div><div class="value" id="kpi-active">–</div><div class="detail" id="kpi-active-detail"></div></div>
+        <div class="card kpi"><div class="label">GPS problems</div><div class="value" id="kpi-signal">–</div><div class="detail" id="kpi-signal-detail"></div></div>
+        <div class="card kpi"><div class="label">Students waiting</div><div class="value" id="kpi-waiting">–</div><div class="detail" id="kpi-waiting-detail"></div></div>
+        <div class="card kpi"><div class="label">Live viewers</div><div class="value" id="kpi-viewers">–</div><div class="detail" id="kpi-viewers-detail"></div></div>
+      </div>
+      <div class="grid-main">
+        <section class="card">
+          <div class="card-header"><h2>Fleet map</h2><span class="hint">Badges show students waiting</span></div>
+          <div class="card-body"><div id="live-map"></div></div>
+        </section>
+        <section class="card">
+          <div class="card-header"><h2>Waiting now, by stop</h2></div>
+          <div class="card-body"><div id="waiting-bars" class="list"></div></div>
+        </section>
+      </div>
+      <section class="card">
+        <div class="card-header"><h2>Active trips</h2><span class="hint" id="active-hint"></span></div>
+        <div class="card-body table-wrap"><table class="data" id="active-table"></table></div>
+      </section>
+    </section>
+
+    <!-- DEMAND -->
+    <section id="tab-demand" class="stack hidden" role="tabpanel">
+      <div id="demand-notice"></div>
+      <section class="card">
+        <div class="card-header"><h2>Demand forecast</h2><span class="hint" id="forecast-hint"></span></div>
+        <div class="card-body stack">
+          <div class="form-grid">
+            <label class="field">Date <input type="date" id="forecast-date"></label>
+            <label class="field">Model <select id="forecast-model"></select></label>
+          </div>
+          <p class="small muted" id="model-description"></p>
+          <div class="kpis" id="forecast-kpis"></div>
+          <div>
+            <div class="section-title">Expected waiting requests per hour (all stops)</div>
+            <div id="forecast-chart"></div>
+          </div>
+          <div>
+            <div class="section-title">By stop and hour — select a cell to see how it was calculated</div>
+            <div class="table-wrap"><table class="heat" id="forecast-heat"></table></div>
+            <div class="legend"><span><span class="swatch seq-low"></span>fewer</span><span><span class="swatch seq-high"></span>more expected requests</span><span>– no history yet</span></div>
+          </div>
+          <div id="explain" class="explain"><span class="muted small">Select a cell in the table above to see the basis of that forecast.</span></div>
+        </div>
+      </section>
+      <section class="card">
+        <div class="card-header"><h2>Historical trends</h2><span class="hint" id="history-hint"></span></div>
+        <div class="card-body stack">
+          <div>
+            <div class="section-title">Waiting requests per day</div>
+            <div id="history-chart"></div>
+            <div class="legend"><span><span class="swatch bar-weekday"></span>Monday–Friday</span><span><span class="swatch bar-weekend"></span>Saturday–Sunday</span></div>
+          </div>
+          <div>
+            <div class="section-title">Average requests by weekday and hour</div>
+            <div class="table-wrap"><table class="heat" id="history-heat"></table></div>
+          </div>
+          <div>
+            <div class="section-title">Busiest stops (period total)</div>
+            <div id="history-stops" class="list"></div>
+          </div>
+        </div>
+      </section>
+      <section class="card">
+        <div class="card-header"><h2>Model evaluation (backtest)</h2><span class="hint" id="eval-hint"></span></div>
+        <div class="card-body stack">
+          <p class="small muted">Each model forecasts every stop-hour of the last 14 days using only earlier data; the forecasts are then compared with what happened. Lower MAE (mean absolute error, requests per stop-hour) is better. Coverage = share of actual values inside the model's low–high range.</p>
+          <div class="table-wrap"><table class="data" id="eval-table"></table></div>
+          <div id="eval-note"></div>
+        </div>
+      </section>
+    </section>
+
+    <!-- ROUTES -->
+    <section id="tab-routes" class="stack hidden" role="tabpanel">
+      <section class="card">
+        <div class="card-header"><h2>Routes</h2><span class="hint">Changes apply to new trips immediately and are recorded in the audit log</span></div>
+        <div class="card-body table-wrap"><table class="data" id="routes-table"></table></div>
+      </section>
+      <section class="card">
+        <div class="card-header"><h2>Create a route</h2><span class="hint">New routes start inactive so they can be reviewed first</span></div>
+        <div class="card-body">
+          <form id="route-form" class="stack">
+            <div class="form-grid">
+              <label class="field">Name <input type="text" name="name" required minlength="3" maxlength="60"></label>
+              <label class="field">Colour <input type="color" name="color" value="#0f766e"></label>
+              <label class="field">Planned speed (km/h) <input type="number" name="nominalSpeedKmh" min="5" max="80" value="20" required></label>
+              <label class="field">Dwell per stop (s) <input type="number" name="dwellSeconds" min="0" max="600" value="20" required></label>
+              <label class="toggle"><input type="checkbox" name="loop" checked> Loop route</label>
+            </div>
+            <div class="row">
+              <label class="field">Add stop <select id="route-stop-add"></select></label>
+              <button class="btn" type="button" id="route-stop-button">Add</button>
+              <button class="btn btn-ghost" type="button" id="route-stop-clear">Clear</button>
+            </div>
+            <div class="stop-picker" id="route-stops" aria-live="polite"></div>
+            <div id="route-error" class="banner banner-critical hidden" role="alert"></div>
+            <div><button class="btn btn-primary" type="submit">Create route</button></div>
+          </form>
+        </div>
+      </section>
+    </section>
+
+    <!-- TRIPS -->
+    <section id="tab-trips" class="stack hidden" role="tabpanel">
+      <section class="card">
+        <div class="card-header">
+          <h2>Trip history</h2>
+          <select id="trip-filter" aria-label="Filter trips by status">
+            <option value="">All trips</option>
+            <option value="ACTIVE">Active</option>
+            <option value="COMPLETED">Completed</option>
+            <option value="TERMINATED">Terminated</option>
+          </select>
+        </div>
+        <div class="card-body table-wrap"><table class="data" id="trips-table"></table></div>
+      </section>
+      <section class="card hidden" id="track-card">
+        <div class="card-header"><h2 id="track-title">Trip track</h2><button class="btn btn-sm" id="track-close" type="button">Close</button></div>
+        <div class="card-body grid-main">
+          <div id="track-map" class="compact"></div>
+          <dl class="kv" id="track-stats"></dl>
+        </div>
+      </section>
+    </section>
+
+    <!-- SYSTEM -->
+    <section id="tab-system" class="stack hidden" role="tabpanel">
+      <div class="grid-main">
+        <section class="card">
+          <div class="card-header"><h2>System health</h2><button class="btn btn-sm" id="system-refresh" type="button">Refresh</button></div>
+          <div class="card-body"><dl class="kv" id="system-kv"></dl></div>
+        </section>
+        <section class="card">
+          <div class="card-header"><h2>Privacy &amp; retention</h2></div>
+          <div class="card-body stack small" id="privacy-info"></div>
+        </section>
+      </div>
+      <section class="card">
+        <div class="card-header"><h2>Audit log</h2><span class="hint">Privileged actions by transport-office staff</span></div>
+        <div class="card-body table-wrap"><table class="data" id="audit-table"></table></div>
+      </section>
+    </section>
+  </main>
+
+  <dialog id="terminate-dialog">
+    <form method="dialog" id="terminate-form">
+      <h2>End trip from the office?</h2>
+      <p class="muted" id="terminate-text"></p>
+      <label class="field">Reason (recorded in the audit log)
+        <input type="text" name="reason" required minlength="3" maxlength="200" placeholder="e.g. Vehicle breakdown reported by phone">
+      </label>
+      <div class="row">
+        <button class="btn" value="cancel" type="submit" formnovalidate>Cancel</button>
+        <button class="btn btn-danger" value="confirm" type="submit">End trip</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="route-dialog">
+    <form method="dialog" id="route-edit-form">
+      <h2>Edit route</h2>
+      <label class="field">Name <input type="text" name="name" required minlength="3" maxlength="60"></label>
+      <label class="field">Colour <input type="color" name="color"></label>
+      <label class="field">Planned speed (km/h) <input type="number" name="nominalSpeedKmh" min="5" max="80" required></label>
+      <label class="field">Dwell per stop (s) <input type="number" name="dwellSeconds" min="0" max="600" required></label>
+      <div class="row">
+        <button class="btn" value="cancel" type="submit" formnovalidate>Cancel</button>
+        <button class="btn btn-primary" value="confirm" type="submit">Save</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>

@@ -1,0 +1,50 @@
+@startuml 03-system-sequence-diagram
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam sequenceMessageAlign left
+title System sequence diagram — Run a trip (UC2) and track it (UC1)
+autonumber
+
+actor Driver
+actor Student
+participant ":Campus Shuttle System" as System
+
+Student -> System : openLiveFeed()
+System --> Student : snapshot(vehicles[], waitingCounts)
+Driver -> System : startTrip(routeId, shuttleId)
+System --> Driver : trip(id, status = ACTIVE)
+System ->> Student : vehicleUpdate(tripId, signal = AWAITING_FIX)
+
+loop every ~3 s while the trip is active
+  Driver -> System : sendLocations(fixes[], sentAt)
+  System --> Driver : result(accepted, rejected[], vehicle)
+  System ->> Student : vehicleUpdate(position, nextStops[eta], signal = LIVE)
+end
+
+opt no position received for more than 20 s
+  System ->> Student : vehicleUpdate(signal = STALE, ETAs approximate)
+end
+opt no position received for more than 60 s
+  System ->> Student : vehicleUpdate(signal = LOST, no ETAs)
+end
+
+note over Student, System
+  The student page derives its arrival list from the
+  nextStops of the pushed vehicle updates; the same list
+  is also available on request (used by tests and API clients).
+end note
+Student -> System : getArrivals(stopId)
+System --> Student : arrivals[](route, shuttle, eta, confidence)
+
+alt driver ends the trip
+  Driver -> System : endTrip(tripId)
+  System --> Driver : trip(status = COMPLETED)
+  System ->> Student : vehicleRemoved(tripId, COMPLETED)
+else no position for 30 min
+  System ->> Student : vehicleRemoved(tripId, TERMINATED)
+end
+opt the student's session expires (8 h)
+  System ->> Student : sessionExpired()
+  note right of System : the live stream is closed
+end
+@enduml

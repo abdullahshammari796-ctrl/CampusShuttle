@@ -1,0 +1,54 @@
+@startuml 04-sequence-location-update
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam sequenceMessageAlign left
+title Design sequence diagram — processing one location upload (inside the system)
+
+participant ":LocationUploader\n(driver browser)" as App
+participant ":driverRoutes\n(web)" as Web
+participant ":TrackingService" as TS
+participant ":TripTracker" as TT
+participant ":LocationFixRepository" as Repo
+participant ":EventBus" as Bus
+participant ":WaitingService" as WS
+participant ":SseHub" as Hub
+participant ":LiveView" as LV
+participant ":EtaStrategy\n(BlendedSpeedEta by default)" as Eta
+participant "Viewer browsers" as Viewers
+
+App -> Web : POST /api/driver/trips/{id}/locations\n{fixes[], sentAt}
+Web -> TS : recordFixes(driverId, tripId, fixes, sentAt)
+TS -> TS : parse, correct clock skew,\nfilter accuracy / service area / age
+TS -> TT : validateSequence(candidates)
+TT --> TS : accepted[], rejected[]
+opt accepted is not empty
+  TS -> Repo : appendMany(accepted)
+  loop for each accepted fix
+    TS -> TT : apply(fix)
+    TT --> TS : stopsReached[]
+  end
+  TS -> TT : tick(now, thresholds)
+  opt signal status changed
+    TS -> Bus : publish(trip.signal)
+    Bus -> Hub : queueVehicle(tripId)
+  end
+  TS -> Bus : publish(trip.location)
+  Bus -> Hub : queueVehicle(tripId)
+  loop for each stop reached
+    TS -> Bus : publish(stop.arrived)
+    Bus -> WS : markServed(stopId, routeId)
+    Bus -> Hub : broadcast(arrival)
+  end
+end
+TS -> Eta : estimate(context)
+Eta --> TS : StopEta[]
+TS --> Web : RecordFixesResult
+Web --> App : 200 {accepted, rejected[], vehicle}
+
+== next event-loop turn (coalesces all updates of this batch) ==
+Hub -> LV : vehicle(tripId)
+LV -> TS : vehicle(tripId)
+TS --> LV : VehicleView
+LV --> Hub : VehicleView
+Hub ->> Viewers : SSE "vehicle" (serialised once, written to every\nconnection whose session has not expired)
+@enduml

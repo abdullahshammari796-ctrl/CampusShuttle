@@ -1,0 +1,83 @@
+@startuml 12-pattern-strategy
+!pragma layout smetana
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam classAttributeIconSize 0
+title Design pattern 1 — Strategy (ETA estimation and demand forecasting)
+
+class TrackingService <<context>> {
+  -eta: EtaStrategy
+  +recordFixes(driverId, tripId, fixes, sentAt): RecordFixesResult
+  -view(tracker: TripTracker, now: number): VehicleView
+}
+interface EtaStrategy <<strategy>> {
+  +id: string
+  +description: string
+  +estimate(ctx: EtaContext): StopEta[]
+}
+class NominalSpeedEta <<concrete strategy>> {
+  +estimate(ctx: EtaContext): StopEta[]
+}
+class BlendedSpeedEta <<concrete strategy>> {
+  -options: BlendedSpeedOptions
+  +speedFor(ctx: EtaContext): number
+  +estimate(ctx: EtaContext): StopEta[]
+}
+class EtaContext {
+  +route: Route
+  +path: RoutePath
+  +distanceAlong: number
+  +observedSpeedMps: number
+  +speedSamples: number
+  +at: number
+}
+
+TrackingService o--> "1" EtaStrategy : eta
+EtaStrategy <|.. NominalSpeedEta
+EtaStrategy <|.. BlendedSpeedEta
+EtaStrategy ..> EtaContext : uses
+
+class DemandService <<context>> {
+  -predictors: DemandPredictor[]
+  +forecast(date: string, modelId: string): ForecastView
+  +explain(stopId, date, hour, modelId): DemandPrediction
+  +evaluate(testDays: number): EvaluationView
+}
+interface DemandPredictor <<strategy>> {
+  +id: string
+  +label: string
+  +description: string
+  +predict(history: HourlySeries, target: PredictionTarget): DemandPrediction
+}
+class SeasonalAveragePredictor <<concrete strategy>> {
+  -weeks: number = 4
+  +predict(history, target): DemandPrediction
+}
+class WeightedSeasonalPredictor <<concrete strategy>> {
+  -weeks: number = 6
+  -decay: number = 0.7
+  +predict(history, target): DemandPrediction
+}
+class HourOfDayMeanPredictor <<concrete strategy>> {
+  -days: number = 28
+  +predict(history, target): DemandPrediction
+}
+
+DemandService o--> "1..*" DemandPredictor : predictors
+DemandPredictor <|.. SeasonalAveragePredictor
+DemandPredictor <|.. WeightedSeasonalPredictor
+DemandPredictor <|.. HourOfDayMeanPredictor
+
+class "Composition root\n(src/container.ts)" as Container
+Container ..> BlendedSpeedEta : <<create>>\n(ETA_STRATEGY=blended-speed, default)
+Container ..> NominalSpeedEta : <<create>>\n(ETA_STRATEGY=nominal-speed)
+Container ..> SeasonalAveragePredictor : <<create>>
+Container ..> WeightedSeasonalPredictor : <<create>>
+Container ..> HourOfDayMeanPredictor : <<create>>
+
+note bottom of DemandPredictor
+  Problem solved: ETA and demand algorithms must evolve
+  (e.g. a trained model later) without touching the services,
+  and must be comparable side by side (backtest, model selector).
+end note
+@enduml

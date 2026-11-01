@@ -1,0 +1,65 @@
+@startuml 02-activity-run-trip
+skinparam shadowing false
+skinparam defaultFontName Arial
+title Activity diagram — UC2 Run a trip, including GPS and network interruptions
+
+|Driver app|
+start
+:Driver chooses route and shuttle;
+:Request trip start;
+|Server|
+if (Route in service and\nshuttle and driver free?) then (yes)
+  :Create ACTIVE trip\n(signal = AWAITING_FIX);
+  :Publish trip.started;
+else (no)
+  |Driver app|
+  :Show reason\n(HTTP 404 unknown route or shuttle,\nHTTP 409 not in service or busy);
+  stop
+endif
+|Driver app|
+:Start GPS source\n(device GPS or simulator);
+repeat
+  repeat
+    :Wait for the next GPS reading\n(simulator every 3 s, device GPS at most every 2 s);
+    if (GPS position available?) then (yes)
+      :Append position to local queue\n(newest 500 kept; oldest dropped and counted);
+    else (no — GPS outage)
+    endif
+    if (Network reachable?) then (yes)
+      :Upload queued positions\n(batches of at most 50, each with sentAt);
+      |Server|
+      if (Trip still ACTIVE?) then (yes)
+        :Correct device clock skew\nusing sentAt;
+        :Validate, sort by time, reject duplicates,\nout-of-order, too old (> 10 min) and impossible jumps;
+        :Persist accepted positions;
+        :Snap to route, update speed,\ndetect stops reached;
+        :Push one coalesced vehicle\nupdate to all live viewers;
+        if (A stop was reached?) then (yes)
+          :Close waiting requests at\nthat stop (SERVED);
+        else (no)
+        endif
+      else (no — ended by the office\nor auto-closed after 30 min)
+        |Driver app|
+        :Stop GPS and uploads;\nshow "trip was ended";
+        stop
+      endif
+      |Driver app|
+      :Show delivery result and\nwhat passengers currently see;
+    else (no — network loss)
+      :Keep positions queued,\nretry with exponential backoff;
+    endif
+  repeat while (Driver presses "End trip"?) is (no) not (yes)
+  :Deliver queued positions first\n(waits for an upload in flight, at most 5 s);
+  :Hold new positions;
+  :Send end-trip request;
+  |Server|
+  if (Request reached the server\nwith a valid session?) then (yes)
+    :Set trip COMPLETED\n(already ended: 409, also final);
+    :Publish trip.ended\n(shuttle removed from every map);
+  else (no)
+  endif
+  |Driver app|
+repeat while (End confirmed by the server?) is (no — trip stays ACTIVE,\nuploads resume, driver may retry) not (yes)
+:Stop GPS and uploads;\nshow "Trip ended";
+stop
+@enduml

@@ -1,0 +1,42 @@
+@startuml 05-state-machine-trip
+!pragma layout smetana
+skinparam shadowing false
+skinparam defaultFontName Arial
+title State machine — Trip lifecycle and GPS signal state
+
+[*] --> Active : startTrip(route, shuttle)\n[route in service, shuttle and driver free]
+
+state Active {
+  [*] --> AwaitingFix
+  AwaitingFix : do / show "waiting for first GPS position"
+  Live : entry / show live ETAs
+  Live : fix accepted / update position, speed, ETAs
+  Stale : do / show ETAs as approximate (~)
+  Lost : do / hide ETAs, show "last seen"
+
+  AwaitingFix --> Live : fix accepted
+  AwaitingFix --> Lost : after(60 s)
+  Live --> Stale : after(20 s) [no newer fix]
+  Live --> Lost : after(60 s)\n[e.g. an old offline backlog,\nor after a server restart]
+  Stale --> Lost : after(60 s since last fix)
+  Stale --> Live : fix accepted
+  Lost --> Live : fix accepted
+}
+
+Active --> Completed : endTrip() [by its driver]
+Active --> Terminated : terminate(reason) [by office]
+Active --> Terminated : after(30 min without an accepted fix)\n/ endReason = NO_SIGNAL_TIMEOUT
+Completed --> [*]
+Terminated --> [*]
+
+note right of Active
+  Ages are measured from the newest
+  accepted fix (server-corrected time),
+  or from the trip start if there is none.
+  Thresholds are configurable
+  (STALE_AFTER_SECONDS, LOST_AFTER_SECONDS,
+  ABANDON_AFTER_MINUTES). A trip recovered
+  after a restart re-enters Live and is then
+  re-evaluated on the next tick.
+end note
+@enduml

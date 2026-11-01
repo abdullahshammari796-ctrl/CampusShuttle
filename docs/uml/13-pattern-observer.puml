@@ -1,0 +1,65 @@
+@startuml 13-pattern-observer
+!pragma layout smetana
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam classAttributeIconSize 0
+title Design pattern 2 — Observer (publish/subscribe domain events with callbacks)
+
+interface "EventPublisher<E>" as EventPublisher {
+  +publish(event: E): void
+}
+class "EventBus<E>" as EventBus <<subject>> {
+  -handlers: Map<string, Set<EventHandler<E>>>
+  -onHandlerError: (error, event: E) => void
+  -published: number
+  -handlerErrors: number
+  +subscribe(type: E['type'], handler: EventHandler<E>): () => void
+  +subscribeAll(handler: EventHandler<E>): () => void
+  +publish(event: E): void
+  +stats(): {published, handlerErrors, subscriptions}
+}
+class "EventHandler<E>" as EventHandler <<function type>> {
+  (event: E) => void
+}
+class DomainEvent <<union type>> {
+  trip.started | trip.location | trip.signal
+  trip.occupancy | trip.ended | stop.arrived
+  waiting.changed | network.changed
+}
+
+class TrackingService <<publisher>>
+class NetworkService <<publisher>>
+class WaitingService <<publisher>> {
+  +markServed(stopId: string, routeId: string): number
+}
+class SseHub <<observer>> {
+  -pendingVehicles: Set<string>
+  -queueVehicle(tripId: string): void
+  -broadcast(event: string, payload: object): void
+}
+class "Composition root\n(src/container.ts)" as Container
+
+EventPublisher <|.. EventBus
+EventBus "1" o-- "0..*" EventHandler : stores per event type
+EventBus ..> DomainEvent : dispatches
+TrackingService --> EventPublisher : publishes
+NetworkService --> EventPublisher : publishes
+WaitingService --> EventPublisher : publishes
+SseHub ..> EventBus : subscribe() with arrow-function callbacks for\ntrip.started/location/signal/occupancy/ended,\nwaiting.changed, stop.arrived, network.changed
+Container ..> EventBus : subscribe('stop.arrived',\ne => waiting.markServed(...))
+Container ..> WaitingService : callback calls markServed()
+
+note bottom of EventHandler
+  An observer is a callback, not a class: EventHandler<E> is the
+  TypeScript function type (event: E) => void. SseHub registers
+  closures in its constructor; the composition root registers a
+  lambda for stop.arrived. No class implements an observer interface.
+end note
+note bottom of EventBus
+  Problem solved: a shuttle update must reach many independent
+  receivers (hundreds of browsers, the waiting-request module)
+  without the tracking module knowing any of them. Each callback
+  runs inside try/catch; one failure cannot break the publisher.
+  subscribe() returns a function that unsubscribes.
+end note
+@enduml

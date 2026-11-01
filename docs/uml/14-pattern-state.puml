@@ -1,0 +1,74 @@
+@startuml 14-pattern-state
+!pragma layout smetana
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam classAttributeIconSize 0
+title Design pattern 3 — State (GPS signal of an active trip)
+
+class TripTracker <<context>> {
+  +signal: SignalState
+  +lastFix: LocationFix
+  +apply(fix: LocationFix): string[]
+  +tick(now: number, thresholds: SignalThresholds): boolean
+}
+interface SignalState <<state>> {
+  +status: SignalStatus
+  +etaConfidence: EtaConfidence
+  +onFix(): SignalState
+  +onTick(ageMs: number, t: SignalThresholds): SignalState
+  +present(etas: StopEta[], now: number): PresentedEta[]
+  +message(ageMs: number): string
+}
+class AwaitingFixState <<concrete state>> {
+  +onFix(): SignalState
+  +onTick(ageMs, t): SignalState
+  +present(): PresentedEta[]
+}
+class LiveState <<concrete state>> {
+  +onFix(): SignalState
+  +onTick(ageMs, t): SignalState
+  +present(etas): PresentedEta[]
+}
+class StaleState <<concrete state>> {
+  +onFix(): SignalState
+  +onTick(ageMs, t): SignalState
+  +present(etas, now): PresentedEta[]
+}
+class LostState <<concrete state>> {
+  +onFix(): SignalState
+  +onTick(): SignalState
+  +present(): PresentedEta[]
+}
+class TrackingService <<client>> {
+  +checkSignals(): {changed: number, closed: number}
+}
+
+TripTracker o--> "1" SignalState : signal
+SignalState <|.. AwaitingFixState
+SignalState <|.. LiveState
+SignalState <|.. StaleState
+SignalState <|.. LostState
+TrackingService "1" *-- "0..*" TripTracker
+
+note right of LiveState
+  onTick: age > 60 s → LOST;
+  age > 20 s → STALE.
+  present: ETAs with confidence "live".
+end note
+note right of StaleState
+  present: ETAs marked "approximate",
+  overdue when arrival time has passed.
+end note
+note right of LostState
+  present: [] — no ETA is shown
+  without a position.
+end note
+note bottom of TripTracker
+  Problem solved: what passengers may be told depends on the
+  freshness of GPS data. Each state owns its transitions and its
+  presentation rule, so no status switch statements are spread
+  through the code. States are stateless singletons (module-private
+  classes reached through the SignalStates constant); restoring a
+  trip after a restart sets LIVE directly.
+end note
+@enduml

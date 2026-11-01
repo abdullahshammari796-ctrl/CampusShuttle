@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Campus Shuttle · Driver</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/app.css">
+  <script type="module" src="/js/driver.js"></script>
+</head>
+<body>
+  <header class="appbar">
+    <a class="brand" href="/driver.html"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 17h12M6 17a2 2 0 1 0 4 0m4 0a2 2 0 1 0 4 0M5 17V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v11M5 11h14"/></svg></span>Campus Shuttle</a>
+    <span class="role-tag">Driver</span>
+    <span class="spacer"></span>
+    <span class="user-name" id="user-name"></span>
+    <button class="btn btn-ghost btn-sm" id="logout" type="button">Sign out</button>
+  </header>
+
+  <main class="page">
+    <div class="grid-main">
+      <div class="stack">
+        <!-- No active trip -->
+        <section class="card hidden" id="start-card">
+          <div class="card-body stack">
+            <h1>Start a trip</h1>
+            <p class="muted">Choose your route and vehicle. Your location is shared only while a trip is active.</p>
+            <form id="start-form" class="stack">
+              <label class="field">Route <select name="routeId" id="route-select" required></select></label>
+              <label class="field">Shuttle <select name="shuttleId" id="shuttle-select" required></select></label>
+              <fieldset class="stack sim-panel">
+                <legend class="section-title">Location source</legend>
+                <label class="toggle"><input type="radio" name="source" value="simulator" checked> Simulated GPS (demonstration)</label>
+                <label class="toggle"><input type="radio" name="source" value="device"> This device's GPS</label>
+                <p class="small muted">Device GPS only works on the (demo) route area and needs HTTPS or localhost. Use the simulator for demonstrations.</p>
+              </fieldset>
+              <div id="start-error" class="banner banner-critical hidden" role="alert"></div>
+              <button class="btn btn-primary btn-lg" type="submit">Start trip</button>
+            </form>
+          </div>
+        </section>
+
+        <!-- Active trip -->
+        <section class="card hidden" id="trip-card">
+          <div class="card-body stack">
+            <div class="row between">
+              <div>
+                <div class="section-title">Active trip</div>
+                <h1 id="trip-title"></h1>
+                <div class="muted small" id="trip-meta"></div>
+              </div>
+              <div id="server-signal"></div>
+            </div>
+            <div class="next-stop" aria-live="polite">
+              <div class="section-title">Next stop</div>
+              <div class="row between"><div class="name" id="next-stop-name">—</div><div class="eta"><div class="value" id="next-stop-eta">–</div><div class="note" id="next-stop-note"></div></div></div>
+            </div>
+            <div class="driver-status">
+              <div class="status-cell"><div class="label">GPS</div><div class="value" id="gps-state">—</div><div class="detail" id="gps-detail"></div></div>
+              <div class="status-cell"><div class="label">Upload</div><div class="value" id="upload-state">—</div><div class="detail" id="upload-detail"></div></div>
+            </div>
+            <div>
+              <div class="section-title">Passenger load</div>
+              <div class="segmented" id="occupancy" role="group" aria-label="Passenger load">
+                <button type="button" data-level="SEATS_AVAILABLE" aria-pressed="false">Seats available</button>
+                <button type="button" data-level="FILLING_UP" aria-pressed="false">Filling up</button>
+                <button type="button" data-level="FULL" aria-pressed="false">Full</button>
+              </div>
+            </div>
+            <button class="btn btn-danger btn-lg" id="end-trip" type="button">End trip</button>
+          </div>
+        </section>
+      </div>
+
+      <div class="stack">
+        <section class="card">
+          <div class="card-header"><h2>Route</h2><span class="hint" id="map-hint"></span></div>
+          <div class="card-body"><div id="map" class="compact"></div></div>
+        </section>
+        <section class="card hidden" id="sim-card">
+          <div class="card-body stack">
+            <h2>GPS simulator</h2>
+            <label class="field">Speed: <span id="speed-value">25 km/h</span>
+              <input type="range" id="speed" min="10" max="80" step="5" value="25">
+            </label>
+            <div class="row">
+              <button class="btn" type="button" id="toggle-outage" aria-pressed="false">Simulate GPS outage</button>
+              <button class="btn" type="button" id="toggle-network" aria-pressed="false">Simulate network loss</button>
+              <button class="btn" type="button" id="inject-glitch">Inject GPS glitch</button>
+            </div>
+            <p class="small muted">GPS outage: no positions are produced (students see "location delayed", then "GPS lost"). Network loss: the server cannot be reached; positions are recorded and queued, then delivered in one batch when the network returns (ending the trip also fails until then). Glitch: sends one impossible position, which the server rejects.</p>
+          </div>
+        </section>
+        <section class="card">
+          <div class="card-header"><h2>Activity</h2></div>
+          <div class="card-body log"><ul id="log"></ul></div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <dialog id="end-dialog">
+    <form method="dialog">
+      <h2>End this trip?</h2>
+      <p class="muted">Once the server confirms, location sharing stops and the shuttle disappears from the student map. If the server cannot be reached, the trip stays active.</p>
+      <div class="row">
+        <button class="btn" value="cancel" type="submit">Keep driving</button>
+        <button class="btn btn-danger" value="confirm" type="submit">End trip</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>

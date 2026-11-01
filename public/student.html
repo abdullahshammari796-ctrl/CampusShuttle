@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Campus Shuttle · Student</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/app.css">
+  <script type="module" src="/js/student.js"></script>
+</head>
+<body>
+  <header class="appbar">
+    <a class="brand" href="/student.html"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 17h12M6 17a2 2 0 1 0 4 0m4 0a2 2 0 1 0 4 0M5 17V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v11M5 11h14"/></svg></span>Campus Shuttle</a>
+    <span class="role-tag">Student</span>
+    <span class="spacer"></span>
+    <span class="conn" id="conn" aria-live="polite"></span>
+    <span class="user-name" id="user-name"></span>
+    <button class="btn btn-ghost btn-sm" id="logout" type="button">Sign out</button>
+  </header>
+
+  <main class="page stack">
+    <div id="notice" class="hidden"></div>
+    <div class="grid-main">
+      <div class="stack">
+        <section class="card">
+          <div class="card-header">
+            <h2>Live map</h2>
+            <div class="chips" id="route-chips" role="group" aria-label="Filter by route"></div>
+          </div>
+          <div class="card-body"><div id="map"></div></div>
+        </section>
+        <section class="card">
+          <div class="card-header"><h2>Shuttles running now</h2><span class="hint" id="fleet-hint"></span></div>
+          <div class="card-body"><div class="list" id="fleet"></div></div>
+        </section>
+      </div>
+
+      <div class="stack">
+        <section class="card">
+          <div class="card-body stack">
+            <label class="field">Your stop
+              <select id="stop-select"></select>
+            </label>
+            <div id="stop-info" class="small muted"></div>
+          </div>
+        </section>
+        <section class="card">
+          <div class="card-header"><h2>Next arrivals</h2><span class="hint" id="arrivals-hint"></span></div>
+          <div class="card-body"><div class="list" id="arrivals" aria-live="polite"></div></div>
+        </section>
+        <section class="card">
+          <div class="card-header"><h2>Waiting request</h2></div>
+          <div class="card-body" id="waiting-card"></div>
+        </section>
+        <p class="small muted">Arrival times are estimates from the shuttle's GPS position and recent speed. When a shuttle's location is delayed the time is shown as approximate (~); when its GPS is lost no time is shown.</p>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

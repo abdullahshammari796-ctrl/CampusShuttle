@@ -1,0 +1,88 @@
+@startuml 10-component-diagram
+!pragma layout smetana
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam componentStyle uml2
+title Component diagram — modular monolith (as implemented; folders in brackets)
+
+package "Web browser" {
+  component "Sign-in page\n[public/index.html]" as LoginUI
+  component "Student UI\n[public/student.html]" as StudentUI
+  component "Driver UI\n[public/driver.html]" as DriverUI
+  component "GPS source:\nDevice / Simulator\n[public/js/gps.js]" as GpsSrc
+  component "Office UI\n[public/office.html]" as OfficeUI
+}
+
+component "Campus Shuttle server (one Node.js process)" as Server {
+  component "Composition root\n[src/container.ts, main.ts, config.ts]" as Root
+  component "Web API\n[src/web]" as Web
+  component "Real-time Gateway\n[src/realtime]" as RT
+  component "Identity & Access\n[src/identity]" as Identity
+  component "Network Management\n[src/network]" as Network
+  component "Tracking\n[src/tracking]" as Tracking
+  component "Demand & Forecasting\n[src/demand]" as Demand
+  component "Shared kernel\n[src/shared]\n(EventBus, DomainEvent,\nClock, AuditLog port)" as Bus
+  component "Persistence\n[src/persistence]" as Persistence
+  component "Demo seed\n[src/seed]" as Seed
+}
+
+database "SQLite file\n[data/campus-shuttle.db]" as DB
+
+interface "REST API\n(HTTP + JSON)" as IREST
+interface "Live feed\n(Server-Sent Events)" as ISSE
+interface "NetworkReader" as INet
+interface "EventPublisher /\nsubscribe" as IBus
+interface "Trip & LocationFix\nrepositories" as ITrackRepo
+interface "WaitingRequest & DemandHistory\nrepositories" as IDemandRepo
+interface "User, Stop, Route & Shuttle\nrepositories, AuditLog" as IOtherRepo
+
+Web - IREST
+RT - ISSE
+Network - INet
+Bus - IBus
+Tracking - ITrackRepo
+Demand - IDemandRepo
+Identity - IOtherRepo
+
+LoginUI ..> IREST
+StudentUI ..> IREST
+StudentUI ..> ISSE
+DriverUI ..> IREST
+DriverUI ..> GpsSrc : position stream
+OfficeUI ..> IREST
+OfficeUI ..> ISSE
+
+Web ..> Identity : authenticate,\nauthorise role
+Web ..> Tracking : trips, positions
+Web ..> Demand : waiting, forecasts
+Web ..> Network : routes
+Web ..> RT : attach stream
+RT ..> Tracking : live vehicle views\n(via LiveView)
+RT ..> Demand : waiting counts
+RT ..> Identity : Role type only
+RT ..> IBus : subscribes
+Tracking ..> INet
+Demand ..> INet
+Tracking ..> IBus : publishes
+Demand ..> IBus : publishes
+Network ..> IBus : publishes
+Persistence ..> ITrackRepo : implements
+Persistence ..> IDemandRepo : implements
+Persistence ..> IOtherRepo : implements
+Persistence ..> DB : SQL (node:sqlite)
+Seed ..> Persistence : writes demo data
+Root ..> Persistence : creates repositories
+Root ..> Web : builds app
+
+note bottom of Server
+  Dependency rules are enforced by test/architecture.test.ts:
+  tracking and demand never import each other; they are connected
+  only through domain events wired in src/container.ts (e.g. the
+  composition root subscribes WaitingService.markServed to
+  stop.arrived). Repository interfaces are declared by the
+  business components (dependency inversion); Persistence
+  implements them. Only the composition root and src/seed know
+  concrete persistence classes. The test checks imports only: it
+  does not prove that every UML operation or association matches.
+end note
+@enduml
