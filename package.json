@@ -19,6 +19,7 @@
     "evaluate": "node --disable-warning=ExperimentalWarning scripts/evaluate-demand.ts",
     "docs:build": "node scripts/build-docs.ts",
     "uml": "node scripts/render-uml.ts",
+    "uml:check": "node scripts/check-uml.ts",
     "review:package": "node scripts/review-package.ts",
     "test:browser": "playwright test"
   },

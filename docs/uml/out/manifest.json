@@ -1,0 +1,236 @@
+{
+  "generator": "scripts/render-uml.ts",
+  "renderedAt": "2026-11-01T20:43:34.488Z",
+  "renderer": {
+    "plantumlJar": "plantuml-mit-1.2026.9.jar",
+    "jarSha256": "e84e45b37ad3030cf802e7be18a687d209eca55733a5679b1f1f1a515f7f70dd",
+    "java": "openjdk version \"21.0.10\" 2026-01-20",
+    "limitSize": 8192
+  },
+  "diagrams": {
+    "01-use-case-diagram": {
+      "source": "docs/uml/01-use-case-diagram.puml",
+      "sourceSha256": "bee8be4605d3f632748152b8e90cf37909237960328c2a0a367b4fb2f012a2f7",
+      "svg": {
+        "sha256": "b05b3157e136dc021d0a8b703ff3997f6b7b0a51891b411b937b50297ced7b23",
+        "width": 1226,
+        "height": 1361
+      },
+      "png": {
+        "sha256": "c7535887ef42c7a43891e7a0743951f099c5e7078fb36decc2d45511014859dd",
+        "width": 1225,
+        "height": 1360
+      }
+    },
+    "02-activity-run-trip": {
+      "source": "docs/uml/02-activity-run-trip.puml",
+      "sourceSha256": "b8d511cd6250caae76ddc9161d3aca14bceb8b6d0df51bf62a16bb0399b78ca7",
+      "svg": {
+        "sha256": "b797b8858a6a51a4dde38dcb01a7ec6f8a00b5ac71efb6b3341d81b537729ef4",
+        "width": 1293,
+        "height": 2213
+      },
+      "png": {
+        "sha256": "1b6a6eef85222ccbbf8b72a92ef787b28ed22764777848a6784472625d18fe1d",
+        "width": 1292,
+        "height": 2212
+      }
+    },
+    "03-system-sequence-diagram": {
+      "source": "docs/uml/03-system-sequence-diagram.puml",
+      "sourceSha256": "2ab745783c7fe2e40a1f581ff1b8176911564fb70fcfa47e8f8e3df9bd7ed612",
+      "svg": {
+        "sha256": "c3f52a324793362fabd30472d473fddb3c19e59b76a462b12a099818f558f379",
+        "width": 641,
+        "height": 1050
+      },
+      "png": {
+        "sha256": "8b2707eefe940c4d9ed2897541a7c72009dc10bc32695db20a8538603bc25f3c",
+        "width": 640,
+        "height": 1049
+      }
+    },
+    "04-sequence-location-update": {
+      "source": "docs/uml/04-sequence-location-update.puml",
+      "sourceSha256": "4dd0e922899619443c18d3b21e534d7891926f129c6e60481cd15df6c63c794a",
+      "svg": {
+        "sha256": "97ae181f0abd8276d358fa3986dc79fd64d1bde14160f7d9dacb1ae0785e5b6b",
+        "width": 1799,
+        "height": 1158
+      },
+      "png": {
+        "sha256": "3acb629824ada2b989c26b44134c6c8e15d87f1dfdf2a270d5af4ee0df95900f",
+        "width": 1798,
+        "height": 1157
+      }
+    },
+    "05-state-machine-trip": {
+      "source": "docs/uml/05-state-machine-trip.puml",
+      "sourceSha256": "48da711ed36a41904948bc3da464927259fd8661a4459e0568cd797f9e410910",
+      "svg": {
+        "sha256": "fcb0a5a0e6e1aa4e0b2051d17e9a92f63912bf024bb79d10df7bf4c6fb1b6c56",
+        "width": 1051,
+        "height": 832
+      },
+      "png": {
+        "sha256": "f73f5d66ecb77113d9be08649c4b6639553d8d73fd093aa9d206b1cd27388d36",
+        "width": 1050,
+        "height": 831
+      }
+    },
+    "06-state-machine-waiting-request": {
+      "source": "docs/uml/06-state-machine-waiting-request.puml",
+      "sourceSha256": "3748cab50da2af7ba7cee1fbf6ec60b5b711f8ee177060f637b2459eaca913b9",
+      "svg": {
+        "sha256": "0aa43139e0df9cbc8add298eb85ff57b2d475fc08d49cb61d66175ea3e665b06",
+        "width": 556,
+        "height": 461
+      },
+      "png": {
+        "sha256": "50dbab49305baca0af3c6dfafed5b9d7f8e963f8b62642f57b64adb9d84c4898",
+        "width": 555,
+        "height": 460
+      }
+    },
+    "07-domain-model": {
+      "source": "docs/uml/07-domain-model.puml",
+      "sourceSha256": "ac361b082808f13002be5afac1347d6285b9d7cd55d106e2e6bedaa4413578a8",
+      "svg": {
+        "sha256": "14dc87298f002406cd7cfa994af2531791f1be1625b31d9a26011a49f54f7dbd",
+        "width": 1016,
+        "height": 925
+      },
+      "png": {
+        "sha256": "c8ffb8fa8325f07b066044427fd8704e783fef5128a136b966c9eaecf5b47d11",
+        "width": 1015,
+        "height": 924
+      }
+    },
+    "08-class-diagram-tracking": {
+      "source": "docs/uml/08-class-diagram-tracking.puml",
+      "sourceSha256": "c60077a30dbef2a23dc567521fe5d3c57926ab9d68a6c7b41fd020085ad6d3e0",
+      "svg": {
+        "sha256": "ea89dd4baf78b2807e98faec25e44d9e89335bd76084c9dc37a5b3ef18c2ba8e",
+        "width": 3667,
+        "height": 1502
+      },
+      "png": {
+        "sha256": "5f1fbaa089bcf01ee0f3d6493644cdd78bfe844d574f3410606a51eb6d7a144c",
+        "width": 3666,
+        "height": 1501
+      }
+    },
+    "09-class-diagram-demand-identity": {
+      "source": "docs/uml/09-class-diagram-demand-identity.puml",
+      "sourceSha256": "4fd5a12087c711b3959e789c29f8c8fd350dac5e16d1f11a5bc8f931fc8f710b",
+      "svg": {
+        "sha256": "e607f8d6c82e9b1b0ec8b5f9cfeb67acdf481710370b4916be14c4db0abbed0f",
+        "width": 4297,
+        "height": 935
+      },
+      "png": {
+        "sha256": "d0e23f76c1ee81737a775353799bb121350e249fc5311f8caea76e81fd5082eb",
+        "width": 4296,
+        "height": 934
+      }
+    },
+    "10-component-diagram": {
+      "source": "docs/uml/10-component-diagram.puml",
+      "sourceSha256": "607395142661f71a3fb8902d09afd1220eecf9d78c351629709cd4e706d826c4",
+      "svg": {
+        "sha256": "0e9a50c7ec338daf854a4bdff4ef29b8415cfbc8c06508920f72b189745d2c81",
+        "width": 2648,
+        "height": 767
+      },
+      "png": {
+        "sha256": "2457f7d673346b166f01b1d0f5f83f4d2cb452c455e2117f57a7b49ec92a9172",
+        "width": 2647,
+        "height": 766
+      }
+    },
+    "11-deployment-diagram": {
+      "source": "docs/uml/11-deployment-diagram.puml",
+      "sourceSha256": "fbc588d9b97345c3b0679cc730326a422f63e78aa51c5f4592ba7e426abe79f2",
+      "svg": {
+        "sha256": "3d159a6102ac45600d200b80c571196b54ffcc9f27765e6a5cd5e1f2b5a17371",
+        "width": 1996,
+        "height": 669
+      },
+      "png": {
+        "sha256": "32a0dcc7e4df3003733b66d2c5ea7ee5c9cf6ce9b753a2b059dc3dfc401276ac",
+        "width": 1995,
+        "height": 668
+      }
+    },
+    "12-pattern-strategy": {
+      "source": "docs/uml/12-pattern-strategy.puml",
+      "sourceSha256": "d3a26a069cb648fe2ac35bddfc114a2aac13f8da201d98087da7c49e741479dd",
+      "svg": {
+        "sha256": "ab9a46253461c35be7e1ac5bf9d3f4b2030dbd41fd36ca295ad853d6f332a51b",
+        "width": 2375,
+        "height": 572
+      },
+      "png": {
+        "sha256": "bc41ba6572e79accbc01fc4943b6a37fe9c61bf8f6beee48f1c6e0cd8e3f8a07",
+        "width": 2374,
+        "height": 571
+      }
+    },
+    "13-pattern-observer": {
+      "source": "docs/uml/13-pattern-observer.puml",
+      "sourceSha256": "cfe997c15e4f2c39013dd456d507e87dc59502beff891198dd4fd0edf3018aa8",
+      "svg": {
+        "sha256": "4772fdb7b901afdca09f83ab110ac16fc833b2501b47f0019552ecc8a60d18fa",
+        "width": 1125,
+        "height": 941
+      },
+      "png": {
+        "sha256": "e61f6cd9843c018a3419ef83e4092c63ac5369a671f2eb662ca4f9051bb25c70",
+        "width": 1124,
+        "height": 940
+      }
+    },
+    "14-pattern-state": {
+      "source": "docs/uml/14-pattern-state.puml",
+      "sourceSha256": "f3c92b616282d65197a5d4988e7487d03240dcb06f0c9acbde60007d2230bad5",
+      "svg": {
+        "sha256": "62b59228fd7635ce8eea44a2380dcb64144c8fb111949355136a0472885a75b8",
+        "width": 1627,
+        "height": 632
+      },
+      "png": {
+        "sha256": "aa39ed74ec98d0926c4be9854f333857f3a1fb89ac20b81751cc018e3628e612",
+        "width": 1626,
+        "height": 631
+      }
+    },
+    "15-pattern-repository": {
+      "source": "docs/uml/15-pattern-repository.puml",
+      "sourceSha256": "7414ec00c2e0e2ee757837b87453873195c6ba27c9579f02d6eaa7a797a3b8bb",
+      "svg": {
+        "sha256": "9d3eb2ba665c57e8390a63c066b3af23413688d95576cb351a34a5062588c480",
+        "width": 1488,
+        "height": 562
+      },
+      "png": {
+        "sha256": "fc7599976851bec15a2e4c9a2a06170e3a34b0884433e6093ca6a21dbc9fa52a",
+        "width": 1487,
+        "height": 561
+      }
+    },
+    "16-pattern-adapter": {
+      "source": "docs/uml/16-pattern-adapter.puml",
+      "sourceSha256": "c38c01d027e59b7edd6a203d853d5364fa7f0d5b1d074ca06a71fc9f2176b972",
+      "svg": {
+        "sha256": "dc6def582e17c0fd05d9c657db7542273740d724b9bc08ad83234eb141481717",
+        "width": 987,
+        "height": 813
+      },
+      "png": {
+        "sha256": "134a6f53241c3c83c5fadcc96e384ff8fb4f8ac8f19625e872a5f28e6c27227b",
+        "width": 986,
+        "height": 812
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+$ PLANTUML_JAR=C:/Projects/tools/plantuml/plantuml-mit-1.2026.9.jar JAVA=<DataGrip JBR 21> PLANTUML_LIMIT_SIZE=8192 npm run uml   # 2026-11-02 00:43 +0400, Windows 11, node v24.14.1
+jar SHA-256: e84e45b37ad3030cf802e7be18a687d209eca55733a5679b1f1f1a515f7f70dd
+
+> campus-shuttle@0.1.0 uml
+> node scripts/render-uml.ts
+
+Rendered and verified 16 diagrams (SVG + PNG, limit 8192 px) to C:\Projects\CampusShuttle\docs\uml\out. Inspect every SVG, then run "npm run docs:build".
+exit 0
+
+$ npm run uml:check
+
+> campus-shuttle@0.1.0 uml:check
+> node scripts/check-uml.ts
+
+All 16 diagrams have complete, unclipped SVG and PNG exports rendered from their current sources (plantuml-mit-1.2026.9.jar, 2026-11-01T20:43:34.488Z).
+exit 0

@@ -64,7 +64,8 @@ note bottom of GpsSource
   control panel additionally calls SimulatedGps-only operations.
   DeviceGps is the true adapter (it converts the browser Geolocation
   API to the contract); SimulatedGps is an alternative implementation
-  of the same contract. The server cannot tell the sources apart except
-  for the "source" field kept for auditing.
+  of the same contract. The server processes both sources the same way;
+  each stored position keeps its "source" for the record and so that a
+  reloaded driver page resumes the source the trip was really using.
 end note
 @enduml
