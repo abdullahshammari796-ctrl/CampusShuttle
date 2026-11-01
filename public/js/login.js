@@ -33,3 +33,7 @@ form.addEventListener('submit', async (event) => {
     button.disabled = false;
   }
 });
+
+// The button stays disabled until this handler exists, so the browser can never submit the form
+// natively (which would put the password into a URL) before the script has loaded.
+form.querySelector('button[type=submit]').disabled = false;

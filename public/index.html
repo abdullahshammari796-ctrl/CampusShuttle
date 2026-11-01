@@ -31,7 +31,7 @@
       <div class="card login-card">
         <div class="card-body stack">
           <h2>Sign in</h2>
-          <form id="login-form" class="stack" novalidate>
+          <form id="login-form" class="stack" method="post" novalidate>
             <label class="field">Username
               <input type="text" name="username" id="username" autocomplete="username" required>
             </label>
@@ -39,7 +39,7 @@
               <input type="password" name="password" id="password" autocomplete="current-password" required>
             </label>
             <div id="login-error" class="banner banner-critical hidden" role="alert"></div>
-            <button class="btn btn-primary btn-lg" type="submit">Sign in</button>
+            <button class="btn btn-primary btn-lg" type="submit" disabled>Sign in</button>
           </form>
           <div class="demo-accounts">
             <div class="section-title">Demo accounts (local prototype only)</div>
