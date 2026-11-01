@@ -11,6 +11,7 @@ Show that the two primary end-to-end flows work, that role restrictions hold, th
 | Architecture conformance | Component dependency rules of the component diagram — **imports only**; UML operations, attributes, associations and multiplicities are not checked automatically (compared with the code by hand) | `node:test` (static import analysis) | `test/architecture.test.ts` |
 | Integration / system | Real HTTP server + SQLite (in memory) + SSE clients; security, use cases, persistence recovery | `node:test`, `fetch`, `node:http` | `test/integration/` |
 | Performance | Fan-out latency with 1,000 and 3,000 simulated viewers — a local benchmark (same process, loopback, one shared session, no browsers), not a deployment test | `scripts/load-test.ts` | `docs/evidence/load-test-*.txt` |
+| Browser (end to end) | Role workflows, UC1–UC5 steps and extensions, accessibility (axe WCAG tags, keyboard) and driver location-source resumption, each against a fresh in-memory server with a controllable server clock | Playwright 1.64.1, Chromium | `e2e/` |
 | Acceptance | UC1–UC5 in a real browser against a running server | manual, scripted | §5 below, `docs/demo-script.md` |
 
 Time is controlled with a `ManualClock`, so staleness, expiry, session expiry and retention are tested deterministically without waiting.
@@ -21,11 +22,14 @@ npm run typecheck     # TypeScript type check (no emit)
 npm test              # all automated tests
 npm run load-test     # 1,000 viewers × 60 updates (add -- --viewers 3000 --rounds 10)
 npm run evaluate      # reproducible demand backtest on synthetic data
+npm run test:browser  # Chromium tests (first: npx playwright install chromium)
 ```
 
 ## 4. Automated test inventory and results
 
-Historical baseline run: 1 Nov 2026, Windows 11, Node 24.14.1 — **103 tests, 103 passed, 0 failed, ≈ 4.7 s** (`docs/evidence/test-run.txt`).
+Current run (owner review, 1 Nov 2026, branch `abdullah/owner-completion`, Windows 11, Node 24.14.1): **114 Node tests, 114 passed, 0 failed** (`docs/evidence/test-run.txt`) and **21 Chromium tests, 21 passed** (`docs/evidence/browser-test-run.txt`). The same checks run in GitHub Actions (`verify`) on every pull request to `main`.
+
+Historical baseline run: 1 Nov 2026, Windows 11, Node 24.14.1 — **103 tests, 103 passed, 0 failed, ≈ 4.7 s** (before PRs #12 and #13).
 
 | Area (requirement / scenario) | Tests |
 |---|---|
@@ -57,6 +61,12 @@ Found by the independent review (1 Nov 2026), reproduced before fixing:
 8. **UML diagrams did not match the code in places.** A member-by-member comparison found, among others: Observer drawn as an interface implemented by `SseHub` (the code uses callbacks); `GpsSource` drawn as a declared interface (it is a duck-typed contract); the hub calling `TrackingService` directly (it calls `LiveView`); the 30-minute auto-close guard worded as "no fix at all"; and hidden fields in the domain model. All 16 sources were corrected; rendering is still pending (§6).
 9. **Flaky privacy test** (found when the review-packaging run failed once): "public vehicle views never contain the driver identity" checked that the view JSON did not contain the driver id `d1`, but the view also contains the trip's random UUID, which includes "d1" in roughly one run in eight. Not a privacy leak; the test now uses an id that cannot occur in a UUID and also checks for the driver's display name. Verified with 5 full-suite runs and 30 runs of that test.
 
+Found in the owner review of PRs #12 and #13 (1 Nov 2026). Each was reproduced by a test that fails on the previous code (`npx playwright test` and `node --test` on commit `f62b472`), and fixed in the owner pull request:
+
+10. **A reloaded device-GPS trip switched to simulated positions.** `driver.js` always restarted the simulator after a reload, so a real trip would have uploaded fabricated positions. Fixed: `GET /api/driver/trip` returns `locationSource` (the source of the latest accepted position, also after a server restart). The page resumes that source; when it is unknown, it shares nothing until the driver chooses. Tests: `e2e/driver-location-source.spec.ts` (2), `api.test.ts` "tells a reloaded driver page which location source its trip is using", and a restart assertion.
+11. **Waiting-count refresh amplification.** Every student waiting at a stop re-fetched their own request whenever anyone joined that stop. With K students waiting, each join cost about K requests (5 extra requests for 5 joins in the test). Fixed: the page re-fetches only when the stop's count falls. Test: `e2e/use-cases.spec.ts` "UC3: other students joining the same stop do not make a waiting student re-fetch its request".
+12. **Development-dependency advisories** (found by `npm audit`, not by a test): two high-severity `image-size` advisories through the deck builder `pptxgenjs`. Resolved with an npm override to the patched `image-size` 2.x. `pptxgenjs` never loads that package, and a rebuilt deck is structurally identical. `npm audit` now reports 0 vulnerabilities in all dependencies.
+
 ## 5. Manual browser verification (acceptance)
 
 Performed on 31 Oct – 1 Nov 2026 in the Chromium-based browser pane of the development environment, against `npm start` with the headless fleet simulator running (`npm run simulate -- --outage`).
@@ -69,7 +79,7 @@ Performed on 31 Oct – 1 Nov 2026 in the Chromium-based browser pane of the dev
 | Driver starts a simulated trip | trip card, next stop, Live | ✔ "Library & Learning Commons, 1 min, 401 m" |
 | Simulate network loss ~10 s, restore | positions queued, then delivered in one batch | ✔ "3 queued" → "Delivered 3 queued positions in one batch (3 accepted)" |
 | Inject GPS glitch | rejected | ✔ "Server rejected 1 position(s): implausible jump" |
-| Reload the driver page | trip resumes | ✔ "Resumed your active trip after a page reload" |
+| Reload the driver page | trip resumes | ✔ "Resumed your active trip after a page reload" (since the owner review it also names the resumed location source; automated in `e2e/driver-location-source.spec.ts`) |
 | Simulate GPS outage ~30 s | passengers see "Location delayed"; recover on restore | ✔ pill changed to "Location delayed"; back to "Live" after restore |
 | End trip (confirm dialog) | trip ends, shuttle removed | ✔ |
 | Office live view | KPIs, map, waiting per stop, active trips with drivers | ✔ including a "GPS lost" shuttle from the simulator's outage window (grey marker) |
@@ -94,7 +104,7 @@ Re-verified on 1 Nov 2026 after the review fixes (fresh server, fleet simulator 
 * Browsers other than Chromium; small-screen phones beyond the responsive layout check; screen readers.
 * Additional browser engines and real assistive-technology sessions (Chromium automation is now covered below).
 * Load beyond 3,000 viewers; long-running (multi-day) operation; database growth over a semester.
-* **UML rendering.** On 1 Nov 2026 the official `plantuml-mit` 1.2026.9 jar was downloaded from Maven Central and its SHA-1, SHA-256 and SHA-512 matched the published checksums. Running it (Java 21 from the DataGrip installation) was refused by the authoring environment's permission policy, so no diagram has been rendered or syntax-checked by a real renderer, and the PDFs still show placeholders. See README "Rendering the UML diagrams".
+* **UML rendering.** On 1 Nov 2026 the official `plantuml-mit` 1.2026.9 jar was downloaded from Maven Central and its SHA-1, SHA-256 and SHA-512 matched the published checksums. Running it (Java 21 from the DataGrip installation) was refused by the authoring environment's permission policy. In the owner review the checksums were verified again and rendering was attempted again; it was refused again. So no diagram has been rendered or syntax-checked by a real renderer, and the PDFs still show placeholders. The 16 sources were compared with the code member by member instead (see `docs/03-uml-diagram-set.md`). This is issue #1, which stays open. See README "Rendering the UML diagrams".
 * Session expiry is now covered in Chromium with the server clock advanced; a real eight-hour soak remains untested.
 * HTTPS deployment.
 

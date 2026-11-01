@@ -4,7 +4,7 @@ These changes were requested by Zuhair and implemented with ChatGPT Work. GitHub
 
 | Issue | Concrete contribution | Remaining acceptance |
 |---|---|---|
-| #6 | Six-week same-weekday median, six unit tests, synthetic evaluation, documentation/UML source, full 109-test baseline verification; PR #12 | Abdullah independent review and merge |
+| #6 | Six-week same-weekday median, six unit tests, synthetic evaluation, documentation/UML source, full 109-test baseline verification; PR #12 Reviewed (AI-assisted technical review from Abdullah's account) and merged on 1 Nov 2026 in `d0775d3` |
 | #7 | Four simulator unit tests, five real-role browser scenarios and seven use-case browser checks; reusable isolated server/clock fixture | Reviewer reproduction; physical-device GPS remains #3 |
 | #8 | Contrast, interactive SVG semantics, named dialog, skip links, narrow layout, reduced motion, stable keyboard focus; six automated accessibility/keyboard checks | Human screen-reader listening and physical-device review |
 | #5 | UC1–UC5 evidence matrix and source corrections; repaired stale expiry/reconnect request state and misleading timeout closure message | Team walkthrough and rendered diagram review |
@@ -13,4 +13,4 @@ These changes were requested by Zuhair and implemented with ChatGPT Work. GitHub
 
 Issues #5–#8 are assigned to `zuhairhalawa`. Work is submitted through PR #12 and [PR #13](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/13) from `zuhairhalawa/CampusShuttle:zuhair/verified-contributions`. The companion includes the forecast history and should be merged after #12 with a merge commit to retain existing author records. No approvals, main-branch merges, deployments or course submission were performed in this session.
 
-Tests: 113/113 Node tests, 18/18 Chromium tests, TypeScript check and synthetic evaluation passed. Exact logs are in the handoff bundle. This is technical completion of the documented automated scope, not a claim that every human or course requirement is complete.
+Tests: 113/113 Node tests, 18/18 Chromium tests, TypeScript check and synthetic evaluation passed. Exact logs are in the handoff bundle. **Status after the owner review (1 Nov 2026):** both PRs were reproduced on Windows 11 / Node 24.14.1 with the same results, approved and merged with merge commits (#12 `d0775d3`, #13 `7dcab45`). The owner review's findings and fixes are in `docs/test-plan.md` §4 (defects 10–12). This is technical completion of the documented automated scope, not a claim that every human or course requirement is complete.

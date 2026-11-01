@@ -10,7 +10,7 @@
 * **Public repository:** https://github.com/abdullahshammari796-ctrl/CampusShuttle (owner: Abdullah). At Abdullah's request, the AI assistant ran a public-release audit, created the repository from his account and imported the AI-assisted baseline in the initial commit `8d11ad60` (see `ai-use-statement.md`). Neither student's own work is in that commit.
 * **Collaborator:** `zuhairhalawa` was invited with write access on 1 Nov 2026. Zuhair **accepted** the invitation on 1 Nov 2026; connected GitHub access confirms write permission.
 * **Work items:** GitHub issues #1–#11, labelled `owner: Abdullah`, `owner: Zuhair` or `owner: both`; each one names its issue number below. Issues #5–#8 are now assigned to `zuhairhalawa`. PRs #12 and #13 record his AI-assisted implementation and verification work; human review is still required.
-* **Still to do by Abdullah (issue #4):** protect `main` (pull request + one review, no force pushes) now that Zuhair has joined; agree on a licence (none yet). Issue assignment is complete.
+* **Branch protection (issue #4), 1 Nov 2026:** `main` now requires a pull request with 1 approving review and a passing `verify` check (GitHub Actions), with the branch up to date. The rule also applies to admins; force pushes and deletion are blocked. Issue assignment is complete. **Still open:** agree on a licence (none yet).
 
 ## Ownership areas
 
@@ -63,3 +63,4 @@
 |---|---|---|
 | 1 Nov 2026 | Zuhair Halawa (with ChatGPT assistance) | [PR #12](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/12): same-weekday median strategy, hand-computed tests and synthetic evaluation (#6). |
 | 1 Nov 2026 | Zuhair Halawa (with ChatGPT Work assistance) | [PR #13](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/13): browser/GPS tests (#7), mobile/accessibility repairs (#8), waiting-state fixes and use-case evidence (#5), technical ADR review (#9), CI support (#4). 113 Node and 18 Chromium tests passed. Human review, acceptance and signatures remain outstanding. |
+| 1 Nov 2026 | Abdullah (with Claude Code assistance; AI-prepared at his request, his own verification still to be confirmed by him) | Technical review, approval and merge of [PR #12](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/12) and [PR #13](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/13) (merge commits `d0775d3`, `7dcab45`); branch protection (#4). Owner pull request from `abdullah/owner-completion`: GPS-source resumption after reload (#3 preparation), waiting-refresh fix, development-dependency fix, ADR-0004–0007 evidence review (#9), documentation reconciliation. Waiting for Zuhair's review. |

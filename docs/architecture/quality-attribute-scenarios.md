@@ -73,13 +73,13 @@ Six-part scenarios (Bass, Clements & Kazman). Every response measure is checked 
 * **Source:** developer. **Stimulus:** adds a new ETA or forecasting algorithm. **Artifact:** tracking / demand.
 * **Response:** added without changing services, API or UI.
 * **Measure:** one new class + one line in `src/container.ts`.
-* **Verification:** design review (Strategy pattern); the office model selector is filled from `/api/office/demand/models`. **Exercised in issue #6** by adding `SameWeekdayMedianPredictor` and registering it in `src/container.ts`, with six targeted unit tests. Full Node 24 integration recheck remains pending.
+* **Verification:** design review (Strategy pattern); the office model selector is filled from `/api/office/demand/models`. **Exercised in issue #6** by adding `SameWeekdayMedianPredictor` and registering it in `src/container.ts`, with six targeted unit tests. The full Node 24 suite, the API test listing four models and a Chromium test selecting the median in the office UI pass (owner review, 1 Nov 2026). **Met, and exercised.**
 
 ### QA-8 Testability
 * **Source:** developer. **Stimulus:** runs the test suite. **Artifact:** code base. **Environment:** developer PC, no network.
 * **Response:** all business rules exercised; time-dependent rules deterministic (manual clock).
 * **Measure:** full suite < 10 s.
-* **Verification:** `npm test` → 103 tests in ≈ 4.7 s (1 Nov 2026). **Met.**
+* **Verification:** `npm test` → 114 tests in about 5 s (owner review, 1 Nov 2026). The 21 Chromium tests (`npm run test:browser`) take about 45 s and are outside this 10 s measure. **Met.**
 
 ### QA-9 Consistency under concurrency
 * **Source:** two drivers. **Stimulus:** start trips on the same shuttle at the same moment. **Artifact:** tracking + database.

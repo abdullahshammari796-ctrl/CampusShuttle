@@ -139,7 +139,7 @@ After every task a ZIP of the whole project (sources, tests, docs, diagrams, PDF
 
 ## Repository and team workflow
 Public repository: <https://github.com/abdullahshammari796-ctrl/CampusShuttle>. Owner: Abdullah; collaborator: Zuhair Halawa.
-* `main` holds the reviewed state. Every change is made on its own branch (e.g. `abdullah/uml-rendering`) and merged through a pull request that the **other** team member reviews.
+* `main` holds the reviewed state. Every change is made on its own branch (e.g. `abdullah/uml-rendering`) and merged through a pull request that the **other** team member reviews. Branch protection enforces this: merging into `main` needs 1 approving review and a passing `verify` check, also for the owner; force pushes and deletion are blocked.
 * Work items are GitHub issues labelled `owner: Abdullah`, `owner: Zuhair` or `owner: both`; the split is explained in [`docs/team/work-ownership-plan.md`](docs/team/work-ownership-plan.md).
 * Commits are authored by the person who did the work. The initial import commit contains the AI-assisted baseline described in [`docs/team/ai-use-statement.md`](docs/team/ai-use-statement.md); it does not represent either student's individual contribution.
 

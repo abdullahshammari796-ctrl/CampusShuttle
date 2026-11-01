@@ -185,14 +185,14 @@ From §2.3, in priority order: (1) timeliness and honesty of shuttle information
 
 ### 6.3 Comparison against the quality attributes
 
-Scores 1 (poor) – 5 (excellent) are the team's judgement, justified in the right-hand column and, where possible, by measurements.
+Scores 1 (poor) – 5 (excellent) were proposed in the AI-assisted draft and are justified in the right-hand column and, where possible, by measurements. Only option A's freshness is measured (local benchmark) and option C's polling load is arithmetic; every other score is judgement. **The team's own re-scoring is OUTSTANDING** (issue #2; evidence notes in `docs/adr/abdullah-technical-review.md`).
 
 | Driver (weight) | A Modular monolith + SSE | B Microservices | C Monolith + polling | D Serverless BaaS | Justification |
 |---|---|---|---|---|---|
 | Freshness & fan-out, QA-1/2 (3) | 5 | 4 | 2 | 5 | A: p95 35–37 ms at 1,000 viewers in a local benchmark. B adds broker and gateway hops. C: data is on average half a polling interval old (2.5 s at 5 s polling) and 1,000 viewers create 200 req/s even when nothing moves. D: native push. |
 | Robustness to GPS/network loss, QA-3/4 (3) | 4 | 4 | 3 | 4 | All can implement store-and-forward on the phone. A keeps live state in memory and rebuilds it from the database after a restart (tested), but is a single process. B isolates failures but has more failure modes. C makes staleness detection a client concern. |
 | Security & privacy, QA-5/6 (2) | 4 | 3 | 4 | 2 | A/C: one trust boundary, data stays on campus. B: more network surface and service-to-service authentication. D: driver locations and student activity stored by a third party outside campus control, which conflicts with data-minimisation and the brief's preference for no cloud subscriptions. |
-| Modifiability & testability, QA-7/8 (2) | 4 | 3 | 3 | 3 | A: enforced component boundaries and ports; whole system testable in-process in 3 s. B: independent deployment, but cross-service changes and integration testing are costly. C tends towards a "big ball of mud". D: logic split between client and vendor functions, harder to test locally. |
+| Modifiability & testability, QA-7/8 (2) | 4 | 3 | 3 | 3 | A: component import rules checked by a test, plus ports; the whole Node suite runs in-process in about 5 s. B: independent deployment, but cross-service changes and integration testing are costly. C tends towards a "big ball of mud". D: logic split between client and vendor functions, harder to test locally. |
 | Operational simplicity for a team of two (3) | 5 | 1 | 5 | 3 | A/C: `npm install && npm start`, one database file. B: ≥ 5 deployables plus broker and gateway. D: no server, but vendor accounts, quotas and lock-in; offline demonstration is hard. |
 | Growth beyond one campus (1) | 3 | 5 | 2 | 5 | A scales vertically; the `EventPublisher` port is the seam for a shared broker if several instances are ever needed. |
 | **Weighted total (max 70)** | **61** | **44** | **46** | **51** | |
@@ -215,18 +215,18 @@ We chose **A — a layered, modular monolith with an in-process event bus and Se
 ### 6.5 Trade-offs, sensitivity points and risks
 
 * **Single process (sensitivity point for availability).** If the process stops, live information stops. Mitigations: all trips and positions are persisted before memory is updated; on restart live state is rebuilt from the database (`TrackingService.recover`, tested); browsers reconnect automatically and receive a full snapshot. For a campus information service, a short outage during which students fall back to the printed timetable is acceptable; a lost record is not.
-* **Synchronous SQLite calls (sensitivity point for latency).** Each statement blocks the event loop for microseconds. Fan-out was unaffected at 3,000 simulated viewers in the local benchmark; the risk returns if the database sits on a slow network drive.
+* **Synchronous SQLite calls (sensitivity point for latency).** Each statement blocks the event loop while it runs; at this data size that is short, but it depends on the query, the data volume and the disk. Fan-out was unaffected at 3,000 simulated viewers in the local benchmark; the risk returns if the database sits on a slow network drive.
 * **In-process event bus (trade-off: simplicity vs horizontal scaling).** Fine for one instance. A second instance would need a shared broker behind the existing `EventPublisher` interface (ADR-0002).
 * **SSE behind proxies.** Some proxies buffer streaming responses; the server sends `X-Accel-Buffering: no` and heartbeats every 15 s, and the client reconnects after 40 s of silence.
 * **Device clocks.** Phones may have wrong clocks; every upload carries `sentAt`, and the server shifts all positions by the measured offset (tested with a 5-minute skew).
 
 ### 6.6 How the architecture addresses the cross-cutting concerns
 
-**Real-time communication and concurrent viewers.** Drivers upload by ordinary REST; viewers receive Server-Sent Events. Each message is serialised once and written to every connection; all positions of one upload batch are coalesced into a single message per trip; a slow client whose socket buffer exceeds 256 KB skips incremental updates and receives a fresh snapshot when it drains, so one slow phone cannot grow server memory. On every (re)connection a snapshot replaces client state, so a client can never be left with a partial picture.
+**Real-time communication and concurrent viewers.** Drivers upload by ordinary REST; viewers receive Server-Sent Events. Each message is serialised once and written to every connection; all positions of one upload batch are coalesced into a single message per trip; a slow client whose socket buffer exceeds 256 KB skips incremental updates and receives a fresh snapshot when it drains, so one slow phone cannot grow server memory. On every (re)connection a snapshot replaces client state, so a client can never be left with a partial picture. A student page re-reads its own waiting request only after a snapshot, an arrival at its stop or a *fall* in that stop's waiting count, so students joining a busy stop do not make everyone else's page send requests.
 
 **ETA calculation.** The route is *linear-referenced*: each GPS position is projected onto the route polyline to obtain "metres along the route". A search window around the previous progress keeps the shuttle on the correct lane of roads used in both directions; small backward jitter is ignored. ETA = remaining distance ÷ speed + dwell time at each intermediate stop. The default `BlendedSpeedEta` uses 60 % of the observed moving speed (exponentially smoothed, standing still ignored) and 40 % of the route's planned speed, clamped to 8–50 km/h, so one traffic jam or one GPS spike cannot produce absurd estimates. Estimates carry an absolute arrival time; browsers count down using a server-time offset, so device clocks do not distort them.
 
-**GPS outages and stale data.** The `SignalState` machine (§7.3) classifies every active trip as awaiting fix, live, stale (> 20 s) or lost (> 60 s), measured from the newest accepted position in server-corrected time. Live estimates are shown as is; stale ones are labelled approximate and become "Due" when their time has passed; lost trips show **no** estimate, only "last seen". A delivered backlog whose newest position is already old is classified as stale immediately. Trips silent for 30 minutes are closed automatically, so no "ghost" shuttles remain. On the driver side, positions recorded during a mobile-network outage are queued in the open page and delivered on reconnection, within the bounds stated in QA-4 (newest 500 kept, at most 10 minutes old on arrival, lost if the page is closed). Ending a trip takes effect on the device only after the server confirms it.
+**GPS outages and stale data.** The `SignalState` machine (§7.3) classifies every active trip as awaiting fix, live, stale (> 20 s) or lost (> 60 s), measured from the newest accepted position in server-corrected time. Live estimates are shown as is; stale ones are labelled approximate and become "Due" when their time has passed; lost trips show **no** estimate, only "last seen". A delivered backlog whose newest position is already old is classified as stale immediately. Trips silent for 30 minutes are closed automatically, so no "ghost" shuttles remain. On the driver side, positions recorded during a mobile-network outage are queued in the open page and delivered on reconnection, within the bounds stated in QA-4 (newest 500 kept, at most 10 minutes old on arrival, lost if the page is closed). Ending a trip takes effect on the device only after the server confirms it. After a page reload, the driver app resumes the location source of the trip's latest accepted position; if none has been accepted yet, it shares nothing until the driver chooses, so a device-GPS trip never silently switches to simulated positions.
 
 **Persistence and data consistency.** SQLite with write-ahead logging and foreign keys. Positions are written in one transaction per batch *before* in-memory state changes. Unique partial indexes (`… WHERE status = 'ACTIVE'`) make it impossible — even under concurrent requests — for a shuttle or a driver to have two active trips, and a student to have two open waiting requests. Positions are de-duplicated and ordered per trip; ended trips reject further positions (tested).
 
@@ -251,7 +251,7 @@ The instructor's recommended reading (RBC Borealis, *Field Guide to Machine Lear
 | Production | Forecasts are computed on request from the live database; every live waiting request automatically becomes training/evaluation data. |
 | Support & maintenance | The backtest table is the monitoring tool: when enough real data exists (we suggest at least one full semester), rerun the evaluation on live data only; introduce a trained model only if it beats the seasonal baseline on held-out real weeks. |
 
-Backtest on the deterministic synthetic history (14 days, 1,890 stop-hours): seasonal average MAE 1.45, weighted seasonal 1.44, same-weekday median 1.42, hour-of-day mean 1.98 requests per stop-hour. The full `npm run evaluate` command was reproduced on Node 24.22.1 in ChatGPT Work on 1 November 2026. **These numbers only show that the pipeline works and that weekday seasonality matters in data generated with weekday seasonality; they are not evidence of real-world accuracy.** Full description, assumptions of the generator and limitations: `docs/demand-prediction.md`.
+Backtest on the deterministic synthetic history (14 days, 1,890 stop-hours): seasonal average MAE 1.45, weighted seasonal 1.44, same-weekday median 1.42, hour-of-day mean 1.98 requests per stop-hour. The full `npm run evaluate` command was reproduced on Node 24.22.1 in ChatGPT Work on 1 November 2026, and again on Windows 11 with Node 24.14.1 during the owner review. **These numbers only show that the pipeline works and that weekday seasonality matters in data generated with weekday seasonality; they are not evidence of real-world accuracy.** Full description, assumptions of the generator and limitations: `docs/demand-prediction.md`.
 
 ## 7. Design patterns applied
 
@@ -283,13 +283,13 @@ A complete, locally runnable web application (`npm install`, `npm start`, open `
 * **Student**: live map with route filter; stop selection (remembered per device); next arrivals with minutes, clock time, distance, load and signal badge; delayed/lost indicators; "I'm waiting here" with route option, cancel, served/expired feedback; connection banner.
 * **Driver**: start trip (route, shuttle, GPS source); live trip card with next stop and ETA, GPS and upload status, "what passengers see"; passenger load; end trip with confirmation; resume after reload; GPS simulator with speed control, GPS-outage, network-loss and glitch-injection buttons; activity log.
 * **Transport office**: KPI tiles, fleet map with waiting badges, waiting per stop, active-trip table with remote termination; demand forecast (model and date), hourly chart, stop × hour heat map with per-cell explanation, historical trends, model backtest; route management (service status, attributes, new routes); trip history with GPS track and gap statistics; system health, privacy/retention summary and audit log.
-* **Tooling**: deterministic demo seed, headless fleet simulator (`npm run simulate`), load test, demand evaluation, 103 automated tests, architecture-conformance test.
+* **Tooling**: deterministic demo seed, headless fleet simulator (`npm run simulate`), load test, demand evaluation, 114 Node tests (unit, integration and an architecture-conformance test), 21 Chromium browser tests (roles, use cases, accessibility), and a GitHub Actions workflow that runs them on every pull request to `main`.
 
-**The two primary end-to-end use cases demonstrated** are UC2 *Run a trip* with UC1 *Track shuttles* (driver → server → many students), and UC3 *Waiting request* feeding UC4/UC5 (student → office demand view → forecast). Both are covered by automated integration tests and were walked through in a browser on 31 October – 1 November 2026.
+**The two primary end-to-end use cases demonstrated** are UC2 *Run a trip* with UC1 *Track shuttles* (driver → server → many students), and UC3 *Waiting request* feeding UC4/UC5 (student → office demand view → forecast). Both are covered by automated integration and Chromium browser tests and were walked through in a browser on 31 October – 1 November 2026.
 
 ### 8.2 What was not built
 
-Single sign-on and integration with university systems; native apps and push notifications; HTTPS configuration (development runs on `localhost`); field test with a real vehicle and phone GPS; timetable data (no schedule fallback when GPS is lost — the system shows "last seen" instead); multi-instance deployment; Arabic localisation; formal accessibility audit (keyboard navigation of stops, `aria-live` regions and icon-plus-label statuses are implemented, but no screen-reader test was done); automated tests of the browser code (it was verified manually); a trained ML model (deliberately, §6.7).
+Single sign-on and integration with university systems; native apps and push notifications; HTTPS configuration (development runs on `localhost`); field test with a real vehicle and phone GPS; timetable data (no schedule fallback when GPS is lost — the system shows "last seen" instead); multi-instance deployment; Arabic localisation; formal accessibility audit (automated axe WCAG checks and keyboard tests pass in Chromium, but no screen-reader session or physical-device check was done); tests in browsers other than Chromium; a trained ML model (deliberately, §6.7).
 
 ### 8.3 How the prototype maps onto the architecture
 
@@ -304,7 +304,7 @@ Single sign-on and integration with university systems; native apps and push not
 | Event Bus | `src/shared/` | `EventBus` | unit tests |
 | Persistence | `src/persistence/` | SQLite repositories, in-memory repositories, migrations | API and recovery tests |
 | Composition root | `src/container.ts` | `buildContainer` | all integration tests |
-| Browser clients | `public/` | `student.js`, `driver.js`, `office.js`, `gps.js`, `map.js`, `live-feed.js` | manual browser verification |
+| Browser clients | `public/` | `student.js`, `driver.js`, `office.js`, `gps.js`, `map.js`, `live-feed.js` | `e2e/*.spec.ts` (Chromium), `test/unit/simulated-gps.test.ts`, `driver-trip-ending.test.ts` |
 
 ### 8.4 Technology choice
 
@@ -315,11 +315,14 @@ We chose **TypeScript on Node.js 24 LTS with Express 5 and SQLite (Node's built-
 | Check | Result (31 Oct – 1 Nov 2026, Windows 11, Node 24.14.1) |
 |---|---|
 | `npm run typecheck` | passes, no errors |
-| `npm test` | 103 tests, 103 passed, 0 failed (≈ 4.7 s) — `docs/evidence/test-run.txt` |
+| `npm test` | 114 tests, 114 passed, 0 failed — `docs/evidence/test-run.txt` |
+| `npm run test:browser` | 21 Chromium tests, 21 passed (Playwright 1.64.1, Chrome for Testing 156) — `docs/evidence/browser-test-run.txt` |
+| `npm audit` | 0 vulnerabilities in all dependencies, including development tools — `docs/evidence/npm-audit.txt` |
+| GitHub Actions (`verify`) | passed on `main` after PRs #12 and #13 (run 41341908650); required for merging into `main` |
 | `npm run load-test` (1,000 viewers; local benchmark) | 31 Oct: p50 23 ms, p95 35 ms, p99 47 ms, max 56 ms. 1 Nov: p50 25 ms, p95 37 ms, p99 48 ms, max 55 ms; 60,000/60,000 delivered; 0 skipped — `docs/evidence/load-test-1000*.txt` |
 | `npm run load-test -- --viewers 3000 --rounds 10` | 31 Oct: p95 90 ms, max 108 ms. 1 Nov: p95 98 ms, max 113 ms; 90,000/90,000 delivered; 0 skipped — `docs/evidence/load-test-3000*.txt`. Same process, loopback, one shared session, no browsers |
 | `npm run evaluate` | see §6.7 — `docs/evidence/demand-evaluation.txt` |
-| Browser walkthrough (student, driver, office) | all three interfaces exercised against a running server with the fleet simulator; see `docs/test-plan.md` §5 |
+| Browser walkthrough (student, driver, office) | all three interfaces exercised against a running server with the fleet simulator (`docs/test-plan.md` §5), and automated in Chromium since PR #13 |
 | UML rendering | **not yet done**: running the PlantUML renderer was blocked in the authoring environment. The 16 sources were corrected against the code by hand (1 Nov); rendering and visual checking remain open — see `docs/test-plan.md` §6 |
 
 ## 9. Reflection
@@ -331,6 +334,7 @@ Factual engineering observations recorded while building the prototype, which th
 * **Measuring found a real defect.** The first load-test run hung on one update. The cause was a route-snapping tie-break that preferred the earlier of two segments meeting at a corner, placing the shuttle up to a few metres behind its true position. A regression test now covers it. A test suite that only checked behaviour away from corners would not have found this.
 * **Shutdown order matters.** An integration test revealed that the real-time gateway could still run deferred work after the database had been closed; the gateway now cancels pending work on close.
 * **An independent review found three real defects** (1 November 2026): the driver app abandoned a trip locally even when the server had not confirmed the end; open live streams outlived their session; and the network-loss guarantee and load-test results were stated more strongly than the evidence supported. All were reproduced before fixing, and regression tests now cover the two code defects.
+* **Browser tests found UI defects that unit tests could not** (PR #13): a waiting request that stayed on screen after it expired or was served while offline, keyboard focus lost on every countdown refresh, and insufficient contrast. The owner review of PRs #12/#13 then found two more: reloading a device-GPS trip switched it to simulated positions, and every student waiting at a stop re-fetched their request whenever anyone joined. Each was reproduced by a failing test before the fix.
 * **Simulation is not reality.** All GPS behaviour was exercised with the simulator; real phones produce noisier positions, longer gaps and battery-saving pauses. The thresholds are therefore configurable, and a field test is the first thing we would do next.
 * **No data, no model.** The most important ML decision was *not* to train a model on invented data.
 
@@ -349,8 +353,8 @@ Factual engineering observations recorded while building the prototype, which th
 
 > **Draft — the factual part below was recorded by the AI assistant; the team must review it, add their own use of AI tools if any, and complete "What we changed".**
 
-* **Tool**: Claude Code (Anthropic) desktop application, model Claude Opus 5.5.
-* **When**: 31 October – 1 November 2026, in one working session started by the team.
+* **Tools**: Claude Code (Anthropic) desktop application, model Claude Opus 5.5, used from Abdullah's computer and GitHub account; ChatGPT (OpenAI), including its Work mode, used from Zuhair's GitHub account (PRs #12 and #13). The details are in `docs/team/ai-use-statement.md`.
+* **When**: 31 October – 1 November 2026.
 * **What it was used for**: reading the official project description and the Module 02 slides; analysing architecture alternatives; generating the application code, automated tests, load test and demo scripts; writing the PlantUML diagram sources; drafting this report, the proposal, ADRs, test plan and presentation materials; running the type checker, tests and load tests and fixing the defects they revealed.
 * **What it was not used for**: it did not create the team, choose the topic for the team, submit anything for marking. Repository setup and later AI-assisted commits were explicitly requested by the respective account owners; see the current AI-use statement. It did not invent rubric details, signatures, timelines, contributions or real-world data; those are marked OUTSTANDING.
 * **What we changed / verified ourselves**: **OUTSTANDING — the team must list the reviews, corrections and additions they made.**

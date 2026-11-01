@@ -3,10 +3,12 @@
 The project description requires a statement of *which AI tools were used, for what, and what you changed*. The factual record below was written by the AI assistant at the end of the session in which it produced the baseline; the team must check it, add any other AI use, and complete the last section.
 
 ## Tool
-* **Claude Code** (Anthropic), desktop application; model **Claude Opus 5.5**.
+* **Claude Code** (Anthropic), desktop application; model **Claude Opus 5.5**. Used from Abdullah's computer and, for GitHub, through the GitHub CLI that Abdullah signed in to himself.
+* **ChatGPT** (OpenAI), including its Work mode, connected to Zuhair's GitHub account (see Zuhair's entries below).
 
 ## Session
-* 31 October – 1 November 2026, one continuous session started by the team with a written brief.
+* Claude Code: 31 October – 1 November 2026, one continuous session started by the team with a written brief. It was later continued for the repository set-up and, on 1 November 2026, for the owner review requested in a written handoff that Abdullah submitted.
+* ChatGPT: 1 November 2026, from Zuhair's side.
 
 ## What the AI assistant did
 * Read the official project description (`Project_description.docx`), the Module 02 slides (`BCS305_02_SDLC.pptx`) and, through a web-reading helper, the RBC Borealis article on ML product development.
@@ -29,7 +31,7 @@ The project description requires a statement of *which AI tools were used, for w
 
 * **GitHub set-up (1 November 2026).** At Abdullah's request, using the GitHub CLI that Abdullah signed in to himself, it:
   * created the **public** repository `abdullahshammari796-ctrl/CampusShuttle` and pushed the initial commit;
-  * invited `zuhairhalawa` as a collaborator (pending until he accepts);
+  * invited `zuhairhalawa` as a collaborator (he accepted later the same day);
   * opened issues #1–#11 describing work for each student and shared tasks, and made the documentation commit that records this.
 
   That setup session did not implement the assigned issues; subsequent work is recorded below.
@@ -38,8 +40,24 @@ The project description requires a statement of *which AI tools were used, for w
 
 * **Zuhair’s Work-mode contributions (1 November 2026).** At Zuhair’s explicit request, ChatGPT Work verified the forecast branch under Node 24, opened PR #12, assigned issues #5–#8 to `zuhairhalawa`, and implemented substantive follow-up work: executable role/browser and simulated-GPS tests; mobile accessibility and keyboard fixes; waiting-request expiry/reconnect repairs; use-case/source evidence; and a technical ADR review. A GitHub Actions workflow automates the repeatable checks. Changes are published as AI-assisted contributions from Zuhair’s authenticated account, in his fork because the connected integration could not write upstream. This does not claim that Zuhair personally wrote the generated code, listened with a screen reader, performed field GPS testing, signed an architecture review, or approved a PR. Abdullah’s independent review and merge remain pending.
 
+* **Owner review and integration (1 November 2026).** Abdullah requested this in a written handoff. Working from his account, Claude Code:
+  * verified PRs #12 and #13 in clean worktrees on Node 24: type check, 109 and 113 Node tests, 18 Chromium tests, the evaluation and both audits;
+  * checked Zuhair's fork CI runs and the pinned GitHub Actions;
+  * submitted approving technical reviews from Abdullah's account. Each review states that it was prepared with AI assistance and is not a claim that Abdullah read every line;
+  * merged both PRs with merge commits (`d0775d3`, `7dcab45`) made under Abdullah's GitHub no-reply address, keeping Zuhair's commits and authorship unchanged;
+  * protected `main`: pull request, 1 approving review and the `verify` check required, also for admins; no force pushes or deletion.
+
+  In the owner pull request from branch `abdullah/owner-completion`, it then:
+  * fixed two defects found in the review, each with tests that fail on the previous code: reloaded device-GPS trips switched to simulated positions, and waiting students re-fetched their request whenever anyone joined their stop;
+  * resolved the development-dependency audit findings;
+  * wrote an evidence review of ADR-0004 to 0007 for Abdullah's side of issue #9;
+  * reconciled the report, test plan, traceability, QA scenarios, use-case validation, demo script and these records with the merged code.
+
+  It verified the PlantUML checksums again, but running PlantUML was again refused by the environment's permission policy, so the diagrams are still unrendered. It requested Zuhair's review of the owner pull request and did not approve or merge its own pull request.
+
 ## What it did not do
 * It did not register the team, choose the topic on the team's behalf, contact the instructor or submit anything for marking. Git and GitHub actions were taken only when Abdullah explicitly asked (see above); Zuhair later requested issue #6 and published commits b5cbdbf and cb90511 under his own authenticated GitHub identity. ChatGPT continued verification and implementation at his request in Work mode. The app was not deployed.
+* It did not act as Zuhair, approve its own pull request, close issues whose acceptance needs a person, deploy the application or choose a licence.
 * It did not invent rubric details, signatures, student IDs, dates, contributions or real-world data. Missing information is marked **OUTSTANDING**; all demo and historical data is labelled synthetic/demonstration.
 
 ## What the team changed, verified or added
