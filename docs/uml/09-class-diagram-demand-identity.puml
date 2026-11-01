@@ -59,7 +59,7 @@ package "demand" {
     +models(): {id, label, description}[]
     +today(): string
     +forecast(date: string, modelId?: string): ForecastView
-    +explain(stopId: string, date: string, hour: number, modelId?: string): DemandPrediction
+    +explain(stopId: string, date: string, hour: number, modelId?: string): DemandPrediction & {stopName, model}
     +history(weeks: number): HistoryView
     +evaluate(testDays = 14): EvaluationView
   }
@@ -127,7 +127,7 @@ package "identity" {
   }
   class AuthService {
     -failures: Map<string, {count, firstAt}>
-    +login(username: string, password: string): Promise<{principal, token, expiresAt}>
+    +login(username: unknown, password: unknown): Promise<{principal, token, expiresAt}>
     +authenticate(token: string | undefined): Session | null
     +displayName(userId: string): string | null
   }

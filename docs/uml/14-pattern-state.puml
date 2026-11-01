@@ -7,7 +7,7 @@ title Design pattern 3 — State (GPS signal of an active trip)
 
 class TripTracker <<context>> {
   +signal: SignalState
-  +lastFix: LocationFix
+  +lastFix: LocationFix | null
   +apply(fix: LocationFix): string[]
   +tick(now: number, thresholds: SignalThresholds): boolean
 }

@@ -34,7 +34,8 @@ class "navigator.geolocation\n(browser Geolocation API)" as Geo <<adaptee>> {
 }
 class "Route geometry\n(path points, stops, dwell time)" as Geometry
 class LocationUploader {
-  -queue: fix[]
+  +queue: fix[]
+  +networkDown: boolean
   -backoffMs: number
   +push(fix): void
   +setNetworkDown(down: boolean): void
@@ -46,7 +47,7 @@ class LocationUploader {
   +stop(): void
 }
 
-DriverApp --> "0..1" GpsSource : gps (null when no trip)
+DriverApp --> "0..1" GpsSource : gps (null when no trip, or after a reload\nuntil the driver chooses a source)
 DriverApp --> "0..1" LocationUploader : push(fix) from the onFix callback
 DriverApp ..> SimulatedGps : demo controls\n(setSpeed, setOutage, glitchFix)
 GpsSource <|.. DeviceGps

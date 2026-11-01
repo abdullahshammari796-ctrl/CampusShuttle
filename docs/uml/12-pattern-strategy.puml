@@ -23,11 +23,11 @@ class BlendedSpeedEta <<concrete strategy>> {
   +speedFor(ctx: EtaContext): number
   +estimate(ctx: EtaContext): StopEta[]
 }
-class EtaContext {
+class EtaContext <<record>> {
   +route: Route
   +path: RoutePath
   +distanceAlong: number
-  +observedSpeedMps: number
+  +observedSpeedMps: number | null
   +speedSamples: number
   +at: number
 }
@@ -39,8 +39,8 @@ EtaStrategy ..> EtaContext : uses
 
 class DemandService <<context>> {
   -predictors: DemandPredictor[]
-  +forecast(date: string, modelId: string): ForecastView
-  +explain(stopId, date, hour, modelId): DemandPrediction
+  +forecast(date: string, modelId?: string): ForecastView
+  +explain(stopId, date, hour, modelId?): DemandPrediction
   +evaluate(testDays: number): EvaluationView
 }
 interface DemandPredictor <<strategy>> {

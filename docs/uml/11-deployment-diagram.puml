@@ -6,20 +6,20 @@ title Deployment diagram — prototype as demonstrated (production recommendatio
 
 node "Student phone or laptop" as StudentDev <<device>> {
   node "Web browser" as StudentBrowser <<executionEnvironment>> {
-    artifact "index.html, student.html\njs/student.js, map.js, live-feed.js,\napi.js, ui.js" as StudentArt
+    artifact "index.html, student.html\njs/login.js, student.js, map.js, live-feed.js,\napi.js, ui.js" as StudentArt
   }
 }
 
 node "Driver phone or laptop" as DriverDev <<device>> {
   node "Web browser" as DriverBrowser <<executionEnvironment>> {
-    artifact "index.html, driver.html\njs/driver.js, gps.js, trip-ending.js,\nmap.js, api.js, ui.js" as DriverArt
+    artifact "index.html, driver.html\njs/login.js, driver.js, gps.js, trip-ending.js,\nmap.js, api.js, ui.js" as DriverArt
   }
   node "GPS receiver" as Gps <<device>>
 }
 
 node "Transport office PC" as OfficeDev <<device>> {
   node "Web browser" as OfficeBrowser <<executionEnvironment>> {
-    artifact "index.html, office.html\njs/office.js, charts.js, map.js,\nlive-feed.js, api.js, ui.js" as OfficeArt
+    artifact "index.html, office.html\njs/login.js, office.js, charts.js, map.js,\nlive-feed.js, api.js, ui.js" as OfficeArt
   }
 }
 

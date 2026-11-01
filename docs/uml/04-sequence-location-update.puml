@@ -28,12 +28,12 @@ opt accepted is not empty
     TT --> TS : stopsReached[]
   end
   TS -> TT : tick(now, thresholds)
+  TS -> Bus : publish(trip.location)
+  Bus -> Hub : queueVehicle(tripId)
   opt signal status changed
     TS -> Bus : publish(trip.signal)
     Bus -> Hub : queueVehicle(tripId)
   end
-  TS -> Bus : publish(trip.location)
-  Bus -> Hub : queueVehicle(tripId)
   loop for each stop reached
     TS -> Bus : publish(stop.arrived)
     Bus -> WS : markServed(stopId, routeId)
