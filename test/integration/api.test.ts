@@ -112,6 +112,21 @@ describe('Use case: run a trip (driver) and track it (student)', () => {
   });
   after(() => app.close());
 
+  it('tells a reloaded driver page which location source its trip is using', async () => {
+    const driver = await TestClient.as(app.baseUrl, 'driver2');
+    const started = await driver.post('/api/driver/trips', { routeId: 'campus-loop', shuttleId: 'sh-02' });
+    const tripId = started.body.trip.id;
+    assert.equal((await driver.get('/api/driver/trip')).body.locationSource, null, 'unknown before the first accepted position');
+
+    await driver.post(`/api/driver/trips/${tripId}/locations`, { fixes: [fixAt(app, 'campus-loop', 0, { source: 'device' })], sentAt: app.clock.now() });
+    const resumed = (await driver.get('/api/driver/trip')).body;
+    assert.equal(resumed.vehicle.tripId, tripId);
+    assert.equal(resumed.locationSource, 'device');
+
+    assert.equal((await driver.post(`/api/driver/trips/${tripId}/end`, {})).status, 200);
+    assert.deepEqual((await driver.get('/api/driver/trip')).body.locationSource, null);
+  });
+
   it('start → live position and ETAs for students → end → removed', async () => {
     const driver = await TestClient.as(app.baseUrl, 'driver1');
     const student = await TestClient.as(app.baseUrl, 'student1');
@@ -333,6 +348,7 @@ describe('Persistence: restart recovery', () => {
       const vehicle = second.tracking.vehicle(trip.id)!;
       assert.ok(Math.abs(vehicle.distanceAlong! - 250) <= 1);
       assert.equal(vehicle.signal.status, 'LIVE');
+      assert.equal(second.tracking.lastFixSource(trip.id), 'device', 'a reloaded driver page resumes the recorded source after a restart');
       assert.equal(second.waiting.countsByStop().residences, 1);
       second.stop();
     } finally {

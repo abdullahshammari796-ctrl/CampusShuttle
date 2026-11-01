@@ -62,10 +62,11 @@ async function start() {
     }
   });
 
-  const { vehicle } = await api('/api/driver/trip');
+  $('#resume-source').addEventListener('click', onChooseSource);
+
+  const { vehicle, locationSource } = await api('/api/driver/trip');
   if (vehicle) {
-    log('Resumed your active trip after a page reload (simulated GPS).');
-    beginTrip(vehicle, 'simulator');
+    resumeTrip(vehicle, locationSource);
   } else {
     await showStartForm();
   }
@@ -129,6 +130,33 @@ async function onStart(event) {
   }
 }
 
+const SOURCE_LABELS = { simulator: 'simulated GPS', device: "this device's GPS" };
+
+/**
+ * After a page reload, continue with the source of the trip's latest accepted
+ * position, so a device-GPS trip never silently switches to simulated
+ * positions. If the server has no position yet, the source is unknown: nothing
+ * is shared until the driver chooses one.
+ */
+function resumeTrip(vehicle, locationSource) {
+  if (locationSource) {
+    log(`Resumed your active trip after a page reload (${SOURCE_LABELS[locationSource]}).`);
+  } else {
+    log('Resumed your active trip after a page reload. No position has reached the server yet, so choose the location source; nothing is shared until you do.');
+  }
+  beginTrip(vehicle, locationSource);
+}
+
+function onChooseSource(event) {
+  const button = event.target.closest('[data-source]');
+  if (!button || !state.vehicle || state.gps) return;
+  $('#resume-source').classList.add('hidden');
+  log(`Location source chosen: ${SOURCE_LABELS[button.dataset.source]}.`);
+  startGps(state.vehicle, button.dataset.source);
+  renderTrip();
+}
+
+/** sourceKind: 'simulator' | 'device', or null when it must first be chosen (see resumeTrip). */
 function beginTrip(vehicle, sourceKind) {
   state.vehicle = vehicle;
   state.fixCount = 0;
@@ -149,6 +177,14 @@ function beginTrip(vehicle, sourceKind) {
     onEnded: onTripEndedElsewhere,
   });
 
+  state.gps = null;
+  $('#sim-card').classList.add('hidden');
+  $('#resume-source').classList.toggle('hidden', Boolean(sourceKind));
+  if (sourceKind) startGps(vehicle, sourceKind);
+  renderTrip();
+}
+
+function startGps(vehicle, sourceKind) {
   const route = state.routes.get(vehicle.routeId);
   if (sourceKind === 'simulator' && route) {
     state.gps = new SimulatedGps({
@@ -176,7 +212,6 @@ function beginTrip(vehicle, sourceKind) {
     },
     (err) => log(`GPS error: ${err.message}`),
   );
-  renderTrip();
 }
 
 function stopLocalTrip() {
@@ -285,7 +320,7 @@ function renderTrip() {
 
   const outage = state.gps && state.gps.outage;
   const age = state.lastFixAt ? Math.round((now - state.lastFixAt) / 1000) : null;
-  $('#gps-state').textContent = outage ? 'No signal (simulated)' : state.lastFixAt ? 'Receiving' : 'Searching…';
+  $('#gps-state').textContent = !state.gps ? 'Not started' : outage ? 'No signal (simulated)' : state.lastFixAt ? 'Receiving' : 'Searching…';
   $('#gps-detail').textContent = `${state.fixCount} positions · last ${age === null ? '—' : `${age} s ago`}${state.gps && state.gps.dwelling ? ' · stopped at stop' : ''}`;
 
   for (const button of document.querySelectorAll('#occupancy [data-level]')) {

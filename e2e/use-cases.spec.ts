@@ -30,6 +30,26 @@ test('UC3: a waiting request visibly expires without a reload', async ({ page, a
   await expect(page.getByRole('button', { name: "I'm waiting here", exact: true })).toBeVisible();
 });
 
+test('UC3: other students joining the same stop do not make a waiting student re-fetch its request', async ({ page, appURL, app }) => {
+  await login(page, appURL, 'student');
+  await page.getByLabel('Your stop').selectOption('library');
+  await page.getByRole('button', { name: "I'm waiting here", exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Cancel request', exact: true })).toBeVisible();
+  let refetches = 0;
+  page.on('request', (r) => { if (r.method() === 'GET' && new URL(r.url()).pathname === '/api/student/waiting') refetches++; });
+
+  const others = [1, 2, 3, 4, 5].map((i) => app.waiting.create(`u-e2e-other-${i}`, { stopId: 'library' }));
+  await expect(page.locator('#stop-info')).toContainText('6 people are waiting here');
+  await page.waitForTimeout(500);
+  expect(refetches).toBe(0);
+
+  // A falling count may mean this student's own request closed, so it is reconciled once.
+  app.waiting.cancel('u-e2e-other-1', others[0].id);
+  await expect(page.locator('#stop-info')).toContainText('5 people are waiting here');
+  await expect.poll(() => refetches).toBe(1);
+  await expect(page.getByRole('button', { name: 'Cancel request', exact: true })).toBeVisible();
+});
+
 test('UC1: expired sessions stop an already-open real browser stream', async ({ page, appURL, app, clock }) => {
   await login(page, appURL, 'student');
   await expect(page.locator('#conn')).toContainText('Live updates');

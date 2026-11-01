@@ -218,6 +218,11 @@ export class TrackingService {
     return tracker ? this.view(tracker, this.deps.clock.now()) : null;
   }
 
+  /** Source of the trip's latest accepted position (null before the first), so a reloaded driver page resumes the same source. */
+  lastFixSource(tripId: string): FixSource | null {
+    return this.trackers.get(tripId)?.lastFix?.source ?? null;
+  }
+
   activeTripFor(driverId: string): VehicleView | null {
     for (const tracker of this.trackers.values()) {
       if (tracker.trip.driverId === driverId) return this.view(tracker, this.deps.clock.now());
