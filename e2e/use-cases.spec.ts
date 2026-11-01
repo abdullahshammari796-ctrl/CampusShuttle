@@ -39,14 +39,18 @@ test('UC1: expired sessions stop an already-open real browser stream', async ({ 
   await expect(page.locator('#notice').getByRole('link', { name: 'Sign in again' })).toBeVisible();
 });
 
-test('UC3: served request is reconciled after the student reconnects', async ({ page, appURL, app, context }) => {
+test('UC3: served request is reconciled after the student reconnects', async ({ page, appURL, app, context, appServer }) => {
   await login(page, appURL, 'student');
   await page.getByLabel('Your stop').selectOption('library');
   await page.getByRole('button', { name: "I'm waiting here", exact: true }).click();
   await expect(page.getByRole('button', { name: 'Cancel request', exact: true })).toBeVisible();
   await context.setOffline(true);
+  // Offline emulation alone can leave an existing EventSource socket open.
+  appServer.disconnectClients();
+  await expect(page.locator('#conn')).toContainText('Reconnecting');
   expect(app.waiting.markServed('library', 'campus-loop')).toBe(1);
   await context.setOffline(false);
+  await expect(page.locator('#conn')).toContainText('Live updates');
   await expect(page.locator('#waiting-card')).toContainText('A shuttle reached', { timeout: 15_000 });
 });
 

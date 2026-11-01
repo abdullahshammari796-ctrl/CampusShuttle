@@ -12,7 +12,7 @@ SQLite in WAL mode via Node 24's built-in `node:sqlite` (`DatabaseSync`), schema
 
 ## Consequences
 * + Zero installation; one file to back up; real SQL constraints and transactions.
-* + Synchronous calls keep code simple; each statement takes microseconds.
-* − `node:sqlite` is marked experimental in Node 24 (warning suppressed in npm scripts; Node version pinned in `engines`).
+* + Synchronous calls keep code simple; latency depends on the query, data size and storage.
+* − `node:sqlite` is marked experimental in Node 24 (warning suppressed in npm scripts; minimum Node version declared in `engines`; Node 24 used for verification).
 * − Synchronous calls block the event loop; fan-out was unaffected at 3,000 simulated viewers in the local benchmark, but a slow disk would hurt.
 * − Single writer: fine for one campus; a multi-instance deployment would need PostgreSQL.

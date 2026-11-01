@@ -36,3 +36,20 @@ test('student keyboard focus survives the periodic waiting-request refresh', asy
   await cancel.press('Enter');
   await expect(page.locator('#waiting-card')).toContainText('cancelled');
 });
+
+test('student can skip navigation and choose a map stop using only keyboard activation', async ({ page, appURL }) => {
+  await login(page, appURL, 'student');
+  await expect(page.locator('#conn')).toContainText('Live updates');
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('link', { name: 'Skip to main content' })).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#main-content')).toBeFocused();
+  const stop = page.getByRole('button', { name: 'Stop: Library & Learning Commons', exact: true });
+  for (let i = 0; i < 15; i++) {
+    await page.keyboard.press('Tab');
+    if (await stop.evaluate(el => el === document.activeElement)) break;
+  }
+  await expect(stop).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page.getByLabel('Your stop')).toHaveValue('library');
+});

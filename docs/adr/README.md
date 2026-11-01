@@ -14,3 +14,5 @@ Each record states the context, the decision, the alternatives considered and th
 | [0008](0008-typescript-without-build.md) | TypeScript executed directly by Node 24 (no build step) | Accepted |
 
 To propose a change, add a new numbered record (do not rewrite an accepted one) and mark the record it replaces as *Superseded by ADR-xxxx*.
+
+Technical evidence: [Zuhair-requested architecture review](zuhair-technical-review.md). This does not substitute for each member's personal cross-review.

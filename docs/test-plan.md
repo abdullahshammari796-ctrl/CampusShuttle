@@ -25,7 +25,7 @@ npm run evaluate      # reproducible demand backtest on synthetic data
 
 ## 4. Automated test inventory and results
 
-Last full run: 1 Nov 2026, Windows 11, Node 24.14.1 — **103 tests, 103 passed, 0 failed, ≈ 4.7 s** (`docs/evidence/test-run.txt`).
+Historical baseline run: 1 Nov 2026, Windows 11, Node 24.14.1 — **103 tests, 103 passed, 0 failed, ≈ 4.7 s** (`docs/evidence/test-run.txt`).
 
 | Area (requirement / scenario) | Tests |
 |---|---|
@@ -116,8 +116,14 @@ The first automated audit reproduced light-mode text contrast failures and inter
 
 Fixes: darker muted text in light mode; map groups expose stop buttons only when they perform an action; noninteractive maps have no dead tab stops; labelled trip-end dialog; skip links and a student page heading; narrow-screen wrapping; reduced-motion support; and a stable waiting card whose countdown updates without rebuilding its controls. After create/cancel, focus moves to the next relevant action.
 
-Verified in Chromium 138, 390×844, light/dark: four axe WCAG-tagged audits and one periodic-refresh keyboard regression pass. This is **not** WCAG certification or a real NVDA/Narrator session. Actual assistive-technology listening and physical-device checks remain a team task. Automated results are in `docs/evidence/issue-8-accessibility.txt`; before-fix evidence is retained in the review package.
+Verified in Chromium 138, 390×844, light/dark: four axe WCAG-tagged audits, one periodic-refresh keyboard regression and one keyboard-only map/skip-link regression pass. This is **not** WCAG certification or a real NVDA/Narrator session. Actual assistive-technology listening and physical-device checks remain a team task. Automated results are in `docs/evidence/issue-8-accessibility.txt`; before-fix evidence is retained in the review package.
 
 ## Issue #5 — use-case validation
 
 See `docs/use-case-validation.md` for a step/extension evidence matrix. Two failing-before browser cases reproduced stale private waiting-request state after expiry and after an offline served event; the student now refreshes its private request on relevant waiting events and reconnect snapshots, and ignores stale reads after a newer mutation. A screen-reader status region announces closures without repeatedly announcing the countdown. The driver no longer attributes every remote closure to the office (the timeout scheduler can also end trips). Seven use-case browser checks passed; production 20s/60s and 30-minute rules were exercised through the existing clock port, not weakened in production.
+
+## Final combined verification (Zuhair’s Work session, 1 November 2026)
+
+Node 24.22.1, Linux: `npm run typecheck` passed; `npm test` passed **113/113**, zero failed/cancelled/skipped; `npm run test:browser` passed **18/18** (6 accessibility/keyboard, 5 roles, 7 use cases); `npm run evaluate` completed. Chromium was 138.0.7204.0 using the documented executable-path override. The reconnect regression now explicitly closes existing HTTP connections while the browser is offline, verifies the Reconnecting banner, marks the request served, restores connectivity and verifies the refreshed private request. Offline emulation alone did not reliably sever an already-open SSE connection. Test runs are sequential because simultaneous Playwright runs share the output directory. Exact final command output and earlier failing evidence are included in the handoff bundle, outside the source tree.
+
+`npm audit --omit=dev --audit-level=high` found **0 production vulnerabilities**. The full audit reported **2 high development-dependency findings** involving `image-size` through `pptxgenjs`; document-generation tooling remediation and regenerated artifact verification remain for the owner’s document work. No forced dependency upgrade was applied. The workflow defines repeatable CI; its existence alone does not establish that GitHub Actions ran or passed.

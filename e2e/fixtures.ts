@@ -3,7 +3,8 @@ import { buildContainer, type Container } from '../src/container.ts';
 import { loadConfig } from '../src/config.ts';
 
 type TestClock = { now(): number; advance(ms: number): void };
-export const test = base.extend<{ appURL: string; app: Container; clock: TestClock }>({
+type AppServer = { url: string; disconnectClients(): void };
+export const test = base.extend<{ appURL: string; appServer: AppServer; app: Container; clock: TestClock }>({
   clock: async ({}, use) => {
     let offset = 0;
     await use({ now: () => Date.now() + offset, advance: ms => { offset += ms; } });
@@ -12,19 +13,20 @@ export const test = base.extend<{ appURL: string; app: Container; clock: TestClo
     const app = await buildContainer(loadConfig({}, { dbFile: ':memory:', port: 0 }), { clock });
     try { await use(app); } finally { app.stop(); }
   },
-  appURL: async ({ app }, use) => {
+  appServer: async ({ app }, use) => {
     const server = app.app.listen(0, '127.0.0.1');
     await new Promise<void>(resolve => server.once('listening', resolve));
     app.startBackgroundJobs();
     const address = server.address();
     if (!address || typeof address === 'string') throw new Error('No test server port');
-    try { await use(`http://127.0.0.1:${address.port}`); }
+    try { await use({ url: `http://127.0.0.1:${address.port}`, disconnectClients: () => server.closeAllConnections() }); }
     finally {
       app.hub.close();
       server.closeAllConnections();
       await new Promise<void>(resolve => server.close(() => resolve()));
     }
   },
+  appURL: async ({ appServer }, use) => { await use(appServer.url); },
 });
 export { expect };
 export async function login(page: Page, appURL: string, role: 'student' | 'driver' | 'office') {
