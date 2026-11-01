@@ -2,7 +2,7 @@
 
 **Campus Shuttle Tracking & Demand Prediction** · BCS 305 Software Architecture · Fall 2026
 
-All diagrams are drawn with **PlantUML** (a text-based UML tool) using standard UML 2 notation. The editable sources are in `docs/uml/*.puml`; rendered SVG/PNG files go to `docs/uml/out/` (`npm run uml`). The class, component and sequence diagrams were written from the actual source code and were compared with it member by member on 1 November 2026 (corrections are listed in `docs/test-plan.md` §4). They were compared again in the owner review after PRs #12 and #13, which corrected diagrams 02, 04, 05, 07–12, 14 and 16 (`docs/test-plan.md` §4, item 13). **The diagrams have not yet been rendered by a real renderer** (issue #1), so syntax and layout are unverified. Only one aspect is checked automatically: `test/architecture.test.ts` fails if a source file imports a component that the component diagram does not allow. It does **not** check UML operations, attributes, associations, multiplicities or sequence messages; those were reviewed by hand and can drift when the code changes. Where a diagram writes a type as `{…}`, the code uses an inline TypeScript object type with no class name.
+All diagrams are drawn with **PlantUML** (a text-based UML tool) using standard UML 2 notation. The editable sources are in `docs/uml/*.puml`; rendered SVG/PNG files go to `docs/uml/out/` (`npm run uml`). The class, component and sequence diagrams were written from the actual source code and were compared with it member by member on 1 November 2026 (corrections are listed in `docs/test-plan.md` §4). They were compared again in the owner review after PRs #12 and #13, which corrected diagrams 02, 04, 05, 07–12, 14 and 16 (`docs/test-plan.md` §4, item 13). **Rendering (2 November 2026):** all 16 sources render with the checksum-verified PlantUML MIT 1.2026.9 (built-in Smetana layout, no Graphviz). `npm run uml` validates every export (complete, unclipped, rendered from the current source) and records it in `docs/uml/out/manifest.json`; `npm run uml:check` repeats that check without Java. In this PDF a diagram is never printed below 60 % of its rendered size: one that is too large for a page at that scale gets a vector overview page (zoom in on screen) followed by overlapping detail pages. Only one aspect is checked automatically: `test/architecture.test.ts` fails if a source file imports a component that the component diagram does not allow. It does **not** check UML operations, attributes, associations, multiplicities or sequence messages; those were reviewed by hand and can drift when the code changes. Where a diagram writes a type as `{…}`, the code uses an inline TypeScript object type with no class name.
 
 | # | Diagram | Required by the brief | Source file |
 |---|---|---|---|
@@ -90,9 +90,9 @@ The five primary use cases below are all implemented end to end in the prototype
 
 ## A.3 Activity diagram — Run a trip
 
-![Figure A.3 — Activity diagram: Run a trip with GPS and network interruptions](uml/out/02-activity-run-trip.svg)
-
 Swimlanes separate the driver app from the server. The two interruption paths are visible: *GPS outage* (no position is appended to the queue) and *network loss* (the queue is kept and retried with backoff). Two further paths are shown: the server ending the trip while it runs (office or 30-minute auto-close), and ending the trip, where the outer loop repeats until the server confirms the end, so a failed request leaves the trip active.
+
+![Figure A.3 — Activity diagram: Run a trip with GPS and network interruptions](uml/out/02-activity-run-trip.svg)
 
 ## A.4 System sequence diagram — Run a trip and track it
 
@@ -130,9 +130,9 @@ Conceptual classes only (no operations). `RouteStop` is an association class car
 
 ## A.11 Component diagram
 
-![Figure A.11 — Component diagram](uml/out/10-component-diagram.svg)
-
 Each component is a folder under `src/` with a public service class and port interfaces. Provided interfaces are drawn as lollipops, required ones as dependencies on them.
+
+![Figure A.11 — Component diagram](uml/out/10-component-diagram.svg)
 
 ## A.12 Deployment diagram
 
