@@ -12,6 +12,14 @@ for (const colorScheme of ['light', 'dark'] as const) {
       const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
       expect(results.violations.map(v => ({ id: v.id, nodes: v.nodes.map(n => n.target) }))).toEqual([]);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+      const mapBounds = await page.locator('.map-wrap').first().evaluate(el => {
+        const svg = el.querySelector('svg')!.getBoundingClientRect();
+        const legend = el.querySelector('.map-legend')?.getBoundingClientRect();
+        const note = el.querySelector('.map-note')!.getBoundingClientRect();
+        return { mapBottom: svg.bottom, legendTop: legend?.top ?? svg.bottom, legendBottom: legend?.bottom ?? svg.bottom, noteTop: note.top };
+      });
+      expect(mapBounds.legendTop).toBeGreaterThanOrEqual(mapBounds.mapBottom);
+      expect(mapBounds.noteTop).toBeGreaterThanOrEqual(mapBounds.legendBottom);
       if (role === 'driver') {
         await page.locator('#end-trip').click();
         await expect(page.getByRole('dialog', { name: 'End this trip?' })).toBeVisible();
