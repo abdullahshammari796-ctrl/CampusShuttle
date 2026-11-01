@@ -5,7 +5,7 @@ title Activity diagram — UC2 Run a trip, including GPS and network interruptio
 
 |Driver app|
 start
-:Driver chooses route and shuttle;
+:Driver chooses route, shuttle\nand location source;
 :Request trip start;
 |Server|
 if (Route in service and\nshuttle and driver free?) then (yes)
@@ -18,6 +18,12 @@ else (no)
 endif
 |Driver app|
 :Start GPS source\n(device GPS or simulator);
+note right
+  After a page reload the app resumes the
+  source of the trip's latest accepted position;
+  if there is none yet, it shares nothing
+  until the driver chooses a source.
+end note
 repeat
   repeat
     :Wait for the next GPS reading\n(simulator every 3 s, device GPS at most every 2 s);
@@ -33,7 +39,7 @@ repeat
         :Validate, sort by time, reject duplicates,\nout-of-order, too old (> 10 min) and impossible jumps;
         :Persist accepted positions;
         :Snap to route, update speed,\ndetect stops reached;
-        :Push one coalesced vehicle\nupdate to all live viewers;
+        :Queue one coalesced vehicle update\n(sent to all viewers on the next\nevent-loop turn, after the steps below);
         if (A stop was reached?) then (yes)
           :Close waiting requests at\nthat stop (SERVED);
         else (no)

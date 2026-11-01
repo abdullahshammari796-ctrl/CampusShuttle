@@ -57,6 +57,7 @@ The full presentation script is in [`docs/demo-script.md`](docs/demo-script.md).
 | `npm run simulate` | Headless fleet simulator (`-- --speed 40`, `-- --drivers 1`, `-- --outage [--outage-at 30 --outage-for 75]`) — needs a running server |
 | `npm test` | All automated tests (unit, integration, real-time, architecture conformance) |
 | `npm run typecheck` | TypeScript type check |
+| `npm run test:browser` | Chromium browser tests in `e2e/` against a fresh in-memory server (first run once: `npx playwright install chromium`) |
 | `npm run check` | Type check + tests |
 | `npm run load-test` | Local fan-out benchmark (default 1,000 simulated viewers; `-- --viewers 3000 --rounds 10`). Viewers run in the server's process over loopback with one shared session and no browsers — not a deployment test |
 | `npm run evaluate` | Reproducible backtest of the demand models on the synthetic history |

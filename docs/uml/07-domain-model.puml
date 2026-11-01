@@ -90,8 +90,7 @@ Trip "0..*" -- "1" Route : runs on >
 Trip "0..*" -- "1" Shuttle : uses >
 Driver "1" -- "0..*" Trip : drives >
 Trip "1" *-- "0..*" LocationFix : records >
-Student "0..1" -- "0..*" WaitingRequest : places (pseudonymously;
-link erased 24 h after closing) >
+Student "0..1" -- "0..*" WaitingRequest : places (pseudonymously;\nlink erased 24 h after closing) >
 WaitingRequest "0..*" -- "1" Stop : at >
 WaitingRequest "0..*" -- "0..1" Route : for >
 HourlyDemand "0..*" -- "1" Stop : measured at >

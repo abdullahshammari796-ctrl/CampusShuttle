@@ -34,7 +34,9 @@ interface "NetworkReader" as INet
 interface "EventPublisher /\nsubscribe" as IBus
 interface "Trip & LocationFix\nrepositories" as ITrackRepo
 interface "WaitingRequest & DemandHistory\nrepositories" as IDemandRepo
-interface "User, Stop, Route & Shuttle\nrepositories, AuditLog" as IOtherRepo
+interface "UserRepository" as IUserRepo
+interface "Stop, Route & Shuttle\nrepositories" as INetRepo
+interface "AuditLog" as IAudit
 
 Web - IREST
 RT - ISSE
@@ -42,7 +44,9 @@ Network - INet
 Bus - IBus
 Tracking - ITrackRepo
 Demand - IDemandRepo
-Identity - IOtherRepo
+Identity - IUserRepo
+Network - INetRepo
+Bus - IAudit
 
 LoginUI ..> IREST
 StudentUI ..> IREST
@@ -68,7 +72,9 @@ Demand ..> IBus : publishes
 Network ..> IBus : publishes
 Persistence ..> ITrackRepo : implements
 Persistence ..> IDemandRepo : implements
-Persistence ..> IOtherRepo : implements
+Persistence ..> IUserRepo : implements
+Persistence ..> INetRepo : implements
+Persistence ..> IAudit : implements
 Persistence ..> DB : SQL (node:sqlite)
 Seed ..> Persistence : writes demo data
 Root ..> Persistence : creates repositories

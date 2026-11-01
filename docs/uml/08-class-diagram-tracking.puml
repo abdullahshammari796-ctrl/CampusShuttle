@@ -16,6 +16,7 @@ package "network" {
     +nominalSpeedKmh: number
     +dwellSeconds: number
     +active: boolean
+    +updatedAt: number
   }
   class RoutePath {
     +loop: boolean
@@ -80,11 +81,14 @@ package "tracking" {
     +recordFixes(driverId: string, tripId: string, fixes, sentAt?): RecordFixesResult
     +setOccupancy(driverId: string, tripId: string, level): Trip
     +endTrip(driverId: string, tripId: string): Trip
-    +terminateTrip(actorId: string, tripId: string, reason: string): Trip
+    +terminateTrip(actorId: string, tripId: string, reason: unknown): Trip
     +checkSignals(): {changed: number, closed: number}
     +liveVehicles(): VehicleView[]
     +vehicle(tripId: string): VehicleView | null
     +activeTripFor(driverId: string): VehicleView | null
+    +lastFixSource(tripId: string): FixSource | null
+    +isShuttleBusy(shuttleId: string): boolean
+    +signalSummary(): Record<SignalStatus, number>
     +arrivalsAt(stopId: string): ArrivalView[]
     +officeTrips(): OfficeTripView[]
     +tripHistory(options: {limit, status?}): TripHistoryItem[]
@@ -140,8 +144,8 @@ package "tracking" {
     +tripId: string
     +routeName: string
     +shuttleLabel: string
-    +position: GeoPoint
-    +signal: {status, lastFixAt, message}
+    +position: GeoPoint | null
+    +signal: {status, lastFixAt, message, etaConfidence}
     +nextStops: PresentedEta[]
   }
 }
@@ -153,6 +157,10 @@ package "shared" {
   class "EventBus<DomainEvent>" as EventBus {
     +subscribe(type, handler: (event) => void): () => void
     +publish(event: DomainEvent): void
+  }
+  interface AuditLog {
+    +record(entry): void
+    +recent(limit: number): AuditEntry[]
   }
 }
 
@@ -186,6 +194,7 @@ TrackingService --> "1" TripRepository
 TrackingService --> "1" LocationFixRepository
 TrackingService --> "1" UserDirectory : users
 TrackingService --> "1" EventPublisher : publishes to
+TrackingService --> "1" AuditLog : audit
 TrackingService ..> VehicleView : creates
 TripTracker "0..1" --> "1" Trip : trip
 TripTracker "0..*" --> "1" RoutePath : path

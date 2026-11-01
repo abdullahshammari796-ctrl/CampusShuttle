@@ -36,7 +36,9 @@ note right of Active
   Thresholds are configurable
   (STALE_AFTER_SECONDS, LOST_AFTER_SECONDS,
   ABANDON_AFTER_MINUTES). A trip recovered
-  after a restart re-enters Live and is then
-  re-evaluated on the next tick.
+  after a restart re-enters Live if it has a
+  stored position (otherwise AwaitingFix), and
+  recover() re-evaluates it immediately, so an
+  old position moves it straight to Stale or Lost.
 end note
 @enduml

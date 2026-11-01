@@ -334,7 +334,7 @@ pres.addSection({ title: 'Evidence' });
   stat(s, { x: M, y: 1.35, w: 2.8, value: '135', label: '114 Node + 21 Chromium tests, all passing' });
   stat(s, { x: 3.7, y: 1.35, w: 2.8, value: '26 × 4', label: 'endpoints × caller types checked for role access' });
   stat(s, { x: 6.8, y: 1.35, w: 2.8, value: '113 ms', label: 'worst of 3,000 simulated viewers (local benchmark)' });
-  stat(s, { x: 9.9, y: 1.35, w: 2.8, value: '12', label: 'defects and corrections in the test plan, all resolved', color: C.accent2 });
+  stat(s, { x: 9.9, y: 1.35, w: 2.8, value: '13', label: 'defects and corrections in the test plan, all resolved', color: C.accent2 });
   card(s, { x: M, y: 3.6, w: 5.9, h: 2.6, title: 'Found by tests and independent review', body: [
     { text: 'Shuttle snapped behind at route corners (load test); hub worked after shutdown (integration test)', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
     { text: 'Driver app gave up a trip the server had not ended; live streams outlived their session (review)', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },

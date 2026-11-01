@@ -66,6 +66,15 @@ Found in the owner review of PRs #12 and #13 (1 Nov 2026). Each was reproduced b
 10. **A reloaded device-GPS trip switched to simulated positions.** `driver.js` always restarted the simulator after a reload, so a real trip would have uploaded fabricated positions. Fixed: `GET /api/driver/trip` returns `locationSource` (the source of the latest accepted position, also after a server restart). The page resumes that source; when it is unknown, it shares nothing until the driver chooses. Tests: `e2e/driver-location-source.spec.ts` (2), `api.test.ts` "tells a reloaded driver page which location source its trip is using", and a restart assertion.
 11. **Waiting-count refresh amplification.** Every student waiting at a stop re-fetched their own request whenever anyone joined that stop. With K students waiting, each join cost about K requests (5 extra requests for 5 joins in the test). Fixed: the page re-fetches only when the stop's count falls. Test: `e2e/use-cases.spec.ts` "UC3: other students joining the same stop do not make a waiting student re-fetch its request".
 12. **Development-dependency advisories** (found by `npm audit`, not by a test): two high-severity `image-size` advisories through the deck builder `pptxgenjs`. Resolved with an npm override to the patched `image-size` 2.x. `pptxgenjs` never loads that package, and a rebuilt deck is structurally identical. `npm audit` now reports 0 vulnerabilities in all dependencies.
+13. **UML sources drifted from the code** (found by a second member-by-member comparison, by reading only; nothing was rendered):
+    * 08: `TrackingService` lacked `lastFixSource`, `isShuttleBusy` and `signalSummary`, its `AuditLog` dependency and `Route.updatedAt`; `terminateTrip`'s reason is `unknown`; `VehicleView.position` can be null and `signal` has `etaConfidence`.
+    * 04: `trip.location` is published before `trip.signal`.
+    * 02: the vehicle update is queued and sent on the next event-loop turn, after waiting requests are closed; the driver chooses the location source, and a reload resumes it.
+    * 05: a recovered trip without a stored position stays AwaitingFix and is re-evaluated immediately.
+    * 10: the user, network and audit ports belong to identity, network and shared respectively.
+    * 07: an association label was split across two lines (a likely syntax error).
+    * Optional parameters, nullable fields and `unknown` inputs were corrected in 09, 12, 14 and 16, and `login.js` was added to 11.
+    * Diagrams 01, 03, 06, 13 and 15 were consistent.
 
 ## 5. Manual browser verification (acceptance)
 
