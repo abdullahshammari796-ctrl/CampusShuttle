@@ -1,6 +1,6 @@
 # Technical architecture review requested by Zuhair — 1 November 2026
 
-This is ChatGPT Work's source/evidence review, requested by Zuhair, for his side of issue #9. It is not a signed personal opinion or an approval submitted as Abdullah. The existing Accepted decisions remain implemented; no architecture has been replaced.
+This source and evidence review was prepared for Zuhair's side of issue #9. It is not a signed personal opinion or an approval submitted as Abdullah. The existing Accepted decisions remain implemented; no architecture has been replaced.
 
 | ADR | Recommendation and evidence | Trade-off / trigger to revisit |
 |---|---|---|

@@ -1,6 +1,6 @@
 # Human acceptance checklist (blank — to be completed by the team)
 
-This form collects the facts and observations that only Abdullah and Zuhair can supply. Each item is still **OUTSTANDING** until a member fills it in from their own work. The AI assistants did not fill in any of it. Fill it in, commit it under your own name through a reviewed pull request, and then update the linked issue.
+This form collects the facts and observations that only Abdullah and Zuhair can supply. Each item is still **OUTSTANDING** until a member fills it in from their own work. Nothing in it has been filled in on anyone's behalf. Fill it in, commit it under your own name through a reviewed pull request, and then update the linked issue.
 
 ## 1. UML inspection (issue #1) — Abdullah, reviewed by Zuhair
 Open `docs/build/uml-diagram-set.pdf`, both on screen at 100 % and as a printed A4 page.

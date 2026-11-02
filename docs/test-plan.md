@@ -28,7 +28,7 @@ npm run uml:check     # rendered UML exports well-formed / fully decoded, unclip
 
 ## 4. Automated test inventory and results
 
-Current run (2 Nov 2026, branch `abdullah/uml-and-docs-finalization`, Windows 11, Node 24.14.1): **119 Node tests, 119 passed, 0 failed** (`docs/evidence/test-run.txt`) and **22 Chromium tests, 22 passed** (two consecutive full runs) (`docs/evidence/browser-test-run.txt`). The same checks run in GitHub Actions (`verify`) on every pull request to `main`.
+Current run (2 Nov 2026, branch `abdullah/docs-wording-and-records` from `main` at `5232999`, Windows 11, Node 24.14.1): **119 Node tests, 119 passed, 0 failed** (`docs/evidence/test-run.txt`) and **22 Chromium tests, 22 passed** (two consecutive full runs) (`docs/evidence/browser-test-run.txt`). The same checks run in GitHub Actions (`verify`) on every pull request to `main`.
 
 Historical baseline run: 1 Nov 2026, Windows 11, Node 24.14.1 — **103 tests, 103 passed, 0 failed, ≈ 4.7 s** (before PRs #12 and #13).
 
@@ -59,10 +59,18 @@ Found by the independent review (1 Nov 2026), reproduced before fixing:
 5. **Driver app ended a trip locally that the server had not ended.** `endTrip()` stopped GPS, discarded the trip and showed the start form *before* the end request, and also when it failed. Reproduced in the browser by making the end request fail: the server still had the trip ACTIVE (signal LIVE) while the driver saw the start form. Fixed with `public/js/trip-ending.js` and `LocationUploader.drain/pause/resume`: queued positions are delivered first (waiting for any upload in flight), new positions are held, and the trip ends on the device only after the server confirms. If the request fails, uploads resume and the driver is told the trip was **not** ended. 8 regression tests.
 6. **Live streams outlived their session.** Authorisation was checked only when an SSE stream opened. Reproduced with a test: after the session expired, the stream still received a `vehicle` update. Fixed in `SseHub`: each stream keeps its session expiry, which is checked before every write and by the heartbeat sweep; an expired stream gets `session-expired` and is closed. 2 integration tests plus a token test.
 7. **Overstated claims** (documentation): QA-4 promised zero position loss although the queue is bounded and in memory; the load-test results were presented without their method limits. Corrected in the QA scenarios, report, ADRs, slides and demo script.
-8. **UML diagrams did not match the code in places.** A member-by-member comparison found, among others: Observer drawn as an interface implemented by `SseHub` (the code uses callbacks); `GpsSource` drawn as a declared interface (it is a duck-typed contract); the hub calling `TrackingService` directly (it calls `LiveView`); the 30-minute auto-close guard worded as "no fix at all"; and hidden fields in the domain model. All 16 sources were corrected; rendering is still pending (§6).
+8. **UML diagrams did not match the code in places.** A member-by-member comparison found, among others: Observer drawn as an interface implemented by `SseHub` (the code uses callbacks); `GpsSource` drawn as a declared interface (it is a duck-typed contract); the hub calling `TrackingService` directly (it calls `LiveView`); the 30-minute auto-close guard worded as "no fix at all"; and hidden fields in the domain model. All 16 sources were corrected on 1 Nov 2026. (Rendering followed on 2 Nov 2026; see §6.)
 9. **Flaky privacy test** (found when the review-packaging run failed once): "public vehicle views never contain the driver identity" checked that the view JSON did not contain the driver id `d1`, but the view also contains the trip's random UUID, which includes "d1" in roughly one run in eight. Not a privacy leak; the test now uses an id that cannot occur in a UUID and also checks for the driver's display name. Verified with 5 full-suite runs and 30 runs of that test.
 
-Found in the owner review of PRs #12 and #13 (1 Nov 2026; items 10–13), in the first UML render (item 14) in a failed browser run on 2 Nov 2026 (item 15) and in Zuhair's review of PR #15 (item 16). Each was reproduced by a test that fails on the previous code (`npx playwright test` and `node --test` on commit `f62b472`), and fixed in the owner pull request:
+Found in the owner review of PRs #12 and #13 (1 Nov 2026; items 10–13), in the first UML render (item 14) in a failed browser run on 2 Nov 2026 (item 15) and in Zuhair's review of PR #15 (item 16). The regression evidence differs by item, so each item names its own baseline:
+* items 10 and 11: tests that fail on commit `f62b472` (`npx playwright test` and `node --test`, 1 Nov 2026);
+* item 12: `npm audit`;
+* item 13: reading the sources against the code;
+* item 14: tests that reproduce the failure kinds Zuhair's render reported (no separate run against the old script was recorded);
+* item 15: the new Chromium test, run with the fix temporarily removed (2 Nov 2026);
+* item 16: tests that fail on the validator from commit `87aceaf` (`docs/evidence/uml-validator-regression.txt`).
+
+The fixes were made in the owner pull requests #14 and #15:
 
 10. **A reloaded device-GPS trip switched to simulated positions.** `driver.js` always restarted the simulator after a reload, so a real trip would have uploaded fabricated positions. Fixed: `GET /api/driver/trip` returns `locationSource` (the source of the latest accepted position, also after a server restart). The page resumes that source; when it is unknown, it shares nothing until the driver chooses. Tests: `e2e/driver-location-source.spec.ts` (2), `api.test.ts` "tells a reloaded driver page which location source its trip is using", and a restart assertion.
 11. **Waiting-count refresh amplification.** Every student waiting at a stop re-fetched their own request whenever anyone joined that stop. With K students waiting, each join cost about K requests (5 extra requests for 5 joins in the test). Fixed: the page re-fetches only when the stop's count falls. Test: `e2e/use-cases.spec.ts` "UC3: other students joining the same stop do not make a waiting student re-fetch its request".
@@ -76,7 +84,7 @@ Found in the owner review of PRs #12 and #13 (1 Nov 2026; items 10–13), in the
     * 07: an association label was split across two lines (a likely syntax error).
     * Optional parameters, nullable fields and `unknown` inputs were corrected in 09, 12, 14 and 16, and `login.js` was added to 11.
     * Diagrams 01, 03, 06, 13 and 15 were consistent.
-14. **The UML render script accepted broken exports** (found when the sources were first rendered, with ChatGPT Work at Zuhair's request, 1 Nov 2026). It only checked that files existed: PNGs 03 and 06 were empty after a successful run, and PNGs 08 and 09 were clipped at PlantUML's default 4096 px limit. Fixed:
+14. **The UML render script accepted broken exports** (found when Zuhair first rendered the sources, 1 Nov 2026). It only checked that files existed: PNGs 03 and 06 were empty after a successful run, and PNGs 08 and 09 were clipped at PlantUML's default 4096 px limit. Fixed:
     * `npm run uml` checks the jar's SHA-256 and renders into a fresh temporary folder with `PLANTUML_LIMIT_SIZE=8192`.
     * It checks every SVG and PNG and requires each PNG to match its SVG's size within 1 px. As first written, that check was itself too shallow; see item 16.
     * It records source and export hashes in `docs/uml/out/manifest.json`.
@@ -87,7 +95,7 @@ Found in the owner review of PRs #12 and #13 (1 Nov 2026; items 10–13), in the
     * the button stays disabled until the script has attached its handler, which also removes the test's race.
 
     Test: `e2e/roles.spec.ts` "the sign-in form never puts credentials into a URL, even before its script has run" (JavaScript disabled). It fails without the fix.
-16. **The new export validator accepted malformed content** (found in Zuhair's review of PR #15, prepared with ChatGPT Work: [review](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/15#pullrequestreview-5730257445)). From committed diagram 01 the review made two broken exports: an SVG with an unmatched `<g>`, and a PNG whose first scanline filter is 5 (valid values are 0–4), with recomputed CRCs. The old `svgSize` and `pngSize` accepted both, `inspectDiagram` reported no problem, and `checkExports` returned nothing when given a manifest whose hashes matched. Fixed:
+16. **The new export validator accepted malformed content** (found in Zuhair's [review of PR #15](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/15#pullrequestreview-5730257445)). From committed diagram 01 the review made two broken exports: an SVG with an unmatched `<g>`, and a PNG whose first scanline filter is 5 (valid values are 0–4), with recomputed CRCs. The old `svgSize` and `pngSize` accepted both, `inspectDiagram` reported no problem, and `checkExports` returned nothing when given a manifest whose hashes matched. Fixed:
     * SVGs are parsed with `@xmldom/xmldom`, and any parser error or warning rejects the file.
     * PNGs are decoded completely: chunk order and CRCs, exact data length, every filter type, and every palette index after reconstructing each scanline. Only PlantUML's 8-bit, non-interlaced encodings are accepted; others are rejected.
     * `recordDiagram` validates before recording.
@@ -133,7 +141,7 @@ Re-verified on 1 Nov 2026 after the review fixes (fresh server, fleet simulator 
 * Load beyond 3,000 viewers; long-running (multi-day) operation; database growth over a semester.
 * **UML rendering — history and status.**
   * On 1 Nov 2026 the authoring environment twice refused to run the checksum-verified `plantuml-mit` 1.2026.9 jar.
-  * On 1 Nov 2026, with ChatGPT Work at Zuhair's request, all 16 unchanged sources were rendered (Java 17, Linux). That run exposed the export-checking defect (item 14).
+  * On 1 Nov 2026, Zuhair's review rendered all 16 unchanged sources (Java 17, Linux). That run exposed the export-checking defect (item 14).
   * On 2 Nov 2026, with Abdullah's explicit authorisation, the same jar rendered all 16 sources on Windows (Java 21) through the validating `npm run uml`; the committed exports come from this run.
   * Not yet done: the team's own visual inspection of every diagram, and print checks on paper rather than on screen (issue #1). On screen, the reading pages print most labels at 6.2–9.8 pt and the smallest annotations at 5.5–6.2 pt; whether that is acceptable on paper is for the team to judge.
 * Session expiry is now covered in Chromium with the server clock advanced; a real eight-hour soak remains untested.
@@ -143,11 +151,11 @@ Re-verified on 1 Nov 2026 after the review fixes (fresh server, fleet simulator 
 * Added six unit tests: outlier resistance (including even-number median), odd sample sizes, covered zeros vs unknown weeks, insufficient history, no future/other-stop/other-hour leakage, and a hand-checked rolling-origin backtest.
 * Independent local check with Node 22.16.0: predictor suite **16/16 passed** and all runnable unit/architecture tests **84/84 passed** (see `docs/evidence/issue-6-local-tests.txt`). This is not the project's required Node 24 environment and does **not** include integration tests or TypeScript checking.
 * Reproduced baseline synthetic backtest figures by importing the same generator and backtest modules directly, then added the median results (MAE 1.42, RMSE 2.01, bias −0.22, 83% range coverage; see `docs/evidence/issue-6-median-evaluation.txt`). This is not a real-world accuracy measurement.
-* **Full recheck (ChatGPT Work, 1 November 2026, Linux, Node 24.22.1):** `npm ci --ignore-scripts`, `npm run typecheck`, `npm test` (**109/109**, no skips) and `npm run evaluate` all passed. Evidence: `docs/evidence/issue-6-node24-*`. Office browser coverage is added in issue #7. Abdullah's independent review and UML rendering remain separate.
+* **Full recheck (Zuhair's verification, 1 November 2026, Linux, Node 24.22.1):** `npm ci --ignore-scripts`, `npm run typecheck`, `npm test` (**109/109**, no skips) and `npm run evaluate` all passed. Evidence: `docs/evidence/issue-6-node24-*`. Office browser coverage is added in issue #7. Abdullah's independent review and UML rendering remain separate.
 
 ## Issue #7 — executable role and simulator coverage
 
-ChatGPT Work on 1 Nov 2026, Node 24.22.1/Linux: 113/113 unit/integration/architecture tests and 5/5 role browser tests passed. Playwright 1.64.1 used Chromium 138.0.7204.0 from the registry-distributed `@sparticuz/chromium` package because the standard browser download returned an invalid archive in this environment. The optional executable-path setting is documented; normal environments install Playwright's bundled Chromium.
+Zuhair's verification on 1 Nov 2026, Node 24.22.1/Linux: 113/113 unit/integration/architecture tests and 5/5 role browser tests passed. Playwright 1.64.1 used Chromium 138.0.7204.0 from the registry-distributed `@sparticuz/chromium` package because the standard browser download returned an invalid archive in this environment. The optional executable-path setting is documented; normal environments install Playwright's bundled Chromium.
 
 `e2e/roles.spec.ts` drives real forms and a fresh SQLite-backed in-memory server: stop selection/persistence, request creation/cancellation, simulated network loss with failed trip end and recovery, office termination with audit reason, median forecast/explanation, and live updates across separate role sessions. No API response stubs are used in these five tests. `test/unit/simulated-gps.test.ts` uses a controlled clock for projection, route boundaries, dwell, outage and stop cleanup. These are automated checks, not a human rehearsal or device GPS field test.
 
@@ -163,7 +171,7 @@ Verified in Chromium 138, 390×844, light/dark: four axe WCAG-tagged audits, one
 
 See `docs/use-case-validation.md` for a step/extension evidence matrix. Two failing-before browser cases reproduced stale private waiting-request state after expiry and after an offline served event; the student now refreshes its private request on relevant waiting events and reconnect snapshots, and ignores stale reads after a newer mutation. A screen-reader status region announces closures without repeatedly announcing the countdown. The driver no longer attributes every remote closure to the office (the timeout scheduler can also end trips). Seven use-case browser checks passed; production 20s/60s and 30-minute rules were exercised through the existing clock port, not weakened in production.
 
-## Final combined verification (Zuhair’s Work session, 1 November 2026)
+## Final combined verification (Zuhair's verification, 1 November 2026)
 
 Node 24.22.1, Linux: `npm run typecheck` passed; `npm test` passed **113/113**, zero failed/cancelled/skipped; `npm run test:browser` passed **18/18** (6 accessibility/keyboard, 5 roles, 7 use cases); `npm run evaluate` completed. Chromium was 138.0.7204.0 using the documented executable-path override. The reconnect regression now explicitly closes existing HTTP connections while the browser is offline, verifies the Reconnecting banner, marks the request served, restores connectivity and verifies the refreshed private request. Offline emulation alone did not reliably sever an already-open SSE connection. Test runs are sequential because simultaneous Playwright runs share the output directory. Exact final command output and earlier failing evidence are included in the handoff bundle, outside the source tree.
 

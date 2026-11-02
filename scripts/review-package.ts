@@ -306,7 +306,7 @@ const summary = `# Review summary — ${opts.task}
 | Packaged project files | ${files.length} files, ${(totalBytes / 1024).toFixed(1)} KiB, under \`${PREFIX}\` with their original relative paths |
 | Checks at a glance ${V} | ${checks.map((c) => `${c.label}: **${c.status}**`).join(' · ')} — ${checksVerdict} |
 
-**How to read this file.** Sections marked ${V} were produced or checked mechanically when this archive was built (file lists, checksums, test output, secret scan, Git state). Sections marked ${R} are the author's (Claude Code's) account of the work; treat them as claims to be checked against the files. Full logs are in \`review-logs/\`; the per-file inventory is \`REVIEW_INVENTORY.csv\` (also in the appendix below). The post-build verification of this archive cannot be inside the archive itself; it is written next to it as \`${zipName}.verification.txt\`, and the archive's checksum as \`${zipName}.sha256\`.
+**How to read this file.** Sections marked ${V} were produced or checked mechanically when this archive was built (file lists, checksums, test output, secret scan, Git state). Sections marked ${R} are the author's account of the work, taken from the notes file; treat them as claims to be checked against the files. Full logs are in \`review-logs/\`; the per-file inventory is \`REVIEW_INVENTORY.csv\` (also in the appendix below). The post-build verification of this archive cannot be inside the archive itself; it is written next to it as \`${zipName}.verification.txt\`, and the archive's checksum as \`${zipName}.sha256\`.
 
 ## 1. What was requested
 ${R}
