@@ -10,7 +10,7 @@ Team: **Abdullah** (GitHub `abdullahshammari796-ctrl`) · **Zuhair Halawa** (Git
 
 Student IDs: *OUTSTANDING — to be added by the team*
 
-Version: draft of 1 November 2026
+Version: draft of 2 November 2026
 
 </div>
 
@@ -82,7 +82,7 @@ Each scenario uses the six-part form (source, stimulus, artifact, environment, r
 | QA-5 | Security (access control) | Unauthenticated caller or wrong role calls a protected endpoint → web API → request refused | 100 % of 26 endpoints × 4 caller types answer 401/403; forged or expired tokens rejected; open live streams closed when the session expires; 5 failed logins → 5-min lockout | automated role-matrix test; token tests; live-stream expiry test |
 | QA-6 | Privacy | Any stored or displayed data → whole system → minimum personal data | students' location never collected; no driver identity in student-visible data; waiting pseudonym erased 24 h after closing; GPS traces deleted after 30 days | tests (view contents, retention job) |
 | QA-7 | Modifiability | Developer adds a new ETA algorithm or forecasting model → tracking / demand → added without touching services, API or UI | one new class + one line in the composition root | Strategy pattern (§7); model list in the UI is data-driven |
-| QA-8 | Testability | Developer runs the test suite → whole code base, developer PC, no network → all business rules exercised, time-dependent rules deterministic | full suite < 10 s | **103 tests in ≈ 4.7 s** (`npm test`) |
+| QA-8 | Testability | Developer runs the test suite → whole code base, developer PC, no network → all business rules exercised, time-dependent rules deterministic | full suite < 10 s | **119 tests in about 5 s** (`npm test`); 22 Chromium tests run separately |
 | QA-9 | Data consistency | Two drivers try to start trips on the same shuttle at the same moment → tracking + database → exactly one succeeds | 100 %, guaranteed by the database | unique partial indexes + service check; tests |
 
 The **hard quality attribute** named in the proposal is *timeliness and honesty of shuttle information under unreliable GPS and mobile connectivity* (QA-1, QA-3, QA-4): the system must be fast when data is good, and must say so — instead of guessing — when it is not.
@@ -283,7 +283,7 @@ A complete, locally runnable web application (`npm install`, `npm start`, open `
 * **Student**: live map with route filter; stop selection (remembered per device); next arrivals with minutes, clock time, distance, load and signal badge; delayed/lost indicators; "I'm waiting here" with route option, cancel, served/expired feedback; connection banner.
 * **Driver**: start trip (route, shuttle, GPS source); live trip card with next stop and ETA, GPS and upload status, "what passengers see"; passenger load; end trip with confirmation; resume after reload with the same location source; GPS simulator with speed control, GPS-outage, network-loss and glitch-injection buttons; activity log.
 * **Transport office**: KPI tiles, fleet map with waiting badges, waiting per stop, active-trip table with remote termination; demand forecast (model and date), hourly chart, stop × hour heat map with per-cell explanation, historical trends, model backtest; route management (service status, attributes, new routes); trip history with GPS track and gap statistics; system health, privacy/retention summary and audit log.
-* **Tooling**: deterministic demo seed, headless fleet simulator (`npm run simulate`), load test, demand evaluation, 114 Node tests (unit, integration and an architecture-conformance test), 21 Chromium browser tests (roles, use cases, accessibility), and a GitHub Actions workflow that runs them on every pull request to `main`.
+* **Tooling**: deterministic demo seed, headless fleet simulator (`npm run simulate`), load test, demand evaluation, 119 Node tests (unit, integration, an architecture-conformance test and UML-export validation), 22 Chromium browser tests (roles, use cases, accessibility), and a GitHub Actions workflow that runs them on every pull request to `main`.
 
 **The two primary end-to-end use cases demonstrated** are UC2 *Run a trip* with UC1 *Track shuttles* (driver → server → many students), and UC3 *Waiting request* feeding UC4/UC5 (student → office demand view → forecast). Both are covered by automated integration and Chromium browser tests and were walked through in a browser on 31 October – 1 November 2026.
 
@@ -315,15 +315,15 @@ We chose **TypeScript on Node.js 24 LTS with Express 5 and SQLite (Node's built-
 | Check | Result (31 Oct – 1 Nov 2026, Windows 11, Node 24.14.1) |
 |---|---|
 | `npm run typecheck` | passes, no errors |
-| `npm test` | 114 tests, 114 passed, 0 failed — `docs/evidence/test-run.txt` |
-| `npm run test:browser` | 21 Chromium tests, 21 passed (Playwright 1.64.1, Chrome for Testing 156) — `docs/evidence/browser-test-run.txt` |
+| `npm test` | 119 tests, 119 passed, 0 failed — `docs/evidence/test-run.txt` |
+| `npm run test:browser` | 22 Chromium tests, 22 passed (Playwright 1.64.1, Chrome for Testing 156) — `docs/evidence/browser-test-run.txt` |
 | `npm audit` | 0 vulnerabilities in all dependencies, including development tools — `docs/evidence/npm-audit.txt` |
 | GitHub Actions (`verify`) | passed on `main` after PRs #12 and #13 (run 41341908650); required for merging into `main` |
 | `npm run load-test` (1,000 viewers; local benchmark) | 31 Oct: p50 23 ms, p95 35 ms, p99 47 ms, max 56 ms. 1 Nov: p50 25 ms, p95 37 ms, p99 48 ms, max 55 ms; 60,000/60,000 delivered; 0 skipped — `docs/evidence/load-test-1000*.txt` |
 | `npm run load-test -- --viewers 3000 --rounds 10` | 31 Oct: p95 90 ms, max 108 ms. 1 Nov: p95 98 ms, max 113 ms; 90,000/90,000 delivered; 0 skipped — `docs/evidence/load-test-3000*.txt`. Same process, loopback, one shared session, no browsers |
 | `npm run evaluate` | see §6.7 — `docs/evidence/demand-evaluation.txt` |
 | Browser walkthrough (student, driver, office) | all three interfaces exercised against a running server with the fleet simulator (`docs/test-plan.md` §5), and automated in Chromium since PR #13 |
-| UML rendering | **not yet done**: running the PlantUML renderer was blocked in the authoring environment. The 16 sources were corrected against the code by hand (1 Nov); rendering and visual checking remain open — see `docs/test-plan.md` §6 |
+| `npm run uml` / `npm run uml:check` | 2 Nov: all 16 diagrams rendered with the checksum-verified PlantUML MIT 1.2026.9 (Java 21, Smetana) and validated: SVGs parsed as well-formed XML, PNGs fully decoded, none clipped, all from the current sources. Zuhair's review of PR #15 (ChatGPT Work) showed that the first validator accepted malformed content; it now rejects it. An independent render of the same sources, made with ChatGPT Work at Zuhair's request (Java 17, Linux), matched in structure. Appendix A prints every diagram at 62 % or more of its rendered size, with overview and detail pages for wide ones; most labels print at 6.2–9.8 pt and the smallest annotations at 5.5 pt (measured on screen). The team's own visual check, including on paper, is still open (issue #1) |
 
 ## 9. Reflection
 
@@ -353,7 +353,7 @@ Factual engineering observations recorded while building the prototype, which th
 
 > **Draft — the factual part below was recorded by the AI assistant; the team must review it, add their own use of AI tools if any, and complete "What we changed".**
 
-* **Tools**: Claude Code (Anthropic) desktop application, model Claude Opus 5.5, used from Abdullah's computer and GitHub account; ChatGPT (OpenAI), including its Work mode, used from Zuhair's GitHub account (PRs #12 and #13). The details are in `docs/team/ai-use-statement.md`.
+* **Tools**: Claude Code (Anthropic) desktop application, model Claude Opus 5.5, used from Abdullah's computer and GitHub account; ChatGPT (OpenAI), including its Work mode, used from Zuhair's GitHub account (PRs #12 and #13, the review of PR #14 and the first UML render). The details are in `docs/team/ai-use-statement.md`.
 * **When**: 31 October – 1 November 2026.
 * **What it was used for**: reading the official project description and the Module 02 slides; analysing architecture alternatives; generating the application code, automated tests, load test and demo scripts; writing the PlantUML diagram sources; drafting this report, the proposal, ADRs, test plan and presentation materials; running the type checker, tests and load tests and fixing the defects they revealed.
 * **What it was not used for**: it did not create the team, choose the topic for the team, submit anything for marking. Repository setup and later AI-assisted commits were explicitly requested by the respective account owners; see the current AI-use statement. It did not invent rubric details, signatures, timelines, contributions or real-world data; those are marked OUTSTANDING.

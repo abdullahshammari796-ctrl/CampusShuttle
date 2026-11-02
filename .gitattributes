@@ -1,0 +1,4 @@
+# Rendered UML exports are recorded byte-for-byte in docs/uml/out/manifest.json
+# (npm run uml:check); never let Git change their line endings.
+docs/uml/out/*.svg -text
+docs/uml/out/*.png binary

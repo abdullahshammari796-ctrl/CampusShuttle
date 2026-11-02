@@ -61,7 +61,8 @@ The full presentation script is in [`docs/demo-script.md`](docs/demo-script.md).
 | `npm run check` | Type check + tests |
 | `npm run load-test` | Local fan-out benchmark (default 1,000 simulated viewers; `-- --viewers 3000 --rounds 10`). Viewers run in the server's process over loopback with one shared session and no browsers — not a deployment test |
 | `npm run evaluate` | Reproducible backtest of the demand models on the synthetic history |
-| `npm run uml` | Render `docs/uml/*.puml` to SVG/PNG (needs Java + `PLANTUML_JAR`) |
+| `npm run uml` | Render `docs/uml/*.puml` to SVG/PNG and validate every export (needs Java + `PLANTUML_JAR`) |
+| `npm run uml:check` | Check, without Java, that every committed SVG is well-formed XML, every PNG decodes completely, none is clipped, and all were rendered from the current sources |
 | `npm run docs:build` | Build proposal, report and UML-set PDFs into `docs/build/` (uses Edge/Chrome headless) |
 | `npm run review:package -- --task "Name" --notes <file>` | Build a verified review ZIP for the independent reviewer in `../review-packages/` (see CLAUDE.md) |
 
@@ -120,17 +121,15 @@ docs/            proposal, report, UML set, ADRs, QA scenarios, test plan, priva
 | Team: ownership plan, contribution statement, AI-use statement | [`docs/team/`](docs/team) |
 
 ### Rendering the UML diagrams
-The diagrams are PlantUML sources (standard UML notation, editable text). They were compared with the code and corrected on 1 November 2026, but they have **not been rendered yet**. In the authoring environment the official jar was downloaded and verified, but running it was refused by the permission policy. A team member can render them on any machine with Java 11+ (Graphviz is not needed; the diagrams use the built-in *smetana* layout):
+The diagrams are PlantUML sources (standard UML notation, editable text). They were compared with the code member by member and rendered on 2 November 2026; the exports are committed in `docs/uml/out/` with a `manifest.json`. To render them again on any machine with Java 11+ (Graphviz is not needed; the diagrams use the built-in *smetana* layout):
 
 1. Download `plantuml-mit-1.2026.9.jar` from Maven Central: `https://repo1.maven.org/maven2/net/sourceforge/plantuml/plantuml-mit/1.2026.9/`. This is the MIT-licensed build, so no installer and no admin rights are needed.
 2. Verify it before running it. The SHA-256 published next to the jar (`.jar.sha256`) is `e84e45b37ad3030cf802e7be18a687d209eca55733a5679b1f1f1a515f7f70dd`. Check it with `Get-FileHash -Algorithm SHA256 <jar>` on Windows or `sha256sum <jar>` elsewhere.
-3. Render: `PLANTUML_JAR=<path to jar> npm run uml`. Optionally add `JAVA=<path to java>`; on Windows use `$env:PLANTUML_JAR='…'` first. The script writes SVG and PNG to `docs/uml/out/` and stops at the first diagram with a syntax error.
+3. Render: `PLANTUML_JAR=<path to jar> npm run uml`. Optionally add `JAVA=<path to java>`; on Windows use `$env:PLANTUML_JAR='…'` first. The script refuses a jar whose SHA-256 differs. It renders into a fresh temporary folder with `PLANTUML_LIMIT_SIZE=8192`, because the default 4096 px clips the large class diagrams, and stops at the first syntax error. It replaces `docs/uml/out/` only if every SVG parses as well-formed XML (with `@xmldom/xmldom`; any parser error or warning rejects the file) and every PNG decodes completely, and each PNG matches its SVG's size. PNG decoding covers chunk order and CRCs, the exact pixel-data length, every scanline filter and every palette index. Only the 8-bit, non-interlaced PNGs that PlantUML writes are accepted; other encodings are rejected rather than skipped. It then records the source and export hashes in `manifest.json`. A hash only records bytes, so exports are validated again before they are recorded and every time they are checked.
 4. Look at every SVG and fix what is wrong. If a diagram with packages or composite states fails under smetana, remove its `!pragma layout smetana` line and install Graphviz instead.
-5. Run `npm run docs:build` to embed the SVGs in the report and UML-set PDFs.
+5. Run `npm run docs:build` to embed the SVGs in the report and UML-set PDFs. It embeds only exports that pass `npm run uml:check`, which CI also runs. A stale, missing, empty, corrupt or clipped export becomes a red placeholder that names the problem. No diagram is printed below 60 % of its rendered size: larger ones get an overview page plus overlapping detail pages, on landscape pages where that helps.
 
-IDE alternative: JetBrains *PlantUML Integration* plugin or the VS Code *PlantUML* extension. Export each diagram as SVG into `docs/uml/out/`, keeping the same file name.
-
-Until the diagrams are rendered, the PDFs show red "not yet rendered" placeholders.
+IDE exports (JetBrains *PlantUML Integration*, VS Code *PlantUML*) are fine for looking at a diagram. They are not recorded in `manifest.json`, so `npm run uml:check` and the PDF build treat them as unverified until `npm run uml` renders them.
 
 ## Status and limitations
 See report §8.2 and the traceability checklist. In short: device GPS has not been field-tested on a vehicle; HTTPS and single sign-on are not set up; sessions expire after 8 h (open live streams are closed then) but cannot be revoked early; the driver's offline queue is bounded and lives only in the open page (QA-4); load figures come from a local benchmark, not a deployment test; forecasts are demonstrated on synthetic data only; UI code is verified manually (no automated browser tests); diagrams await rendering; personal sections of the report (reflection, contribution, AI-use "what we changed") must be written by the team.

@@ -33,7 +33,7 @@ After *Simulate GPS outage* is pressed, the driver's shuttle produces no positio
 | 8:15 | Member B | **Demo UC3 → UC4/UC5**: student taps *I'm waiting here*; office map badge and KPI update; open *Demand & forecast*, click a cell to show the explanation | Explainable baseline; synthetic data clearly labelled; why no ML model yet (Borealis lifecycle: feasibility). |
 | 9:30 | Member A | Office ends the driver's trip with a reason → audit log; driver window returns to start | Role-based access and accountability. |
 | 10:00 | Member B | Design patterns slide (Strategy, Observer, State, Repository, Adapter) | Problem each solves, where it is in the code. |
-| 10:45 | Both | Testing evidence, limitations, reflection | 114 Node tests and 21 Chromium tests, CI on every pull request, local load test (and its limits), what was not done, what we would do next. |
+| 10:45 | Both | Testing evidence, limitations, reflection | 119 Node tests and 22 Chromium tests, CI on every pull request, local load test (and its limits), what was not done, what we would do next. |
 | 11:30 | — | Questions | Each member must be able to explain any diagram. |
 
 ## Likely questions — be ready

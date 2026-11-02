@@ -23,11 +23,12 @@ npm test              # all automated tests
 npm run load-test     # 1,000 viewers × 60 updates (add -- --viewers 3000 --rounds 10)
 npm run evaluate      # reproducible demand backtest on synthetic data
 npm run test:browser  # Chromium tests (first: npx playwright install chromium)
+npm run uml:check     # rendered UML exports well-formed / fully decoded, unclipped and from the current sources
 ```
 
 ## 4. Automated test inventory and results
 
-Current run (owner review, 1 Nov 2026, branch `abdullah/owner-completion`, Windows 11, Node 24.14.1): **114 Node tests, 114 passed, 0 failed** (`docs/evidence/test-run.txt`) and **21 Chromium tests, 21 passed** (`docs/evidence/browser-test-run.txt`). The same checks run in GitHub Actions (`verify`) on every pull request to `main`.
+Current run (2 Nov 2026, branch `abdullah/uml-and-docs-finalization`, Windows 11, Node 24.14.1): **119 Node tests, 119 passed, 0 failed** (`docs/evidence/test-run.txt`) and **22 Chromium tests, 22 passed** (two consecutive full runs) (`docs/evidence/browser-test-run.txt`). The same checks run in GitHub Actions (`verify`) on every pull request to `main`.
 
 Historical baseline run: 1 Nov 2026, Windows 11, Node 24.14.1 — **103 tests, 103 passed, 0 failed, ≈ 4.7 s** (before PRs #12 and #13).
 
@@ -61,7 +62,7 @@ Found by the independent review (1 Nov 2026), reproduced before fixing:
 8. **UML diagrams did not match the code in places.** A member-by-member comparison found, among others: Observer drawn as an interface implemented by `SseHub` (the code uses callbacks); `GpsSource` drawn as a declared interface (it is a duck-typed contract); the hub calling `TrackingService` directly (it calls `LiveView`); the 30-minute auto-close guard worded as "no fix at all"; and hidden fields in the domain model. All 16 sources were corrected; rendering is still pending (§6).
 9. **Flaky privacy test** (found when the review-packaging run failed once): "public vehicle views never contain the driver identity" checked that the view JSON did not contain the driver id `d1`, but the view also contains the trip's random UUID, which includes "d1" in roughly one run in eight. Not a privacy leak; the test now uses an id that cannot occur in a UUID and also checks for the driver's display name. Verified with 5 full-suite runs and 30 runs of that test.
 
-Found in the owner review of PRs #12 and #13 (1 Nov 2026). Each was reproduced by a test that fails on the previous code (`npx playwright test` and `node --test` on commit `f62b472`), and fixed in the owner pull request:
+Found in the owner review of PRs #12 and #13 (1 Nov 2026; items 10–13), in the first UML render (item 14) in a failed browser run on 2 Nov 2026 (item 15) and in Zuhair's review of PR #15 (item 16). Each was reproduced by a test that fails on the previous code (`npx playwright test` and `node --test` on commit `f62b472`), and fixed in the owner pull request:
 
 10. **A reloaded device-GPS trip switched to simulated positions.** `driver.js` always restarted the simulator after a reload, so a real trip would have uploaded fabricated positions. Fixed: `GET /api/driver/trip` returns `locationSource` (the source of the latest accepted position, also after a server restart). The page resumes that source; when it is unknown, it shares nothing until the driver chooses. Tests: `e2e/driver-location-source.spec.ts` (2), `api.test.ts` "tells a reloaded driver page which location source its trip is using", and a restart assertion.
 11. **Waiting-count refresh amplification.** Every student waiting at a stop re-fetched their own request whenever anyone joined that stop. With K students waiting, each join cost about K requests (5 extra requests for 5 joins in the test). Fixed: the page re-fetches only when the stop's count falls. Test: `e2e/use-cases.spec.ts` "UC3: other students joining the same stop do not make a waiting student re-fetch its request".
@@ -75,6 +76,23 @@ Found in the owner review of PRs #12 and #13 (1 Nov 2026). Each was reproduced b
     * 07: an association label was split across two lines (a likely syntax error).
     * Optional parameters, nullable fields and `unknown` inputs were corrected in 09, 12, 14 and 16, and `login.js` was added to 11.
     * Diagrams 01, 03, 06, 13 and 15 were consistent.
+14. **The UML render script accepted broken exports** (found when the sources were first rendered, with ChatGPT Work at Zuhair's request, 1 Nov 2026). It only checked that files existed: PNGs 03 and 06 were empty after a successful run, and PNGs 08 and 09 were clipped at PlantUML's default 4096 px limit. Fixed:
+    * `npm run uml` checks the jar's SHA-256 and renders into a fresh temporary folder with `PLANTUML_LIMIT_SIZE=8192`.
+    * It checks every SVG and PNG and requires each PNG to match its SVG's size within 1 px. As first written, that check was itself too shallow; see item 16.
+    * It records source and export hashes in `docs/uml/out/manifest.json`.
+    * `npm run uml:check` (also in CI and in `npm run docs:build`) reports missing, empty, corrupt, clipped, stale and orphaned exports.
+    * Tests: `test/unit/uml-exports.test.ts` (3), each reproducing one of these failures. The stale check also caught a real case: the adapter note was edited after rendering.
+15. **The sign-in form could put the password into a URL** (found because one full browser run failed on 2 Nov 2026). The test clicked *Sign in* before `login.js` had attached its submit handler, so the browser submitted the form natively as a GET request: `/?username=…&password=…`. A real user who pressed Enter on a slow connection could do the same, leaving credentials in the browser history. Fixed:
+    * the form uses `method="post"`;
+    * the button stays disabled until the script has attached its handler, which also removes the test's race.
+
+    Test: `e2e/roles.spec.ts` "the sign-in form never puts credentials into a URL, even before its script has run" (JavaScript disabled). It fails without the fix.
+16. **The new export validator accepted malformed content** (found in Zuhair's review of PR #15, prepared with ChatGPT Work: [review](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/15#pullrequestreview-5730257445)). From committed diagram 01 the review made two broken exports: an SVG with an unmatched `<g>`, and a PNG whose first scanline filter is 5 (valid values are 0–4), with recomputed CRCs. The old `svgSize` and `pngSize` accepted both, `inspectDiagram` reported no problem, and `checkExports` returned nothing when given a manifest whose hashes matched. Fixed:
+    * SVGs are parsed with `@xmldom/xmldom`, and any parser error or warning rejects the file.
+    * PNGs are decoded completely: chunk order and CRCs, exact data length, every filter type, and every palette index after reconstructing each scanline. Only PlantUML's 8-bit, non-interlaced encodings are accepted; others are rejected.
+    * `recordDiagram` validates before recording.
+
+    Tests in `test/unit/uml-exports.test.ts`: "rejects well-wrapped exports whose content does not parse or decode", and "refuses to record malformed exports, and the manifest check rejects them even when their hashes match". On the old validator the first fails with "Missing expected exception" and the second because `checkExports` returned `[]`. The reviewer's reproducer now stops at the first rejection.
 
 ## 5. Manual browser verification (acceptance)
 
@@ -113,7 +131,11 @@ Re-verified on 1 Nov 2026 after the review fixes (fresh server, fleet simulator 
 * Browsers other than Chromium; small-screen phones beyond the responsive layout check; screen readers.
 * Additional browser engines and real assistive-technology sessions (Chromium automation is now covered below).
 * Load beyond 3,000 viewers; long-running (multi-day) operation; database growth over a semester.
-* **UML rendering.** On 1 Nov 2026 the official `plantuml-mit` 1.2026.9 jar was downloaded from Maven Central and its SHA-1, SHA-256 and SHA-512 matched the published checksums. Running it (Java 21 from the DataGrip installation) was refused by the authoring environment's permission policy. In the owner review the checksums were verified again and rendering was attempted again; it was refused again. So no diagram has been rendered or syntax-checked by a real renderer, and the PDFs still show placeholders. The 16 sources were compared with the code member by member instead (see `docs/03-uml-diagram-set.md`). This is issue #1, which stays open. See README "Rendering the UML diagrams".
+* **UML rendering — history and status.**
+  * On 1 Nov 2026 the authoring environment twice refused to run the checksum-verified `plantuml-mit` 1.2026.9 jar.
+  * On 1 Nov 2026, with ChatGPT Work at Zuhair's request, all 16 unchanged sources were rendered (Java 17, Linux). That run exposed the export-checking defect (item 14).
+  * On 2 Nov 2026, with Abdullah's explicit authorisation, the same jar rendered all 16 sources on Windows (Java 21) through the validating `npm run uml`; the committed exports come from this run.
+  * Not yet done: the team's own visual inspection of every diagram, and print checks on paper rather than on screen (issue #1). On screen, the reading pages print most labels at 6.2–9.8 pt and the smallest annotations at 5.5–6.2 pt; whether that is acceptable on paper is for the team to judge.
 * Session expiry is now covered in Chromium with the server clock advanced; a real eight-hour soak remains untested.
 * HTTPS deployment.
 

@@ -53,7 +53,33 @@ The project description requires a statement of *which AI tools were used, for w
   * wrote an evidence review of ADR-0004 to 0007 for Abdullah's side of issue #9;
   * reconciled the report, test plan, traceability, QA scenarios, use-case validation, demo script and these records with the merged code.
 
-  It verified the PlantUML checksums again, but running PlantUML was again refused by the environment's permission policy, so the diagrams are still unrendered. It requested Zuhair's review of the owner pull request and did not approve or merge its own pull request.
+  It verified the PlantUML checksums again, but running PlantUML was again refused by the environment's permission policy, so the diagrams stayed unrendered that day (they were rendered on 2 November; see below). It requested Zuhair's review of the owner pull request (PR #14) and did not approve it.
+
+* **Zuhair's review of PR #14 and the first UML render (1 November 2026).** At Zuhair's request, ChatGPT Work:
+  * reviewed PR #14 on a fresh Linux checkout and posted his approving review, which discloses that assistance;
+  * rendered all 16 unchanged PlantUML sources with the checksum-verified jar, which exposed empty and clipped PNG exports that the render script had accepted.
+
+* **Integration and UML finalisation (2 November 2026).** Abdullah requested this in a written handoff. Working from his account, Claude Code:
+  * merged PR #14 through the protected workflow (GitHub's rebase method, pinned to the approved head);
+  * rendered all 16 diagrams on Abdullah's computer with the same verified jar, which his explicit authorisation now allowed;
+  * made the render step validate its exports (jar hash, complete decoding, clipping, staleness), with three regression tests and a CI check;
+  * made the PDF build print every diagram at a readable scale, using overview and detail pages;
+  * corrected the adapter note;
+  * reconciled the documents and records, and rebuilt the PDFs and deck;
+  * opened a follow-up pull request for Zuhair's review (PR #15).
+
+* **Zuhair's review of PR #15 (2 November 2026).** At Zuhair's request, ChatGPT Work reviewed PR #15 at `87aceaf`. It reproduced that the new export validator accepted malformed SVG and PNG content, using a reproducer script and an independent Pillow decoder check. It visually inspected the UML set, the report body, the proposal and the slides. It posted Zuhair's [review requesting changes](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/15#pullrequestreview-5730257445), which discloses that assistance.
+
+* **Corrections to PR #15 (2 November 2026).** Abdullah requested these in a written handoff. Working from his account, Claude Code:
+  * reproduced the defect with the reviewer's script;
+  * replaced the SVG check with XML parsing (`@xmldom/xmldom`, any report rejects) and the PNG check with a complete decoder for PlantUML's encodings (other encodings rejected);
+  * made recording validate first;
+  * added two regression tests that fail on the old validator;
+  * fixed A.3's page layout;
+  * re-rendered all diagrams with the verified jar (the exports were unchanged);
+  * rebuilt the PDFs and deck, and reconciled the documents.
+
+  It requested Zuhair's fresh review. It did not dismiss his review, approve or merge.
 
 ## What it did not do
 * It did not register the team, choose the topic on the team's behalf, contact the instructor or submit anything for marking. Git and GitHub actions were taken only when Abdullah explicitly asked (see above); Zuhair later requested issue #6 and published commits b5cbdbf and cb90511 under his own authenticated GitHub identity. ChatGPT continued verification and implementation at his request in Work mode. The app was not deployed.

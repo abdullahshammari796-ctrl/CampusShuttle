@@ -331,10 +331,10 @@ pres.addSection({ title: 'Evidence' });
 {
   const s = content('Evidence');
   s.addText('Tested, measured — and honest about the gaps', { placeholder: 'title' });
-  stat(s, { x: M, y: 1.35, w: 2.8, value: '135', label: '114 Node + 21 Chromium tests, all passing' });
+  stat(s, { x: M, y: 1.35, w: 2.8, value: '141', label: '119 Node + 22 Chromium tests, all passing' });
   stat(s, { x: 3.7, y: 1.35, w: 2.8, value: '26 × 4', label: 'endpoints × caller types checked for role access' });
   stat(s, { x: 6.8, y: 1.35, w: 2.8, value: '113 ms', label: 'worst of 3,000 simulated viewers (local benchmark)' });
-  stat(s, { x: 9.9, y: 1.35, w: 2.8, value: '13', label: 'defects and corrections in the test plan, all resolved', color: C.accent2 });
+  stat(s, { x: 9.9, y: 1.35, w: 2.8, value: '16', label: 'defects and corrections in the test plan, all resolved', color: C.accent2 });
   card(s, { x: M, y: 3.6, w: 5.9, h: 2.6, title: 'Found by tests and independent review', body: [
     { text: 'Shuttle snapped behind at route corners (load test); hub worked after shutdown (integration test)', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
     { text: 'Driver app gave up a trip the server had not ended; live streams outlived their session (review)', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
@@ -344,7 +344,7 @@ pres.addSection({ title: 'Evidence' });
     { text: 'Field test with a real phone on a real shuttle', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
     { text: 'HTTPS, single sign-on, Arabic, screen-reader audit', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
     { text: 'Real demand data — forecasts shown on synthetic data only', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
-    { text: 'UML diagrams rendered and checked visually; deployment load test', options: { bullet: true, paraSpaceAfter: 8 } },
+    { text: 'Team inspection of the rendered UML; deployment load test', options: { bullet: true, paraSpaceAfter: 8 } },
   ] });
   s.addNotes('Numbers from docs/evidence and docs/test-plan.md section 4. The 21 Chromium tests drive the real pages against a fresh server; the same checks run in GitHub Actions on every pull request. Mention the V-model pairing: unit ↔ module design, architecture test ↔ architectural design, integration ↔ system design, demo ↔ requirements.');
 }

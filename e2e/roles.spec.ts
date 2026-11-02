@@ -1,5 +1,19 @@
 import { test, expect, login, startTrip, endTrip } from './fixtures.ts';
 
+test('the sign-in form never puts credentials into a URL, even before its script has run', async ({ browser, appURL }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  try {
+    await page.goto(appURL);
+    await page.getByLabel('Username', { exact: true }).fill('student1');
+    await page.getByLabel('Password', { exact: true }).fill('student-demo');
+    await expect(page.getByRole('button', { name: 'Sign in', exact: true })).toBeDisabled();
+    await page.getByLabel('Password', { exact: true }).press('Enter'); // implicit submission is blocked by the disabled button
+    await page.waitForTimeout(500);
+    expect(page.url()).toBe(`${appURL}/`);
+  } finally { await context.close(); }
+});
+
 test('student selects and remembers a stop, registers and cancels a waiting request', async ({ page, appURL }) => {
   await login(page, appURL, 'student');
   const select = page.getByLabel('Your stop');

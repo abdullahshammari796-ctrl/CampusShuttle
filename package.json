@@ -19,6 +19,7 @@
     "evaluate": "node --disable-warning=ExperimentalWarning scripts/evaluate-demand.ts",
     "docs:build": "node scripts/build-docs.ts",
     "uml": "node scripts/render-uml.ts",
+    "uml:check": "node scripts/check-uml.ts",
     "review:package": "node scripts/review-package.ts",
     "test:browser": "playwright test"
   },
@@ -30,6 +31,7 @@
     "@playwright/test": "1.64.1",
     "@types/express": "^5.0.3",
     "@types/node": "^24.10.0",
+    "@xmldom/xmldom": "^0.9.12",
     "marked": "^16.4.0",
     "pptxgenjs": "^4.0.1",
     "typescript": "~5.9.3"

@@ -1,32 +1,33 @@
-$ npm run test:browser   # 2026-11-01 23:42 +0400, Windows 11, node v24.14.1, Playwright Version 1.64.1, Chrome for Testing 156.0.8078.4 (Playwright's own download)
+$ npm run test:browser   # 2026-11-02 19:30 +0400, Windows 11, node v24.14.1, Playwright Version 1.64.1, Chrome for Testing 156.0.8078.4 (Playwright's own download)
 
 > campus-shuttle@0.1.0 test:browser
 > playwright test
 
 
-Running 21 tests using 1 worker
+Running 22 tests using 1 worker
 
-  ok  1 e2e\accessibility.spec.ts:6:5 › student light: automated WCAG checks, mobile layout and named dialog (805ms)
+  ok  1 e2e\accessibility.spec.ts:6:5 › student light: automated WCAG checks, mobile layout and named dialog (987ms)
   ok  2 e2e\accessibility.spec.ts:6:5 › driver light: automated WCAG checks, mobile layout and named dialog (1.1s)
-  ok  3 e2e\accessibility.spec.ts:6:5 › student dark: automated WCAG checks, mobile layout and named dialog (693ms)
+  ok  3 e2e\accessibility.spec.ts:6:5 › student dark: automated WCAG checks, mobile layout and named dialog (709ms)
   ok  4 e2e\accessibility.spec.ts:6:5 › driver dark: automated WCAG checks, mobile layout and named dialog (1.1s)
-  ok  5 e2e\accessibility.spec.ts:35:1 › student keyboard focus survives the periodic waiting-request refresh (453ms)
-  ok  6 e2e\accessibility.spec.ts:48:1 › student can skip navigation and choose a map stop using only keyboard activation (446ms)
+  ok  5 e2e\accessibility.spec.ts:35:1 › student keyboard focus survives the periodic waiting-request refresh (449ms)
+  ok  6 e2e\accessibility.spec.ts:48:1 › student can skip navigation and choose a map stop using only keyboard activation (428ms)
   ok  7 e2e\driver-location-source.spec.ts:3:1 › UC2 4b: a reloaded device-GPS trip keeps device GPS and never switches to the simulator (3.2s)
   ok  8 e2e\driver-location-source.spec.ts:32:1 › UC2 4b: with no accepted position, a reloaded trip shares nothing until the driver chooses a source (4.5s)
-  ok  9 e2e\roles.spec.ts:3:1 › student selects and remembers a stop, registers and cancels a waiting request (564ms)
-  ok 10 e2e\roles.spec.ts:15:1 › driver keeps an offline trip active, sends queued fixes and ends after recovery (4.2s)
-  ok 11 e2e\roles.spec.ts:31:1 › office terminates a live driver trip with an audited reason (3.8s)
-  ok 12 e2e\roles.spec.ts:47:1 › office selects the fourth forecast model and inspects its actual explanation (619ms)
-  ok 13 e2e\roles.spec.ts:58:1 › student receives driver updates and remote removal over a real live stream (879ms)
-  ok 14 e2e\use-cases.spec.ts:3:1 › UC1/UC2: real stream shows delayed, lost without ETA, and recovered GPS (4.2s)
-  ok 15 e2e\use-cases.spec.ts:24:1 › UC3: a waiting request visibly expires without a reload (455ms)
-  ok 16 e2e\use-cases.spec.ts:33:1 › UC3: other students joining the same stop do not make a waiting student re-fetch its request (945ms)
-  ok 17 e2e\use-cases.spec.ts:53:1 › UC1: expired sessions stop an already-open real browser stream (376ms)
-  ok 18 e2e\use-cases.spec.ts:62:1 › UC3: served request is reconciled after the student reconnects (3.8s)
-  ok 19 e2e\use-cases.spec.ts:78:1 › UC5: an empty historical period produces no invented forecast (685ms)
-  ok 20 e2e\use-cases.spec.ts:90:1 › UC2: reload resumes a trip, a GPS glitch is rejected, and prolonged loss closes it (10.6s)
-  ok 21 e2e\use-cases.spec.ts:105:1 › UC4: office edits and disables a route through the real form (580ms)
+  ok  9 e2e\roles.spec.ts:3:1 › the sign-in form never puts credentials into a URL, even before its script has run (811ms)
+  ok 10 e2e\roles.spec.ts:17:1 › student selects and remembers a stop, registers and cancels a waiting request (493ms)
+  ok 11 e2e\roles.spec.ts:29:1 › driver keeps an offline trip active, sends queued fixes and ends after recovery (4.2s)
+  ok 12 e2e\roles.spec.ts:45:1 › office terminates a live driver trip with an audited reason (3.8s)
+  ok 13 e2e\roles.spec.ts:61:1 › office selects the fourth forecast model and inspects its actual explanation (606ms)
+  ok 14 e2e\roles.spec.ts:72:1 › student receives driver updates and remote removal over a real live stream (813ms)
+  ok 15 e2e\use-cases.spec.ts:3:1 › UC1/UC2: real stream shows delayed, lost without ETA, and recovered GPS (4.2s)
+  ok 16 e2e\use-cases.spec.ts:24:1 › UC3: a waiting request visibly expires without a reload (410ms)
+  ok 17 e2e\use-cases.spec.ts:33:1 › UC3: other students joining the same stop do not make a waiting student re-fetch its request (928ms)
+  ok 18 e2e\use-cases.spec.ts:53:1 › UC1: expired sessions stop an already-open real browser stream (343ms)
+  ok 19 e2e\use-cases.spec.ts:62:1 › UC3: served request is reconciled after the student reconnects (3.8s)
+  ok 20 e2e\use-cases.spec.ts:78:1 › UC5: an empty historical period produces no invented forecast (631ms)
+  ok 21 e2e\use-cases.spec.ts:90:1 › UC2: reload resumes a trip, a GPS glitch is rejected, and prolonged loss closes it (10.6s)
+  ok 22 e2e\use-cases.spec.ts:105:1 › UC4: office edits and disables a route through the real form (552ms)
 
-  21 passed (45.1s)
+  22 passed (46.3s)
 exit 0
