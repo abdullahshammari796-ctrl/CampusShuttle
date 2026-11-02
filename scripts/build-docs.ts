@@ -30,8 +30,17 @@ const UML_OUT = join(DOCS, 'uml', 'out');
 const MIN_SCALE = 0.6;
 /** Diagram pixels repeated at the edges of neighbouring detail pages, so most boxes appear whole on one of them. */
 const OVERLAP = 200;
-/** Height (CSS px) kept free on a diagram's first page for the heading (and short introduction) moved onto it. */
-const HEADING_ROOM = 130;
+/**
+ * Height (CSS px) kept free on a diagram's first page for the heading and the
+ * short introduction moved onto it: the heading itself, plus one 10.5 pt line
+ * (about 21 px) per CHARS_PER_LINE characters of introduction. A fixed allowance
+ * let A.3's five-line introduction push its overview onto the next page.
+ */
+const HEADING_ROOM = 60;
+const INTRO_LINE = 21;
+const CHARS_PER_LINE = { portrait: 90, landscape: 135 } as const;
+/** Extra caption height of an overview page: its caption has a second, explanatory line. */
+const OVERVIEW_CAPTION = 24;
 /** Image area (CSS px) of a page of its own: A4 minus margins and a caption line. */
 const AREA = { portrait: { w: 672, h: 941 }, landscape: { w: 1016, h: 650 } } as const;
 /** Largest height (CSS px) of a figure placed in the text flow, leaving room for its heading and a short description. */
@@ -116,12 +125,14 @@ function tilesFor(width: number, height: number, orientation: Orientation) {
 }
 
 /** One rendered diagram as print-ready HTML (see the comment at the top of this file). */
-function diagramHtml(name: string, caption: string, headingRoom: number): string {
+function diagramHtml(name: string, caption: string, intro: { heading: boolean; chars: number }): string {
   const svgFile = join(UML_OUT, `${name}.svg`);
   const text = readFileSync(svgFile, 'utf8');
   const { width, height } = svgSize(text);
   const label = escapeHtml(caption);
-  const fit = (o: Orientation, maxHeight: number = AREA[o].h - headingRoom) => Math.min(1, AREA[o].w / width, maxHeight / height);
+  const headingRoom = (o: Orientation) => (intro.heading ? HEADING_ROOM + Math.ceil(intro.chars / CHARS_PER_LINE[o]) * INTRO_LINE : 0);
+  const fit = (o: Orientation, maxHeight: number = AREA[o].h - headingRoom(o)) => Math.min(1, AREA[o].w / width, maxHeight / height);
+  const overviewFit = (o: Orientation) => fit(o, AREA[o].h - headingRoom(o) - OVERVIEW_CAPTION);
   const img = (scale: number) => `<img src="${pathToFileURL(svgFile).href}" alt="${label}" style="width:${px(width * scale)};height:${px(height * scale)}">`;
   const figure = (body: string, figcaption: string) => `<figure class="uml">${body}<figcaption>${figcaption}</figcaption></figure>`;
   const page = (o: Orientation, body: string) => `<section class="uml-page ${o}">${body}</section>`;
@@ -131,12 +142,12 @@ function diagramHtml(name: string, caption: string, headingRoom: number): string
 
   const detail = (['landscape', 'portrait'] as const).map((o) => tilesFor(width, height, o))
     .sort((a, b) => a.tiles.length - b.tiles.length || b.scale - a.scale)[0];
-  if (detail.tiles.length === 1 && !headingRoom) return page(detail.orientation, figure(img(detail.scale), label));
-  const overview: Orientation = fit('landscape') >= fit('portrait') ? 'landscape' : 'portrait';
+  if (detail.tiles.length === 1 && !intro.heading) return page(detail.orientation, figure(img(detail.scale), label));
+  const overview: Orientation = overviewFit('landscape') >= overviewFit('portrait') ? 'landscape' : 'portrait';
   const start = text.indexOf('>', text.search(/<svg\b/)) + 1;
   const inner = text.slice(start, text.lastIndexOf('</svg>')).replace(/<\?[\s\S]*?\?>/g, '').replace(/\r?\n/g, ' ');
-  const pages = [page(overview, figure(img(fit(overview)),
-    `${label} — overview at ${percent(fit(overview))} <span class="uml-note">(read the ${detail.tiles.length} detail pages that follow, at ${percent(detail.scale)}; on screen, zoom in)</span>`))];
+  const pages = [page(overview, figure(img(overviewFit(overview)),
+    `${label} — overview at ${percent(overviewFit(overview))} <span class="uml-note">(read the ${detail.tiles.length} detail pages that follow, at ${percent(detail.scale)}; on screen, zoom in)</span>`))];
   detail.tiles.forEach((tile, i) => {
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="${tile.x} ${tile.y} ${detail.tileW} ${detail.tileH}" style="width:${px(detail.tileW * detail.scale)};height:${px(detail.tileH * detail.scale)}" preserveAspectRatio="xMinYMin meet">${inner}</svg>`;
     const where = [detail.rows > 1 ? `row ${tile.row} of ${detail.rows}` : '', detail.cols > 1 ? `column ${tile.col} of ${detail.cols}` : ''].filter(Boolean).join(', ');
@@ -150,8 +161,9 @@ function embedDiagrams(markdown: string): string {
   return markdown.replace(/!\[([^\]]*)\]\(uml\/out\/([\w.-]+)\.(svg|png)\)/g, (_m, caption: string, name: string, _ext: string, offset: number) => {
     const problems = exportProblems.filter((p) => p.diagram === name);
     // The same rule as the heading move in the page assembly below: a heading, optionally followed by one short paragraph.
-    const followsHeading = /(?:^|\n)#{1,4} [^\n]*\n\s*(?:[^\n#!|<][^\n]{0,600}\n\s*)?$/.test(markdown.slice(0, offset));
-    if (!problems.length) return `\n\n${diagramHtml(name, caption, followsHeading ? HEADING_ROOM : 0)}\n\n`;
+    const before = /(?:^|\n)#{1,4} [^\n]*\n\s*(?:([^\n#!|<][^\n]{0,600})\n\s*)?$/.exec(markdown.slice(0, offset));
+    const intro = { heading: Boolean(before), chars: before?.[1]?.length ?? 0 };
+    if (!problems.length) return `\n\n${diagramHtml(name, caption, intro)}\n\n`;
     missingDiagrams.add(name);
     const why = problems.map((p) => `${p.file}: ${p.kind} — ${escapeHtml(p.detail)}`).join('<br>');
     return `<figure><div class="placeholder">DIAGRAM NOT USABLE: ${escapeHtml(caption)}<br><small>${why}<br>Source: docs/uml/${name}.puml — run "npm run uml", then rebuild.</small></div><figcaption>${escapeHtml(caption)}</figcaption></figure>`;

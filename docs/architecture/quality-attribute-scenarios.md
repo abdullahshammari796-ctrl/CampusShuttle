@@ -79,7 +79,7 @@ Six-part scenarios (Bass, Clements & Kazman). Every response measure is checked 
 * **Source:** developer. **Stimulus:** runs the test suite. **Artifact:** code base. **Environment:** developer PC, no network.
 * **Response:** all business rules exercised; time-dependent rules deterministic (manual clock).
 * **Measure:** full suite < 10 s.
-* **Verification:** `npm test` → 117 tests in about 5 s (2 Nov 2026). The 22 Chromium tests (`npm run test:browser`) take about 45 s and are outside this 10 s measure. **Met.**
+* **Verification:** `npm test` → 119 tests in about 5 s (2 Nov 2026). The 22 Chromium tests (`npm run test:browser`) take about 45 s and are outside this 10 s measure. **Met.**
 
 ### QA-9 Consistency under concurrency
 * **Source:** two drivers. **Stimulus:** start trips on the same shuttle at the same moment. **Artifact:** tracking + database.
