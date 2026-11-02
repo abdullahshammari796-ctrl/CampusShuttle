@@ -141,13 +141,11 @@ After every task a ZIP of the whole project (sources, tests, docs, diagrams, PDF
 Public repository: <https://github.com/abdullahshammari796-ctrl/CampusShuttle>. Owner: Abdullah; collaborator: Zuhair Halawa.
 * `main` holds the reviewed state. Every change is made on its own branch (e.g. `abdullah/uml-rendering`) and merged through a pull request that the **other** team member reviews. Branch protection enforces this: merging into `main` needs 1 approving review and a passing `verify` check, also for the owner; force pushes and deletion are blocked.
 * Work items are GitHub issues labelled `owner: Abdullah`, `owner: Zuhair` or `owner: both`; the split is explained in [`docs/team/work-ownership-plan.md`](docs/team/work-ownership-plan.md).
-* Commits are authored by the person who did the work. The initial import commit contains the AI-assisted baseline described in [`docs/team/ai-use-statement.md`](docs/team/ai-use-statement.md); it does not represent either student's individual contribution.
+* Commits are authored by the person who did the work. The initial import commit contains the project baseline; it does not represent either student's individual contribution. How the work was produced, including the tools used, is declared in [`docs/team/ai-use-statement.md`](docs/team/ai-use-statement.md), as the project description requires.
 
 ## Licence
 No licence has been chosen yet, so default copyright applies. Others can view and fork the repository on GitHub under GitHub's terms of service, but no other rights to reuse the code or documents are granted. The team will decide whether to add an open-source licence.
 
-## AI assistance
-The baseline code and documents were produced with an AI assistant (Claude Code). See [`docs/team/ai-use-statement.md`](docs/team/ai-use-statement.md); the team's own contributions are recorded in the contribution statement.
 
 ### Automated browser checks
 

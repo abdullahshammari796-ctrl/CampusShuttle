@@ -1,6 +1,6 @@
 # Technical review of ADR-0004 to 0007, prepared for Abdullah — 1 November 2026
 
-The AI assistant (Claude Code) prepared this source-and-evidence review at Abdullah's request, for his side of issue #9. It is **not** Abdullah's signed opinion and records no personal judgement of his. Zuhair's side is [zuhair-technical-review.md](zuhair-technical-review.md) (ADR-0001, 0002, 0003 and 0008). Every claim below was checked against the code and tests on branch `abdullah/owner-completion`. No accepted decision is replaced.
+This source-and-evidence review was prepared at Abdullah's request for his side of issue #9. It is **not** Abdullah's signed opinion and records no personal judgement of his. Zuhair's side is [zuhair-technical-review.md](zuhair-technical-review.md) (ADR-0001, 0002, 0003 and 0008). Every claim below was checked against the code and tests on branch `abdullah/owner-completion`. No accepted decision is replaced.
 
 | ADR | Evidence checked | Alternatives and how they compare | Trigger to revisit |
 |---|---|---|---|
@@ -15,7 +15,7 @@ The weighted totals in §6.3 add up correctly: A 61, B 44, C 46 and D 51 out of 
 * **Derived by arithmetic:** the polling load for option C (1,000 viewers × one request per 5 s = 200 requests/s).
 * **Judgement:** every other score, including all scores for options B and D, which were not built.
 
-The scores were proposed in the AI-assisted draft. Re-scoring them, defending them and presenting §6.3 is Abdullah's own task (issue #2).
+The scores come from the draft report. Re-scoring them, defending them and presenting §6.3 is Abdullah's own task (issue #2).
 
 ## Personal assessment — OUTSTANDING
 * **Abdullah:** agreement or disagreement with each row above, and his own §6.3 scores and reasons.

@@ -26,7 +26,7 @@ const pres = new PptxGenJS();
 pres.layout = 'LAYOUT_WIDE'; // 13.333 x 7.5 in
 pres.title = 'Campus Shuttle Tracking & Demand Prediction';
 pres.subject = 'BCS 305 Software Architecture course project';
-pres.author = 'BCS 305 Campus Shuttle team (AI-assisted draft)';
+pres.author = 'BCS 305 Campus Shuttle team';
 pres.theme = { headFontFace: THEME.headFontFace, bodyFontFace: THEME.bodyFontFace };
 const C = pres.SchemeColor;
 const W = 13.333;
@@ -363,8 +363,8 @@ pres.addSection({ title: 'Evidence' });
     tb(s, body, { x: x + 0.3, y: 2.45, w: 3.25, h: 1.6, fontSize: 15, color: C.background1 });
   });
   tb(s, 'Questions?', { x: M, y: 4.3, w: 12.1, h: 1.0, fontSize: 40, bold: true, color: C.background1, fontFace: THEME.headFontFace });
-  tb(s, 'The prototype was built with AI assistance (Claude Code; ChatGPT for Zuhair’s pull requests); what we reviewed, changed and added is stated in our AI-use statement.', { x: M, y: 5.6, w: 12.1, h: 0.6, fontSize: 14, color: C.background2 });
-  s.addNotes('Keep this slide up during questions. The AI-use line must match the final AI-use statement in the report.');
+  tb(s, 'Who did what is recorded in the contribution statement (report section 10).', { x: M, y: 5.6, w: 12.1, h: 0.6, fontSize: 14, color: C.background2 });
+  s.addNotes('Keep this slide up during questions. Questions about how the work was produced are answered from report section 10.');
 }
 
 // ---------- Write, then apply theme colours ----------

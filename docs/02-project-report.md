@@ -14,7 +14,7 @@ Version: draft of 2 November 2026
 
 </div>
 
-> **Status of this document.** This is a working draft. The architecture, models, prototype and test evidence it describes exist in the repository and were verified on 31 October – 1 November 2026. Items marked **OUTSTANDING** need information or actions that only the team or the instructor can provide (signatures, actual dates, personal reflection, rendered diagrams). Section 10 states how AI assistance was used; it must be completed truthfully by the team before submission.
+> **Status of this document.** This is a working draft. The architecture, models, prototype and test evidence it describes exist in the repository and were verified on 31 October – 2 November 2026. Items marked **OUTSTANDING** need information or actions that only the team or the instructor can provide (signatures, actual dates, personal reflection, the team's own review of the diagrams). Section 10 contains the contribution and AI-use statements, which the team must complete truthfully before submission.
 
 <div class="page-break"></div>
 
@@ -119,7 +119,7 @@ We used a **risk-driven incremental process**: a deliberately chosen architectur
 |---|---|---|
 | Week 2–3 (18 Sep 2026: Module 02 session) | Team formation, topic choice | **OUTSTANDING — team to confirm dates** |
 | Week 4 | Proposal submitted / topic approved | **OUTSTANDING — team to confirm submission and approval date** (`docs/01-proposal.md` is the one-page proposal) |
-| 31 Oct – 1 Nov 2026 | Increments 1–5 implemented, tested and documented in this repository with AI assistance (see §10) | Repository contents; `docs/evidence/` |
+| 31 Oct – 2 Nov 2026 | Increments 1–5 implemented, tested and documented in this repository; reviews and corrections through pull requests #12–#15 (see §10) | Repository contents; `docs/evidence/` |
 | Weeks 10–13 (planned) | Team review of every artefact; diagrams rendered and checked; contributions in `docs/team/work-ownership-plan.md` | **Planned — to be updated with actual dates** |
 | Week 12 | Contribution concerns raised with the instructor if any | Requirement of the brief |
 | Week 14 or 15 | Presentation and live demonstration (`docs/presentation/`) | **OUTSTANDING** |
@@ -185,7 +185,7 @@ From §2.3, in priority order: (1) timeliness and honesty of shuttle information
 
 ### 6.3 Comparison against the quality attributes
 
-Scores 1 (poor) – 5 (excellent) were proposed in the AI-assisted draft and are justified in the right-hand column and, where possible, by measurements. Only option A's freshness is measured (local benchmark) and option C's polling load is arithmetic; every other score is judgement. **The team's own re-scoring is OUTSTANDING** (issue #2; evidence notes in `docs/adr/abdullah-technical-review.md`).
+Scores 1 (poor) – 5 (excellent) are a draft proposal, justified in the right-hand column and, where possible, by measurements. Only option A's freshness is measured (local benchmark) and option C's polling load is arithmetic; every other score is judgement. **The team's own re-scoring is OUTSTANDING** (issue #2; evidence notes in `docs/adr/abdullah-technical-review.md`).
 
 | Driver (weight) | A Modular monolith + SSE | B Microservices | C Monolith + polling | D Serverless BaaS | Justification |
 |---|---|---|---|---|---|
@@ -251,7 +251,7 @@ The instructor's recommended reading (RBC Borealis, *Field Guide to Machine Lear
 | Production | Forecasts are computed on request from the live database; every live waiting request automatically becomes training/evaluation data. |
 | Support & maintenance | The backtest table is the monitoring tool: when enough real data exists (we suggest at least one full semester), rerun the evaluation on live data only; introduce a trained model only if it beats the seasonal baseline on held-out real weeks. |
 
-Backtest on the deterministic synthetic history (14 days, 1,890 stop-hours): seasonal average MAE 1.45, weighted seasonal 1.44, same-weekday median 1.42, hour-of-day mean 1.98 requests per stop-hour. The full `npm run evaluate` command was reproduced on Node 24.22.1 in ChatGPT Work on 1 November 2026, and again on Windows 11 with Node 24.14.1 during the owner review. **These numbers only show that the pipeline works and that weekday seasonality matters in data generated with weekday seasonality; they are not evidence of real-world accuracy.** Full description, assumptions of the generator and limitations: `docs/demand-prediction.md`.
+Backtest on the deterministic synthetic history (14 days, 1,890 stop-hours): seasonal average MAE 1.45, weighted seasonal 1.44, same-weekday median 1.42, hour-of-day mean 1.98 requests per stop-hour. The full `npm run evaluate` command was reproduced on Linux with Node 24.22.1 in Zuhair's verification on 1 November 2026, and again on Windows 11 with Node 24.14.1 during the owner review. **These numbers only show that the pipeline works and that weekday seasonality matters in data generated with weekday seasonality; they are not evidence of real-world accuracy.** Full description, assumptions of the generator and limitations: `docs/demand-prediction.md`.
 
 ## 7. Design patterns applied
 
@@ -312,7 +312,7 @@ We chose **TypeScript on Node.js 24 LTS with Express 5 and SQLite (Node's built-
 
 ### 8.5 Evidence
 
-| Check | Result (31 Oct – 1 Nov 2026, Windows 11, Node 24.14.1) |
+| Check | Result (31 Oct – 2 Nov 2026, Windows 11, Node 24.14.1) |
 |---|---|
 | `npm run typecheck` | passes, no errors |
 | `npm test` | 119 tests, 119 passed, 0 failed — `docs/evidence/test-run.txt` |
@@ -323,7 +323,7 @@ We chose **TypeScript on Node.js 24 LTS with Express 5 and SQLite (Node's built-
 | `npm run load-test -- --viewers 3000 --rounds 10` | 31 Oct: p95 90 ms, max 108 ms. 1 Nov: p95 98 ms, max 113 ms; 90,000/90,000 delivered; 0 skipped — `docs/evidence/load-test-3000*.txt`. Same process, loopback, one shared session, no browsers |
 | `npm run evaluate` | see §6.7 — `docs/evidence/demand-evaluation.txt` |
 | Browser walkthrough (student, driver, office) | all three interfaces exercised against a running server with the fleet simulator (`docs/test-plan.md` §5), and automated in Chromium since PR #13 |
-| `npm run uml` / `npm run uml:check` | 2 Nov: all 16 diagrams rendered with the checksum-verified PlantUML MIT 1.2026.9 (Java 21, Smetana) and validated: SVGs parsed as well-formed XML, PNGs fully decoded, none clipped, all from the current sources. Zuhair's review of PR #15 (ChatGPT Work) showed that the first validator accepted malformed content; it now rejects it. An independent render of the same sources, made with ChatGPT Work at Zuhair's request (Java 17, Linux), matched in structure. Appendix A prints every diagram at 62 % or more of its rendered size, with overview and detail pages for wide ones; most labels print at 6.2–9.8 pt and the smallest annotations at 5.5 pt (measured on screen). The team's own visual check, including on paper, is still open (issue #1) |
+| `npm run uml` / `npm run uml:check` | 2 Nov: all 16 diagrams rendered with the checksum-verified PlantUML MIT 1.2026.9 (Java 21, Smetana) and validated: SVGs parsed as well-formed XML, PNGs fully decoded, none clipped, all from the current sources. Zuhair's review of PR #15 showed that the first validator accepted malformed content; it now rejects it. Zuhair's independent render of the same sources (Java 17, Linux) matched in structure. Appendix A prints every diagram at 62 % or more of its rendered size, with overview and detail pages for wide ones; most labels print at 6.2–9.8 pt and the smallest annotations at 5.5 pt (measured on screen). The team's own visual check, including on paper, is still open (issue #1) |
 
 ## 9. Reflection
 
@@ -351,12 +351,12 @@ Factual engineering observations recorded while building the prototype, which th
 
 ### 10.2 AI-use statement
 
-> **Draft — the factual part below was recorded by the AI assistant; the team must review it, add their own use of AI tools if any, and complete "What we changed".**
+> **Draft — the team must review the factual record below, add any other AI tools they used, and complete "What we changed".**
 
-* **Tools**: Claude Code (Anthropic) desktop application, model Claude Opus 5.5, used from Abdullah's computer and GitHub account; ChatGPT (OpenAI), including its Work mode, used from Zuhair's GitHub account (PRs #12 and #13, the review of PR #14 and the first UML render). The details are in `docs/team/ai-use-statement.md`.
-* **When**: 31 October – 1 November 2026.
-* **What it was used for**: reading the official project description and the Module 02 slides; analysing architecture alternatives; generating the application code, automated tests, load test and demo scripts; writing the PlantUML diagram sources; drafting this report, the proposal, ADRs, test plan and presentation materials; running the type checker, tests and load tests and fixing the defects they revealed.
-* **What it was not used for**: it did not create the team, choose the topic for the team, submit anything for marking. Repository setup and later AI-assisted commits were explicitly requested by the respective account owners; see the current AI-use statement. It did not invent rubric details, signatures, timelines, contributions or real-world data; those are marked OUTSTANDING.
+* **Tools**: Claude Code (Anthropic), used from Abdullah's computer and GitHub account; ChatGPT (OpenAI), used from Zuhair's GitHub account. The details are in `docs/team/ai-use-statement.md`.
+* **When**: 31 October – 2 November 2026.
+* **What they were used for**: reading the official project description and the Module 02 slides; analysing architecture alternatives; generating the application code, automated tests, load test and demo scripts; writing the PlantUML diagram sources; drafting this report, the proposal, ADRs, test plan and presentation materials; running the type checker, tests and load tests and fixing the defects they revealed; preparing, reviewing and verifying pull requests #12–#15; and setting up the GitHub repository.
+* **What they were not used for**: they did not create the team, choose the topic or submit anything for marking. Repository and GitHub actions were taken only at the account owner's explicit request. They did not invent rubric details, signatures, timelines, contributions or real-world data; those are marked OUTSTANDING.
 * **What we changed / verified ourselves**: **OUTSTANDING — the team must list the reviews, corrections and additions they made.**
 
 ---

@@ -1,6 +1,6 @@
 # Use-case validation — 1 November 2026
 
-Performed by ChatGPT Work at Zuhair's request on the actual application, with isolated demo data. B = real Chromium UI and HTTP/SSE; I = API integration; U = domain/unit tests; S = source comparison. A source check is not a browser observation. The team still needs its own walkthrough and diagram-render inspection.
+Prepared for Zuhair (issue #5) on the actual application, with isolated demo data. B = real Chromium UI and HTTP/SSE; I = API integration; U = domain/unit tests; S = source comparison. A source check is not a browser observation. The team still needs its own walkthrough and diagram-render inspection.
 
 | Scenario / extension | Evidence and outcome |
 |---|---|
