@@ -16,4 +16,4 @@ if (problems.length) {
   console.error(`${problems.length} UML export problem(s). Render again with "npm run uml".`);
   process.exit(1);
 }
-console.log(`All ${Object.keys(manifest!.diagrams).length} diagrams have complete, unclipped SVG and PNG exports rendered from their current sources (${manifest!.renderer.plantumlJar}, ${manifest!.renderedAt}).`);
+console.log(`All ${Object.keys(manifest!.diagrams).length} diagrams have well-formed SVG and fully decoded PNG exports, unclipped and rendered from their current sources (${manifest!.renderer.plantumlJar}, ${manifest!.renderedAt}).`);

@@ -1,0 +1,42 @@
+UML export validator — regression evidence for test plan item 16 (Zuhair's review of PR #15)
+Windows 11, node v24.14.1, 2026-11-02 19:32 +0400. Fixtures made from committed diagram 01 by the reviewer's
+reproduce-export-validation.mjs (unmatched <g> before </svg>; PNG scanline 0 filter byte set to 5, CRC recomputed).
+
+1) Reviewer's reproducer on the OLD validator (scripts/uml-exports.ts at 87aceaf):
+   Malformed SVG accepted by svgSize: {"width":1226,"height":1361}
+   PNG with invalid filter accepted by pngSize: {"width":1225,"height":1360}
+   inspectDiagram: {"problems":[],"svg":{"width":1226,"height":1361},"png":{"width":1225,"height":1360}}
+   checkExports problems for corrupt pair with matching manifest: []
+
+2) The same fixtures on the NEW validator:
+   malformed.svg (svgSize) REJECTED: not well-formed XML (fatalError: Opening and ending tag mismatch: "g" != "svg")
+   invalid-filter.png (pngSize) REJECTED: invalid filter type 5 in scanline 0
+   inspectDiagram(paired-case): ["pair.svg:corrupt","pair.png:corrupt"]
+
+3) node --test test/unit/uml-exports.test.ts with the OLD scripts/uml-exports.ts (same new tests):
+     ✔ rejects empty, truncated and corrupt exports that a file-exists check would accept
+     ✖ rejects well-wrapped exports whose content does not parse or decode
+     ✔ flags a PNG clipped by PLANTUML_LIMIT_SIZE although both files decode
+     ✖ refuses to record malformed exports, and the manifest check rejects them even when their hashes match
+     ✖ reports missing, stale, replaced and orphaned exports against the render manifest
+   ℹ tests 5
+   ℹ pass 2
+   ℹ fail 3
+   Failure reasons (in test order):
+     AssertionError [ERR_ASSERTION]: Missing expected exception.
+     AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+     TypeError: Cannot read properties of undefined (reading 'svg')
+   (The stale/orphan test fails on the old file only because recordDiagram now derives sizes by validating; its behaviour is unchanged.)
+
+4) The same tests with the NEW scripts/uml-exports.ts:
+     ✔ rejects empty, truncated and corrupt exports that a file-exists check would accept
+     ✔ rejects well-wrapped exports whose content does not parse or decode
+     ✔ flags a PNG clipped by PLANTUML_LIMIT_SIZE although both files decode
+     ✔ refuses to record malformed exports, and the manifest check rejects them even when their hashes match
+     ✔ reports missing, stale, replaced and orphaned exports against the render manifest
+   ℹ tests 5
+   ℹ pass 5
+   ℹ fail 0
+
+5) Committed exports with the NEW validator:
+   All 16 diagrams have well-formed SVG and fully decoded PNG exports, unclipped and rendered from their current sources (plantuml-mit-1.2026.9.jar, 2026-11-02T15:26:20.743Z).

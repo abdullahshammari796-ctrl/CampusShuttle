@@ -2,15 +2,18 @@
 // renderer (scripts/render-uml.ts), the stand-alone check (scripts/check-uml.ts)
 // and the PDF build (scripts/build-docs.ts).
 //
-// A file existing is not evidence of a successful render. Every export is
-// decoded, its size compared with its sibling (PlantUML clips PNGs at
-// PLANTUML_LIMIT_SIZE but not SVGs), and docs/uml/out/manifest.json ties each
-// export to the SHA-256 of the source it was rendered from, so an export that is
-// older than its source, or was replaced after rendering, is reported as stale.
+// A file existing is not evidence of a successful render. Every SVG is parsed
+// as XML and every PNG is decoded completely, each pair's sizes are compared
+// (PlantUML clips PNGs at PLANTUML_LIMIT_SIZE but not SVGs), and
+// docs/uml/out/manifest.json ties each export to the SHA-256 of the source it was
+// rendered from, so an export that is older than its source, or was replaced
+// after rendering, is reported as stale. A hash only records bytes, so exports
+// are validated before they are recorded and again every time they are checked.
 import { createHash } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
 import { crc32, inflateSync } from 'node:zlib';
+import { DOMParser } from '@xmldom/xmldom';
 
 export interface ImageSize { width: number; height: number }
 
@@ -36,41 +39,74 @@ export const sha256 = (data: Buffer | string): string => createHash('sha256').up
 /** Source hash independent of the checkout's line endings (CRLF on Windows, LF in Git and CI). */
 export const sourceSha256 = (text: string): string => sha256(text.replace(/\r\n/g, '\n'));
 
-/** Decodes a PNG far enough to prove it is complete: chunk CRCs, IHDR, IEND and the full pixel data. */
+/** Channels per pixel for each PNG colour type (greyscale, RGB, palette, greyscale + alpha, RGBA). */
+const PNG_CHANNELS: Record<number, number> = { 0: 1, 2: 3, 3: 1, 4: 2, 6: 4 };
+const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
+
+/**
+ * Decodes a PNG completely, or throws. Accepts exactly the subset PlantUML
+ * writes (8 bits per channel, not interlaced) and rejects every other encoding
+ * rather than skipping it: valid chunk structure and order with correct CRCs,
+ * the zlib stream inflates to exactly one filter byte plus one row of pixels
+ * per scanline, every filter type is 0–4, and after reconstructing each
+ * scanline every palette index refers to an existing PLTE entry.
+ */
 export function pngSize(buf: Buffer): ImageSize {
   if (buf.length === 0) throw new Error('empty file');
   if (buf.length < 8 || !buf.subarray(0, 8).equals(PNG_SIGNATURE)) throw new Error('not a PNG (bad signature)');
-  let pos = 8;
-  let size: ImageSize | null = null;
-  let rowBytes = 0;
-  let interlaced = false;
+  let header: { width: number; height: number; colourType: number; channels: number } | null = null;
+  let paletteEntries = 0;
   const idat: Buffer[] = [];
+  let idatEnded = false;
   let ended = false;
+  let pos = 8;
   while (pos < buf.length) {
     if (pos + 12 > buf.length) throw new Error(`truncated chunk header at byte ${pos}`);
     const length = buf.readUInt32BE(pos);
     const type = buf.toString('latin1', pos + 4, pos + 8);
-    if (pos + 12 + length > buf.length) throw new Error(`truncated ${type} chunk at byte ${pos}`);
+    if (!/^[A-Za-z]{4}$/.test(type)) throw new Error(`invalid chunk type at byte ${pos}`);
+    if (length > 0x7fffffff || pos + 12 + length > buf.length) throw new Error(`truncated ${type} chunk at byte ${pos}`);
     const data = buf.subarray(pos + 8, pos + 8 + length);
     if (crc32(buf.subarray(pos + 4, pos + 8 + length)) !== buf.readUInt32BE(pos + 8 + length)) throw new Error(`CRC mismatch in ${type} chunk`);
-    if (!size && type !== 'IHDR') throw new Error('first chunk is not IHDR');
-    if (type === 'IHDR') {
-      size = { width: data.readUInt32BE(0), height: data.readUInt32BE(4) };
-      const bitDepth = data[8];
-      const channels = ({ 0: 1, 2: 3, 3: 1, 4: 2, 6: 4 } as Record<number, number>)[data[9]];
-      if (!channels || !size.width || !size.height) throw new Error('invalid IHDR');
-      rowBytes = 1 + Math.ceil((size.width * channels * bitDepth) / 8);
-      interlaced = data[12] === 1;
-    } else if (type === 'IDAT') {
+    pos += 12 + length;
+
+    if (!header) {
+      if (type !== 'IHDR' || length !== 13) throw new Error('first chunk is not a valid IHDR');
+      const [bitDepth, colourType, compression, filter, interlace] = data.subarray(8, 13);
+      const width = data.readUInt32BE(0);
+      const height = data.readUInt32BE(4);
+      const channels = PNG_CHANNELS[colourType];
+      if (!width || !height || !channels || compression !== 0 || filter !== 0) throw new Error('invalid IHDR');
+      if (bitDepth !== 8 || interlace !== 0) throw new Error(`unsupported PNG encoding (bit depth ${bitDepth}, interlace ${interlace}): only 8-bit, non-interlaced images as written by PlantUML are accepted`);
+      header = { width, height, colourType, channels };
+      continue;
+    }
+    if (type === 'IDAT') {
+      if (idatEnded) throw new Error('IDAT chunks are not consecutive');
+      if (header.colourType === 3 && !paletteEntries) throw new Error('palette image without a PLTE chunk before its data');
       idat.push(data);
-    } else if (type === 'IEND') {
+      continue;
+    }
+    if (idat.length) idatEnded = true;
+    if (type === 'IEND') {
+      if (length !== 0) throw new Error('invalid IEND chunk');
       ended = true;
       break;
     }
-    pos += 12 + length;
+    if (type === 'IHDR') throw new Error('second IHDR chunk');
+    if (type === 'PLTE') {
+      if (idat.length || paletteEntries || header.colourType === 0 || header.colourType === 4) throw new Error('misplaced PLTE chunk');
+      if (length === 0 || length % 3 !== 0 || length > 768) throw new Error('invalid PLTE chunk');
+      paletteEntries = length / 3;
+    } else if (type === 'tRNS' && header.colourType === 3 && length > paletteEntries) {
+      throw new Error('tRNS chunk longer than the palette');
+    } else if (type.charCodeAt(0) < 0x61) {
+      throw new Error(`unknown critical chunk ${type}`); // an upper-case first letter marks a chunk a decoder must understand
+    }
   }
-  if (!size) throw new Error('no IHDR chunk');
+  if (!header) throw new Error('no IHDR chunk');
   if (!ended) throw new Error('no IEND chunk (file truncated)');
+  if (pos !== buf.length) throw new Error(`${buf.length - pos} byte(s) after IEND`);
   if (!idat.length) throw new Error('no image data');
   let pixels: Buffer;
   try {
@@ -78,21 +114,67 @@ export function pngSize(buf: Buffer): ImageSize {
   } catch {
     throw new Error('image data does not decompress');
   }
-  if (!interlaced && pixels.length < rowBytes * size.height) throw new Error(`image data incomplete (${pixels.length} of ${rowBytes * size.height} bytes)`);
-  return size;
+  const stride = header.width * header.channels; // bytes per scanline at 8 bits per channel
+  if (pixels.length !== (stride + 1) * header.height) throw new Error(`image data has ${pixels.length} bytes, expected ${(stride + 1) * header.height}`);
+
+  // Reconstruct every scanline (PNG specification §9) so that palette indices can be checked.
+  const bpp = header.channels;
+  let previous = Buffer.alloc(stride);
+  let row = Buffer.alloc(stride);
+  for (let y = 0; y < header.height; y++) {
+    const start = y * (stride + 1);
+    const filter = pixels[start];
+    if (filter > 4) throw new Error(`invalid filter type ${filter} in scanline ${y}`);
+    for (let x = 0; x < stride; x++) {
+      const a = x >= bpp ? row[x - bpp] : 0;
+      const b = previous[x];
+      const c = x >= bpp ? previous[x - bpp] : 0;
+      let predictor = 0;
+      if (filter === 1) predictor = a;
+      else if (filter === 2) predictor = b;
+      else if (filter === 3) predictor = (a + b) >> 1;
+      else if (filter === 4) {
+        const p = a + b - c;
+        const pa = Math.abs(p - a);
+        const pb = Math.abs(p - b);
+        const pc = Math.abs(p - c);
+        predictor = pa <= pb && pa <= pc ? a : pb <= pc ? b : c;
+      }
+      row[x] = (pixels[start + 1 + x] + predictor) & 0xff;
+    }
+    if (header.colourType === 3) {
+      for (let x = 0; x < stride; x++) if (row[x] >= paletteEntries) throw new Error(`palette index ${row[x]} out of range in scanline ${y}`);
+    }
+    [previous, row] = [row, previous];
+  }
+  return { width: header.width, height: header.height };
 }
 
-/** Checks that an SVG is complete, is not a PlantUML error image, and returns its size. */
+/**
+ * Parses an SVG as XML and returns its size, or throws. The file must be
+ * well-formed (xmldom reports undefined entities, content after the root
+ * element and unquoted attributes only as errors or warnings, so any report
+ * rejects the file), its root must be an SVG <svg> element, and it must not be
+ * a PlantUML error image.
+ */
 export function svgSize(text: string): ImageSize {
   if (!text.trim()) throw new Error('empty file');
-  const root = /<svg\b[^>]*>/.exec(text);
-  if (!root) throw new Error('no <svg> root element');
   if (!text.trimEnd().endsWith('</svg>')) throw new Error('no closing </svg> (file truncated)');
-  if (PLANTUML_ERROR.test(text)) throw new Error('PlantUML drew an error image');
-  const attr = (name: string) => new RegExp(`\\b${name}="([\\d.]+)(?:px)?"`).exec(root[0])?.[1];
-  const viewBox = /\bviewBox="[\d.-]+ [\d.-]+ ([\d.]+) ([\d.]+)"/.exec(root[0]);
-  const width = Number(attr('width') ?? viewBox?.[1]);
-  const height = Number(attr('height') ?? viewBox?.[2]);
+  const reports: string[] = [];
+  let doc: ReturnType<DOMParser['parseFromString']> | null = null;
+  try {
+    doc = new DOMParser({ onError: (level, message) => { reports.push(`${level}: ${String(message).split('\n')[0]}`); } }).parseFromString(text, 'image/svg+xml');
+  } catch (e) {
+    if (!reports.length) reports.push(String((e as Error).message).split('\n')[0]);
+  }
+  if (reports.length || !doc) throw new Error(`not well-formed XML (${reports[0]})`);
+  const root = doc.documentElement;
+  if (!root || root.localName !== 'svg' || root.namespaceURI !== SVG_NAMESPACE) throw new Error('root element is not an SVG <svg> element');
+  if (PLANTUML_ERROR.test(root.textContent ?? '')) throw new Error('PlantUML drew an error image');
+  const length = (value: string | null) => Number(/^\s*([\d.]+)(?:px)?\s*$/.exec(value ?? '')?.[1] ?? NaN);
+  const viewBox = (root.getAttribute('viewBox') ?? '').trim().split(/[\s,]+/).map(Number);
+  const width = length(root.getAttribute('width')) || viewBox[2];
+  const height = length(root.getAttribute('height')) || viewBox[3];
   if (!(width > 0 && height > 0)) throw new Error('no usable width/height');
   return { width, height };
 }
@@ -170,8 +252,13 @@ export function checkExports(umlDir: string, outDir: string, manifest: UmlManife
   return problems;
 }
 
-/** Builds the manifest record for one validated diagram. */
-export function recordDiagram(umlDir: string, outDir: string, name: string, sizes: { svg: ImageSize; png: ImageSize }): DiagramRecord {
+/** Validates one diagram's exports and builds its manifest record; throws instead of recording invalid exports. */
+export function recordDiagram(umlDir: string, outDir: string, name: string): DiagramRecord {
+  const { problems, svg: svgDims, png: pngDims } = inspectDiagram(outDir, name);
+  if (problems.length || !svgDims || !pngDims) {
+    throw new Error(`refusing to record ${name}: ${problems.map((p) => `${p.file} ${p.kind} — ${p.detail}`).join('; ')}`);
+  }
+  const sizes = { svg: svgDims, png: pngDims };
   const file = (ext: string) => readFileSync(join(outDir, `${name}.${ext}`));
   return {
     source: `docs/uml/${name}.puml`,

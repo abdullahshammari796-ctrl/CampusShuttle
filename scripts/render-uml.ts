@@ -10,7 +10,8 @@
 //   another jar version: PLANTUML_JAR_SHA256=<its published SHA-256>
 //
 // The run fails (and leaves docs/uml/out/ untouched) unless the jar matches its
-// expected SHA-256 and every new export decodes completely, is not clipped by
+// expected SHA-256 and every new SVG parses as well-formed XML and every PNG
+// decodes completely (scripts/uml-exports.ts), neither is clipped by
 // the PNG size limit and matches its SVG's size. Exports are rendered into a
 // fresh temporary folder, so files from an earlier run can never pass as new.
 // `npm run uml:check` re-checks the committed exports without Java.
@@ -19,7 +20,7 @@ import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFile
 import { tmpdir } from 'node:os';
 import { basename, join, resolve } from 'node:path';
 import { PROJECT_ROOT } from '../src/config.ts';
-import { type DiagramRecord, type ExportProblem, type ImageSize, MANIFEST_FILE, type UmlManifest, checkExports, inspectDiagram, recordDiagram, sha256 } from './uml-exports.ts';
+import { type DiagramRecord, type ExportProblem, MANIFEST_FILE, type UmlManifest, checkExports, inspectDiagram, recordDiagram, sha256 } from './uml-exports.ts';
 
 const EXPECTED_JAR_SHA256 = process.env.PLANTUML_JAR_SHA256 ?? 'e84e45b37ad3030cf802e7be18a687d209eca55733a5679b1f1f1a515f7f70dd'; // plantuml-mit 1.2026.9
 const umlDir = resolve(PROJECT_ROOT, 'docs', 'uml');
@@ -52,13 +53,7 @@ try {
     if (result.status !== 0) fail(`PlantUML failed (${format}, exit ${result.status}). Fix the reported diagram and run again; docs/uml/out/ was not changed.`);
   }
 
-  const sizes = new Map<string, { svg: ImageSize; png: ImageSize }>();
-  const problems: ExportProblem[] = [];
-  for (const name of names) {
-    const inspected = inspectDiagram(tmp, name);
-    problems.push(...inspected.problems);
-    if (inspected.svg && inspected.png) sizes.set(name, { svg: inspected.svg, png: inspected.png });
-  }
+  const problems = names.flatMap((name) => inspectDiagram(tmp, name).problems);
   if (problems.length) fail(`${problems.length} export problem(s); docs/uml/out/ was not changed. A clipped PNG needs a larger PLANTUML_LIMIT_SIZE.`, problems);
 
   mkdirSync(outDir, { recursive: true });
@@ -66,7 +61,7 @@ try {
   const diagrams: Record<string, DiagramRecord> = {};
   for (const name of names) {
     for (const ext of ['svg', 'png']) copyFileSync(join(tmp, `${name}.${ext}`), join(outDir, `${name}.${ext}`));
-    diagrams[name] = recordDiagram(umlDir, outDir, name, sizes.get(name)!);
+    diagrams[name] = recordDiagram(umlDir, outDir, name); // validates again and refuses invalid exports
   }
   const manifest: UmlManifest = {
     generator: 'scripts/render-uml.ts',

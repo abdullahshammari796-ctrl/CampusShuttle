@@ -1,6 +1,6 @@
 {
   "generator": "scripts/render-uml.ts",
-  "renderedAt": "2026-11-01T20:43:34.488Z",
+  "renderedAt": "2026-11-02T15:26:20.743Z",
   "renderer": {
     "plantumlJar": "plantuml-mit-1.2026.9.jar",
     "jarSha256": "e84e45b37ad3030cf802e7be18a687d209eca55733a5679b1f1f1a515f7f70dd",
