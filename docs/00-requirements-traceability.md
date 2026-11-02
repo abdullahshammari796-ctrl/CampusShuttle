@@ -34,7 +34,7 @@ Status: ✅ done and verified · ◐ done, with a limitation · ⏳ OUTSTANDING 
 | §4.3 | Component boundaries visible in code | `src/<component>/`; allowed imports enforced by `test/architecture.test.ts` (imports only — UML operations and associations are checked by hand) | ✅ |
 | §4.3 | ≥ 2 primary use cases end to end | UC2+UC1 and UC3→UC4/UC5 (tests + browser walkthrough) | ✅ |
 | §4.3 | Technology justified in one paragraph | Report §8.4 | ✅ |
-| §4.3 | Source code submitted with a README explaining how to run it | `README.md`; public repository https://github.com/abdullahshammari796-ctrl/CampusShuttle | ✅ (repository created 1 Nov 2026; Zuhair accepted his invitation; PRs #12 and #13 merged after review; `main` protected: pull request, 1 approving review and the `verify` check required; ⏳ Moodle submission by the team) |
+| §4.3 | Source code submitted with a README explaining how to run it | `README.md`; public repository https://github.com/abdullahshammari796-ctrl/CampusShuttle | ✅ (repository created 1 Nov 2026; Zuhair accepted his invitation; PRs #12–#15 merged after review; `main` protected: pull request, 1 approving review and the `verify` check required; ⏳ Moodle submission by the team) |
 | §4.4 | Presentation; every member speaks; strict timing | `docs/presentation/`, `docs/demo-script.md` | ◐ ⏳ official time limit unknown |
 | §8 | Grading rubric | Not in the provided document | ⏳ obtain from the instructor |
 
@@ -55,5 +55,5 @@ Status: ✅ done and verified · ◐ done, with a limitation · ⏳ OUTSTANDING 
 | Proposal, report, UML set, README, ADRs, QA scenarios, test plan, presentation/demo materials | `docs/` | ✅ drafts; PDFs rebuilt with the rendered diagrams (2 Nov). ⏳ Not final until the team-only facts (issue #11) and human acceptance items are supplied |
 | Free, local stack; reproducible setup; demo data; automated tests | `package.json`, seed, tests | ✅ |
 | Tests: main workflows, roles, simultaneous connections, ETA, GPS interruption/recovery, demand calculations, edge cases | `test/` (119 Node tests) and `e2e/` (22 Chromium tests: roles, use cases, accessibility, driver location source, sign-in form safety); both run in GitHub Actions on every PR to `main` | ✅ |
-| No remote repository, pushes, commits or Git config changes without explicit authorisation | Repository created, baseline pushed and Zuhair invited only on Abdullah's explicit request (1 Nov 2026), after a public-release audit; commits use Abdullah's GitHub no-reply address, no Git configuration was changed, no AI co-author | ✅ |
+| No remote repository, pushes, commits or Git config changes without explicit authorisation | Repository created, baseline pushed and Zuhair invited only on Abdullah's explicit request (1 Nov 2026), after a public-release audit; commits use Abdullah's GitHub no-reply address and no Git configuration was changed; since 1 Nov 2026 main changes only through reviewed pull requests | ✅ |
 | Work-ownership plan with genuine future contributions | `docs/team/work-ownership-plan.md` | ✅ |
