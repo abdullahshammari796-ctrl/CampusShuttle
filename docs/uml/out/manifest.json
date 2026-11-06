@@ -1,6 +1,6 @@
 {
   "generator": "scripts/render-uml.ts",
-  "renderedAt": "2026-11-02T15:26:20.743Z",
+  "renderedAt": "2026-11-06T20:15:20.298Z",
   "renderer": {
     "plantumlJar": "plantuml-mit-1.2026.9.jar",
     "jarSha256": "e84e45b37ad3030cf802e7be18a687d209eca55733a5679b1f1f1a515f7f70dd",
@@ -136,15 +136,15 @@
     },
     "10-component-diagram": {
       "source": "docs/uml/10-component-diagram.puml",
-      "sourceSha256": "607395142661f71a3fb8902d09afd1220eecf9d78c351629709cd4e706d826c4",
+      "sourceSha256": "e3c2920a90b2891c5adcfb692265579936262682ae4b5b2b8459ceccba679d7f",
       "svg": {
-        "sha256": "0e9a50c7ec338daf854a4bdff4ef29b8415cfbc8c06508920f72b189745d2c81",
-        "width": 2648,
+        "sha256": "d8f54746c228c7d2b4fb1dd5913341f60ea07c8c48ffd8462b0ae5d2d2da21e6",
+        "width": 2610,
         "height": 767
       },
       "png": {
-        "sha256": "2457f7d673346b166f01b1d0f5f83f4d2cb452c455e2117f57a7b49ec92a9172",
-        "width": 2647,
+        "sha256": "9edc2495d419a8a9c4194bfd6a5ce9f85b8a0af6909eed2deee72631b548663a",
+        "width": 2609,
         "height": 766
       }
     },
