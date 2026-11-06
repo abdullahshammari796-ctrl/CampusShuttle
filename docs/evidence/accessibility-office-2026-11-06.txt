@@ -1,0 +1,38 @@
+Office page accessibility — automated checks, 6–7 November 2026 (test plan item 17)
+
+METHOD
+axe-core 4.14.0 through @axe-core/playwright 4.14.0, tags wcag2a, wcag2aa, wcag21aa and wcag22aa, on all five
+office tabs (Live operations, Demand & forecast, Routes, Trip history, System), light and dark colour schemes,
+at 1280 × 900 and 390 × 844, against the walkthrough server with demonstration data (Playwright 1.64.1,
+Chrome for Testing 156, Windows 11, Node 24.14.1). These are automated checks: they are not a screen-reader
+session, a physical-device check or WCAG certification.
+
+BEFORE THE FIX (main at 695eb88)
+- Demand & forecast, every size and scheme: color-contrast (serious). White numbers on the mid-blue heat-map
+  cell #3987e5 (about 3.6:1; small text needs 4.5:1); 20 cells in light mode and 33 in dark mode. In dark mode
+  the ramp colour #2a78d6 reached only 4.4:1 with white and 4.2:1 with the dark ink.
+- Demand & forecast at 390 px: scrollable-region-focusable (serious), 3 table wrappers.
+- System at 390 px, once the audit log had a real entry: scrollable-region-focusable (serious), 1 wrapper.
+- Keyboard: the forecast heat-map cells were <td> elements with a click handler only. Tab never reached them,
+  so the explanation (UC5 step 3) could not be opened without a mouse.
+- No horizontal page overflow on any tab at either width.
+
+FIX
+- public/js/office.js: each forecast cell holds a <button> with an accessible name, e.g.
+  "Library & Learning Commons 08:00: 8 expected".
+- public/js/charts.js: the ink colour is chosen by computed WCAG contrast (the higher of two inks); the dark-ramp
+  colour #2a78d6 was replaced by #2672cc, so every ramp colour reaches 4.5:1 with one ink.
+- public/office.html: the history, backtest and audit table wrappers are focusable, named regions; the
+  explanation area is aria-live="polite".
+- public/css/app.css: the cell buttons fill their cells and show a focus outline.
+
+REGRESSION TESTS (e2e/accessibility.spec.ts)
+- "office light|dark: automated WCAG checks on every tab at phone width" — makes one audited route update first,
+  so the audit table has a real row.
+- "office can open a forecast explanation (UC5 step 3) using only the keyboard".
+Run against the unfixed public/ files: all three failed — color-contrast and scrollable-region-focusable
+(Demand & forecast), scrollable-region-focusable (System, with the audit fix alone removed), and
+"expect(locator('#forecast-heat :focus')).toHaveCount(1) — Received: 0". With the fix: all three pass.
+
+AFTER THE FIX
+The same sweep (5 tabs × 2 schemes × 2 widths = 20 scans, audit log with a real entry): no violations, no horizontal overflow.

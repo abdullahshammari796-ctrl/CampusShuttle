@@ -10,6 +10,8 @@ This source-and-evidence review was prepared at Abdullah's request for his side 
 | 0007 offline schematic SVG map | The map is drawn from route geometry with a 100 m grid (`public/js/map.js`), with no third-party tile requests (the CSP blocks them). Stops are keyboard-operable buttons only where clicking does something. On narrow screens the legend no longer covers stops (PR #13, axe and layout checks in `e2e/accessibility.spec.ts`). | **Third-party tiles:** familiar streets, but they leak viewers' locations to the provider, need keys or usage limits, and fail offline. **Self-hosted tiles:** keep privacy but add a tile pipeline that a two-person team does not need for a nine-stop campus. | Users who cannot orient themselves without buildings or streets: add self-hosted tiles behind the same map component. |
 
 ## Score rationale for report §6.3 (issue #2)
+*Superseded on 6 November 2026 by `docs/architecture/technical-assessment.md`, which re-scored option C (polling does not determine modularity) and option D; the totals are now A 61, C 52, D 45, B 44. The text below is kept as the 1 November record.*
+
 The weighted totals in §6.3 add up correctly: A 61, B 44, C 46 and D 51 out of 70, with weights 3, 3, 2, 2, 3 and 1. Only some of the inputs are measured:
 * **Measured:** freshness and fan-out for option A, from the local benchmark. It is a same-process loopback test, not real campus Wi-Fi.
 * **Derived by arithmetic:** the polling load for option C (1,000 viewers × one request per 5 s = 200 requests/s).

@@ -2,7 +2,7 @@
 
 This record lists the work submitted from Zuhair's account and the reviews he posted. How the work was produced, including the tools used, is declared in `ai-use-statement.md`. This record makes no claim of unaided or hand-written work, and no signatures, personal reflections or field observations have been invented.
 
-## Current status (2 November 2026)
+## Current status (7 November 2026)
 
 | Issue / PR | Concrete contribution | Status |
 |---|---|---|
@@ -15,6 +15,7 @@ This record lists the work submitted from Zuhair's account and the reviews he po
 | Review of PR #14 | Independent Linux review (Node 24.22.1): type check, 114/114 Node tests, 21/21 Chromium 138 tests, evaluation and full audit; [approving review](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/14#pullrequestreview-5729974323) at head `96006f6` | PR #14 merged on 2 Nov 2026 (`f9327d4`). |
 | UML rendering evidence (#1) | First render of all 16 unchanged sources with the checksum-verified PlantUML MIT 1.2026.9 (Java 17, Smetana); found empty PNGs (03, 06) and PNGs clipped at 4096 px (08, 09); supplied a hash manifest | The failures it found are detected by `npm run uml:check`. The committed exports were rendered on Abdullah's machine from the same sources and checked against this render. |
 | Review of PR #15 | Independent Linux review of head `87aceaf`, then re-review of the corrections at `ebf4ba5` (details below) | [Changes requested](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/15#pullrequestreview-5730257445) at `87aceaf`; [approved](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/15#pullrequestreview-5739614810) at `ebf4ba5`; PR #15 merged on 2 Nov 2026 (`5232999`). |
+| Review of PR #16 | Independent Linux review of head `052ae3b` (Node 24.22.1, Chromium 138): 119/119 Node tests and 22/22 Chromium tests in one full run; edited the wording of his own PR #12/#13 descriptions and three of his reviews | [Approved](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/16#pullrequestreview-5742229877); PR #16 merged on 2 Nov 2026 (`695eb88`). |
 
 ### PR #15 review evidence
 **First review, at head `87aceaf`:**

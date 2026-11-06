@@ -1,7 +1,7 @@
 # Project proposal — Campus Shuttle Tracking & Demand Prediction
 
 **BCS 305 Software Architecture · Fall 2026 · Instructor: Dr. Khaled Ammar**  
-**Team:** Abdullah (`abdullahshammari796-ctrl`) · Zuhair Halawa (`zuhairhalawa`) — *student IDs: to be added* · Team of two (the brief allows three ± one)
+**Team:** Abdullah (`abdullahshammari796-ctrl`) · Zuhair Halawa (`zuhairhalawa`) — *student IDs: in the private submission copy only* · Team of two (the brief allows three ± one)
 
 **Problem.** Students on UAE campuses that run shuttle buses cannot see where a shuttle is or when it will reach their stop, so they wait outdoors — often in extreme heat — or miss it; the transport office plans vehicles without data on where and when students actually wait.
 

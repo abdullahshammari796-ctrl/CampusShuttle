@@ -15,3 +15,6 @@ One deployable Node.js process, internally split into components (`identity`, `n
 * − Single point of failure; mitigated by persisting before updating memory and by `TrackingService.recover()` on restart.
 * − Vertical scaling only, until the event bus is replaced by a broker (see ADR-0002).
 * Revisit if: several campuses, more than one server instance, or independent release cycles become necessary.
+
+## Reassessment — 6 November 2026
+The options were re-scored in `docs/architecture/technical-assessment.md` (a technical assessment, not either member's personal view). The draft had let the polling transport lower option C's modularity score; corrected totals: A 61, C 52, D 45, B 44. The decision stands. Its sensitivity point: A beats C only on freshness (QA-1), so a relaxed freshness requirement would make a polling monolith an equally good choice.
