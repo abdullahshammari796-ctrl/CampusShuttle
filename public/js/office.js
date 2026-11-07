@@ -284,12 +284,15 @@ function renderForecast(f) {
   })), { height: 200, tickEvery: 2, label: 'Expected waiting requests per hour' });
 
   const max = Math.max(1, ...f.stops.flatMap((s) => s.predictions.map((p) => p.expected ?? 0)));
+  // Each cell holds a real button, so the explanation (UC5 step 3) can be opened with the keyboard too.
+  const cellButton = (label, text) => html`<button type="button" class="heat-cell" aria-label="${label}">${text}</button>`;
   render($('#forecast-heat'), html`
     <thead><tr><th></th>${f.hours.map((h) => html`<th>${String(h).padStart(2, '0')}</th>`)}<th>Total</th></tr></thead>
     <tbody>${f.stops.map((s) => html`<tr><th>${s.stopName}</th>${s.predictions.map((p) => {
-      if (p.expected === null) return html`<td class="nodata clickable" data-stop="${s.stopId}" data-hour="${p.hour}" data-tip="${s.stopName} ${hourLabel(p.hour)}: no history">–</td>`;
+      if (p.expected === null) return html`<td class="nodata clickable" data-stop="${s.stopId}" data-hour="${p.hour}" data-tip="${s.stopName} ${hourLabel(p.hour)}: no history">${cellButton(`${s.stopName} ${hourLabel(p.hour)}: no history`, '–')}</td>`;
       const bg = sequentialColor(p.expected, max);
-      return html`<td class="clickable" data-stop="${s.stopId}" data-hour="${p.hour}" data-bg="${bg ?? ''}" data-ink="${inkFor(bg)}" data-tip="${s.stopName} ${hourLabel(p.hour)}: ${p.expected} expected (range ${p.low}–${p.high})">${p.expected >= 1 || p.expected === 0 ? Math.round(p.expected) : "<1"}</td>`;
+      const shown = p.expected >= 1 || p.expected === 0 ? String(Math.round(p.expected)) : '<1';
+      return html`<td class="clickable" data-stop="${s.stopId}" data-hour="${p.hour}" data-bg="${bg ?? ''}" data-ink="${inkFor(bg)}" data-tip="${s.stopName} ${hourLabel(p.hour)}: ${p.expected} expected (range ${p.low}–${p.high})">${cellButton(`${s.stopName} ${hourLabel(p.hour)}: ${shown} expected`, shown)}</td>`;
     })}<td class="num"><strong>${Math.round(s.total)}</strong></td></tr>`)}</tbody>`);
   paintHeat($('#forecast-heat'));
 }

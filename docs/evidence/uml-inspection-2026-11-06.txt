@@ -1,0 +1,75 @@
+UML pages — on-screen inspection and print-size measurement, 6–7 November 2026 (test plan item 18)
+
+WHO AND HOW
+- Done by the AI tool declared in docs/team/ai-use-statement.md, on Abdullah's computer. It is NOT Abdullah's own
+  inspection (issue #1), and nothing was printed: an on-screen inspection cannot show that the pages are readable
+  on paper.
+- Every page of docs/build/uml-diagram-set.pdf and the Appendix A pages of docs/build/project-report.pdf were
+  rasterised with the Windows PDF engine (1100 px wide) and viewed as contact sheets and, where needed, as full pages.
+- Printed text sizes were computed from the build: the scale of each embedded figure or detail page (shown width ÷
+  SVG width) × the SVG's font sizes × 0.75 pt per CSS pixel.
+
+DEFECTS FOUND AND FIXED
+1. A.11 component diagram: the interface labels "WaitingRequest & DemandHistory repositories" and "UserRepository"
+   were drawn over each other. docs/uml/10-component-diagram.puml now breaks both over several lines. Re-rendered
+   with `npm run uml` (checksum-verified plantuml-mit 1.2026.9, Java 21, Smetana) on 7 Nov 2026; only diagram 10's
+   SVG and PNG and the manifest changed, the other 15 exports were byte-identical. `npm run uml:check` passes.
+2. Print size: at the old minimum scale (60 %), reading pages printed 11–12 px labels at 5.5–5.6 pt (A.5, A.9, A.15).
+   scripts/build-docs.ts now enlarges each diagram in the separate UML-set PDF towards a 7 pt minimum, without cutting
+   it into more rows of pages than before. A.4's explanatory paragraph was moved above its figure, so it no longer
+   ends up alone on a page.
+
+SMALLEST PRINTED TEXT ON THE READING PAGES (pt)
+Figure                     UML-set PDF (scale)   before   Report Appendix A (scale)
+A.1 Use case               8.1  (83 %)            8.1      8.1  (83 %)
+A.3 Activity               6.2  (75 %)            6.2      6.2  (75 %)
+A.4 System sequence        6.6  (80 %)            6.0      6.0  (72 %)
+A.5 Design sequence        6.7  (81 %)            5.5      5.5  (67 %)
+A.6 Trip state machine     6.9  (71 %)            6.2      6.2  (64 %)
+A.7 Waiting state machine  9.8  (100 %)           9.8      9.8  (100 %)
+A.8 Domain model           6.4  (66 %)            6.4      6.4  (66 %)
+A.9 Class diagram 1        5.7  (63 %)            5.7      5.7  (63 %)   stereotypes 5.7, members 6.6
+A.10 Class diagram 2       6.3  (70 %)            5.9      5.9  (65 %)
+A.11 Component             7.0  (72 %)            6.9      7.0  (72 %)
+A.12 Deployment            9.1  (93 %)            9.1      9.1  (93 %)
+A.13 Strategy              7.1  (79 %)            7.1      7.1  (79 %)
+A.14 Observer              6.2  (69 %)            6.2      6.2  (69 %)
+A.15 State                 9.0  (100 %)           5.6      5.6  (62 %)
+A.16 Repository            9.0  (100 %)           6.1      6.1  (68 %)
+A.17 Adapter               7.2  (80 %)            6.1      6.1  (68 %)
+UML-set PDF: 9 of 16 diagrams at 6.9 pt or more (5 before); 47 pages (40 before). Report: 63 pages.
+A.9 and A.10 cannot reach 7 pt on A4 without cutting class boxes across pages; print them on A3 or read the vector
+PDF on screen.
+
+NOTATION AND LAYOUT (what was checked on screen)
+- No clipped diagram, no placeholder, no heading separated from its figure, no blank page.
+- A.1: all actors outside the system boundary; generalisation (hollow triangles) from Student and Driver to Campus
+  user; «include» arrows from base to included use case, «extend» from extension to base. Two connector lines cross
+  the boundary's title (cosmetic).
+- A.3: two swimlanes (Driver app, Server); decisions carry guards (yes / no — network loss, GPS outage); the end-trip
+  loop and the server-side end paths are present.
+- A.4: the system is one lifeline; messages are operations with parameters; loop, opt and alt fragments; no database
+  or controller lifeline.
+- A.5: participants are real classes and ports; the "next event-loop turn" separator is labelled.
+- A.6/A.7: initial and final states, composite Active state, after(…) time events, guards in brackets.
+- A.8–A.10: attributes, operations (design classes), associations with multiplicities, interfaces and stereotypes.
+- A.11: provided interfaces as lollipops, required ones as dependencies; component boundaries match src/ folders.
+- A.12: devices, execution environments and artifacts; the production recommendation is a note.
+- A.13–A.17: one problem and one class structure per pattern; A.17 labels GpsSource as a duck-typed contract.
+
+CONSISTENCY CHECKS (Module 04, printed slide 20; Week 6 sheet part 5)
+1. Every actor appears elsewhere: Student, Driver, Transport office staff, GPS receiver and Scheduler all appear in
+   the A.2 descriptions; Driver and Student in A.4. PASS.
+2. One SSD for the main scenario modelled: A.4 covers UC2 with UC1. PASS for that scenario; the other use cases have
+   none (the brief asks for one).
+3. Every activity step that crosses the boundary is a message: request trip start → startTrip, upload →
+   sendLocations, end trip → endTrip. PASS.
+4. Every message that changes something is an event on a state machine: startTrip, accepted fixes, endTrip,
+   terminate and the time events on A.6; register, cancel, served and expiry on A.7. PASS.
+5. Every state is reachable and can be left, except final states: A.6 and A.7. PASS.
+
+REVIEW QUESTIONS FOR THE TEAM (not changed)
+- The Week 6 sheet asks for "one actor on the left" in an SSD; A.4 shows Driver and Student because it models UC2 and
+  UC1 together. Keep it, or split it into two SSDs?
+- The Week 6 sheet's check 1 says "every lane is an actor"; A.3's second lane is "Server" (the system). Keep it, or
+  rename it?

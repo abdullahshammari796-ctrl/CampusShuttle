@@ -8,13 +8,13 @@ Canadian University Dubai · Fall 2026 · Instructor: Dr. Khaled Ammar
 
 Team: **Abdullah** (GitHub `abdullahshammari796-ctrl`) · **Zuhair Halawa** (GitHub `zuhairhalawa`)
 
-Student IDs: *OUTSTANDING — to be added by the team*
+Student IDs: *added only in the private submission copy; not published in the public repository*
 
-Version: draft of 2 November 2026
+Version: technically verified candidate of 7 November 2026
 
 </div>
 
-> **Status of this document.** This is a working draft. The architecture, models, prototype and test evidence it describes exist in the repository and were verified on 31 October – 2 November 2026. Items marked **OUTSTANDING** need information or actions that only the team or the instructor can provide (signatures, actual dates, personal reflection, the team's own review of the diagrams). Section 10 contains the contribution and AI-use statements, which the team must complete truthfully before submission.
+> **Status of this document.** This is a technically verified candidate, not the final submission. The architecture, models, prototype and test evidence it describes exist in the repository and were verified between 31 October and 7 November 2026. Items marked **OUTSTANDING** need facts or actions that only the team or the instructor can provide: student IDs and signatures (private copy only), the proposal approval date, each member's own confirmation of the reflection, contribution and AI-use statements, and the team's own inspection of the diagrams on paper. Section 10 records the factual contribution and tool-use history; the personal statements in it must be completed truthfully by each member before submission.
 
 <div class="page-break"></div>
 
@@ -82,10 +82,20 @@ Each scenario uses the six-part form (source, stimulus, artifact, environment, r
 | QA-5 | Security (access control) | Unauthenticated caller or wrong role calls a protected endpoint → web API → request refused | 100 % of 26 endpoints × 4 caller types answer 401/403; forged or expired tokens rejected; open live streams closed when the session expires; 5 failed logins → 5-min lockout | automated role-matrix test; token tests; live-stream expiry test |
 | QA-6 | Privacy | Any stored or displayed data → whole system → minimum personal data | students' location never collected; no driver identity in student-visible data; waiting pseudonym erased 24 h after closing; GPS traces deleted after 30 days | tests (view contents, retention job) |
 | QA-7 | Modifiability | Developer adds a new ETA algorithm or forecasting model → tracking / demand → added without touching services, API or UI | one new class + one line in the composition root | Strategy pattern (§7); model list in the UI is data-driven |
-| QA-8 | Testability | Developer runs the test suite → whole code base, developer PC, no network → all business rules exercised, time-dependent rules deterministic | full suite < 10 s | **119 tests in about 5 s** (`npm test`); 22 Chromium tests run separately |
+| QA-8 | Testability | Developer runs the test suite → whole code base, developer PC, no network → all business rules exercised, time-dependent rules deterministic | full suite < 10 s | **119 tests in about 5 s** (`npm test`); 25 Chromium tests run separately |
 | QA-9 | Data consistency | Two drivers try to start trips on the same shuttle at the same moment → tracking + database → exactly one succeeds | 100 %, guaranteed by the database | unique partial indexes + service check; tests |
 
 The **hard quality attribute** named in the proposal is *timeliness and honesty of shuttle information under unreliable GPS and mobile connectivity* (QA-1, QA-3, QA-4): the system must be fast when data is good, and must say so — instead of guessing — when it is not.
+
+### 2.4 How the requirements were elicited and validated
+
+Module 03 asks the report to say which elicitation techniques were used and what each taught. The project record shows three:
+
+* **Document analysis.** The official project description, which lists "campus shuttle tracking and demand prediction" among its example themes, the Module 02 slides, the RBC Borealis ML guide and the UAE personal-data law (§2.1). It fixed the three user groups, the need for an explicit privacy treatment and the baseline-first approach to forecasting.
+* **Domain analysis.** The stakeholder table, the functional requirements and the quality-attribute scenarios were drafted from general knowledge of transport-information systems while the baseline was prepared (see §10.2). This produced most of the requirements, but it is not evidence of what real students, drivers or office staff want.
+* **Prototyping.** The running prototype, the GPS simulator, the load test and browser walkthroughs. Prototyping changed requirements: QA-4 was narrowed from "no position lost" to a bounded guarantee, the trip now ends on the driver's device only after the server confirms it, and the 6 November walkthrough showed that a driver page in a background tab stops reporting (§8.2).
+
+**No interviews, surveys or observations with real students, drivers or transport staff are recorded** in the project evidence. If the team carried any out, they are **OUTSTANDING** and should be added here with what was learned. Requirements were validated against the running prototype (Appendix A.2 use cases, `docs/use-case-validation.md`), not with stakeholders.
 
 ## 3. Planning and development process
 
@@ -115,15 +125,24 @@ We used a **risk-driven incremental process**: a deliberately chosen architectur
 
 ### 3.3 Actual timeline
 
-| When | Activity | Evidence / status |
+The dated rows come from the repository, the pull requests and their reviews (times in Gulf Standard Time, UTC+4). Course deadlines come from the brief and the course schedule, whose dates are marked "indicative". What the project record does not show is marked **OUTSTANDING**; no date has been inferred from a commit time.
+
+| When | What happened | Evidence |
 |---|---|---|
-| Week 2–3 (18 Sep 2026: Module 02 session) | Team formation, topic choice | **OUTSTANDING — team to confirm dates** |
-| Week 4 | Proposal submitted / topic approved | **OUTSTANDING — team to confirm submission and approval date** (`docs/01-proposal.md` is the one-page proposal) |
-| 31 Oct – 2 Nov 2026 | Increments 1–5 implemented, tested and documented in this repository; reviews and corrections through pull requests #12–#15 (see §10) | Repository contents; `docs/evidence/` |
-| Weeks 10–13 (planned) | Team review of every artefact; diagrams rendered and checked; contributions in `docs/team/work-ownership-plan.md` | **Planned — to be updated with actual dates** |
-| Week 12 | Contribution concerns raised with the instructor if any | Requirement of the brief |
-| Week 14 or 15 | Presentation and live demonstration (`docs/presentation/`) | **OUTSTANDING** |
-| Week 15 | Final submission on Moodle | **OUTSTANDING** |
+| Weeks 2–4 (11–25 Sep 2026) | Team formed and registered on Moodle (due Week 4); topic approved by the instructor (Week 4); one-page proposal due (Week 4) | **OUTSTANDING**: the actual dates of registration, proposal submission and approval are not in the project record. The proposal in `docs/01-proposal.md` was written on 31 Oct 2026 |
+| Week 6 (9 Oct) and Week 9 (30 Oct) | Model Set Studio sheet; Project Checkpoint 1 due (requirements, the four analysis models and the class diagram in one document) | **OUTSTANDING**: whether and what the team submitted is not recorded |
+| 31 Oct 2026 | Increments 1–5 (§3.2) built and tested; first load tests | `docs/evidence/load-test-1000.txt`, `load-test-3000.txt` |
+| 1 Nov, 14:37–15:42 | Public repository created; baseline imported (`8d11ad6`); work items opened as issues #1–#11 | commits `8d11ad6`, `404238e` |
+| 1 Nov, 18:58–20:49 | Zuhair's pull requests: #12 (fourth forecasting model, issue #6) and #13 (browser tests, accessibility and use-case fixes, ADR evidence review, CI workflow; issues #5, #7, #8, #9) | PRs #12, #13 |
+| 1 Nov, 23:27–23:28 | Owner review; #12 and #13 approved and merged; `main` protected (PR, 1 approval, `verify` check) | merge commits `d0775d3`, `7dcab45`; issue #4 |
+| 1 Nov 23:45 – 2 Nov 00:22 | Owner follow-up #14 (GPS-source resumption, waiting-refresh fix, dependency fix, UML corrections); approved by Zuhair at 00:05 and merged | review 5729974323; `f9327d4` |
+| 2 Nov, 00:45 – 23:01 | #15: validated UML rendering and readable diagram pages. Zuhair requested changes at 01:05 (export validator accepted malformed files; A.3 layout); corrections pushed at 19:33; approved at 20:15; merged | reviews 5730257445, 5739614810; `5232999` |
+| 2 Nov, 23:06 – 23:53 | #16: documentation follow-up; approved by Zuhair at 23:34; merged; `main` CI passed | review 5742229877; `695eb88`; CI run 41514123139 |
+| 6–7 Nov 2026 | Final completion pass: requirement mapping, technical assessment, browser walkthroughs and a timed demo dry run, office accessibility fixes, UML-set print layout, retrospective draft, contribution and tool-use records, speaking script | branch `abdullah/final-completion` (PR #17) |
+| 7 Nov 2026 | Zuhair's review of PR #17 at `1a21cc6`, supplied as a review package (not posted on GitHub: the integration was refused with HTTP 403); four documentation findings corrected the same day (test plan item 19) | review package; PR #17; review on GitHub pending |
+| Week 12 (20 Nov, planned) | Presentation running order published; any contribution concerns raised with the instructor | brief §2 and §4.4 |
+| Week 14 (4 Dec, planned) | Presentations day 1. The instructor's note on the course-introduction slides says every team submits everything before Day 1 | course introduction, slide 11 |
+| Week 14 or 15 (4 or 11 Dec) | Presentation and live demonstration in the team's slot | **OUTSTANDING**: slot and time limit not yet published |
 
 ### 3.4 Verification approach (V-model pairing)
 
@@ -150,6 +169,18 @@ The state machine for the trip is central to the design: an `Active` trip has th
 
 Appendix A contains the domain model (A.8), two design class diagrams with attributes, operations, associations and multiplicities (A.9, A.10), the component diagram (A.11) and the deployment diagram (A.12).
 
+**Architectural views (4+1).** Module 06 asks for the logical view and at least one other. All five are covered:
+
+| View | Question it answers | Diagrams |
+|---|---|---|
+| Logical | What the system knows and which classes carry the behaviour | A.8 domain model, A.9–A.10 class diagrams, A.13–A.17 patterns |
+| Process | What happens at run time, in which order, and in which states | A.5 design sequence, A.6–A.7 state machines |
+| Development | Which replaceable parts are built and what each provides and requires | A.11 component diagram |
+| Physical | What runs where, and what happens when it fails | A.12 deployment diagram |
+| Scenarios | What the system is for | A.1–A.2 use cases, A.3 activity, A.4 system sequence diagram |
+
+The hardest question for this system is "what do students see when a shuttle's GPS fails?", which lives in the process view (A.6 and the State pattern, A.15).
+
 **Domain model in brief.** A *Route* visits two or more *Stops* in order (association class *RouteStop*); a *Trip* runs one *Route* with one *Shuttle* and one *Driver* and records many *LocationFixes*; a *Student* places *WaitingRequests* at a *Stop*; *HourlyDemand* observations at each stop are the input of *DemandForecasts*. Invariants: a shuttle and a driver are each on at most one active trip; an ended trip never changes.
 
 **Components** (each is a folder under `src/`):
@@ -171,7 +202,12 @@ Appendix A contains the domain model (A.8), two design class diagrams with attri
 
 ### 6.1 Architectural drivers
 
-From §2.3, in priority order: (1) timeliness and honesty of shuttle information under unreliable GPS/connectivity (QA-1, QA-3, QA-4); (2) many concurrent viewers at peak times (QA-2); (3) security and privacy of location and identity data (QA-5, QA-6); (4) modifiability and testability, because forecasting and ETA methods will change as data accumulates (QA-7, QA-8); and two constraints — a **two-person team** and **no paid services or cloud subscriptions** (the prototype must run on a laptop).
+From §2.3, in priority order: (1) timeliness and honesty of shuttle information under unreliable GPS/connectivity (QA-1, QA-3, QA-4); (2) many concurrent viewers at peak times (QA-2); (3) security and privacy of location and identity data (QA-5, QA-6); (4) modifiability and testability, because forecasting and ETA methods will change as data accumulates (QA-7, QA-8); and two project constraints — a **two-person team** and **no paid services or cloud subscriptions** (the prototype must run on a laptop). The second constraint is the team's own; the brief does not require it.
+
+**The three requirements that drove the architecture** (Module 03):
+1. **QA-1, one update to every viewer within 1 s.** This is the only driver on which the chosen option (A) beats a polling monolith (C); it is why live data is pushed over Server-Sent Events (ADR-0002).
+2. **QA-3, honest information when GPS stops.** It put ETAs and an explicit signal state machine on the server (ADR-0004), so every student sees the same state and "no estimate" instead of a guess.
+3. **The two-person, no-paid-services constraint.** It ruled out microservices and a hosted backend in practice, and led to one deployable (ADR-0001) with an embedded database (ADR-0003).
 
 ### 6.2 Candidate architectures
 
@@ -185,17 +221,19 @@ From §2.3, in priority order: (1) timeliness and honesty of shuttle information
 
 ### 6.3 Comparison against the quality attributes
 
-Scores 1 (poor) – 5 (excellent) are a draft proposal, justified in the right-hand column and, where possible, by measurements. Only option A's freshness is measured (local benchmark) and option C's polling load is arithmetic; every other score is judgement. **The team's own re-scoring is OUTSTANDING** (issue #2; evidence notes in `docs/adr/abdullah-technical-review.md`).
+Scores 1 (poor) – 5 (excellent) come from the technical assessment in `docs/architecture/technical-assessment.md`, which gives the reason for every cell. That assessment was produced with the tool declared in §10.2; it is not either member's personal scoring, which is still **OUTSTANDING** (issue #2). Only option A's freshness is measured (local benchmark) and option C's polling load is arithmetic; every other score is judgement. It replaces the draft of 1 November, which wrongly let the polling *transport* lower option C's modularity score and cited a "preference for no cloud subscriptions" that the brief does not contain.
 
 | Driver (weight) | A Modular monolith + SSE | B Microservices | C Monolith + polling | D Serverless BaaS | Justification |
 |---|---|---|---|---|---|
-| Freshness & fan-out, QA-1/2 (3) | 5 | 4 | 2 | 5 | A: p95 35–37 ms at 1,000 viewers in a local benchmark. B adds broker and gateway hops. C: data is on average half a polling interval old (2.5 s at 5 s polling) and 1,000 viewers create 200 req/s even when nothing moves. D: native push. |
-| Robustness to GPS/network loss, QA-3/4 (3) | 4 | 4 | 3 | 4 | All can implement store-and-forward on the phone. A keeps live state in memory and rebuilds it from the database after a restart (tested), but is a single process. B isolates failures but has more failure modes. C makes staleness detection a client concern. |
-| Security & privacy, QA-5/6 (2) | 4 | 3 | 4 | 2 | A/C: one trust boundary, data stays on campus. B: more network surface and service-to-service authentication. D: driver locations and student activity stored by a third party outside campus control, which conflicts with data-minimisation and the brief's preference for no cloud subscriptions. |
-| Modifiability & testability, QA-7/8 (2) | 4 | 3 | 3 | 3 | A: component import rules checked by a test, plus ports; the whole Node suite runs in-process in about 5 s. B: independent deployment, but cross-service changes and integration testing are costly. C tends towards a "big ball of mud". D: logic split between client and vendor functions, harder to test locally. |
+| Freshness & fan-out, QA-1/2 (3) | 5 | 4 | 2 | 4 | A: p95 35–37 ms at 1,000 viewers in a local benchmark. B: broker and gateway add milliseconds, not seconds. C: data is on average half a polling interval old; meeting p95 ≤ 1 s needs about 1 s polling, i.e. 1,000–3,000 requests/s even when nothing moves (arithmetic). D: native push, but a cloud function per upload can add cold-start delays (not measured). |
+| Robustness to GPS/network loss, QA-3/4 (3) | 4 | 4 | 4 | 3 | A, B and C can all run the signal states on the server and buffer positions on the phone; A is a single process but rebuilds live state after a restart (tested); B has more failure modes; polling (C) needs no reconnection logic. D: the 20 s / 60 s transitions happen when *no* event arrives, which needs client-side code or a scheduler, typically at one-minute granularity. |
+| Security & privacy, QA-5/6 (2) | 4 | 3 | 4 | 2 | A/C: one trust boundary, data stays on campus. B: more network surface and service-to-service authentication. D: driver locations and student activity stored by a third party, possibly outside the UAE, which complicates data minimisation and cross-border rules. |
+| Modifiability & testability, QA-7/8 (2) | 4 | 3 | 4 | 3 | A: ports, a composition root and an import-rule test; PR #12 added a forecasting model as one class plus one line. C: the transport does not decide module structure, so the same ports and tests are possible. B: cross-service changes need coordinated releases. D: logic split between client and vendor functions. |
 | Operational simplicity for a team of two (3) | 5 | 1 | 5 | 3 | A/C: `npm install && npm start`, one database file. B: ≥ 5 deployables plus broker and gateway. D: no server, but vendor accounts, quotas and lock-in; offline demonstration is hard. |
-| Growth beyond one campus (1) | 3 | 5 | 2 | 5 | A scales vertically; the `EventPublisher` port is the seam for a shared broker if several instances are ever needed. |
-| **Weighted total (max 70)** | **61** | **44** | **46** | **51** | |
+| Growth beyond one campus (1) | 3 | 5 | 3 | 5 | A scales vertically; the `EventPublisher` port is the seam for a shared broker. C's stateless servers scale out, at the cost of request volume. B and D scale per service or by the vendor. |
+| **Weighted total (max 70)** | **61** | **44** | **52** | **45** | |
+
+**Uncertainty.** A and C differ only in freshness (15 against 6 points); without that driver both total 46. The choice of push over polling therefore rests entirely on QA-1's one-second requirement: if the office accepted information a few seconds old, C would be as good and simpler to scale out. A leads C by 9 points, so at least three one-point scoring errors in C's favour would be needed to tie. With equal weights the order is A 25, C 22, B 20, D 20; raising "growth" to weight 3 gives A 67, C 58, D 55, B 54.
 
 ### 6.4 Decision
 
@@ -219,6 +257,7 @@ We chose **A — a layered, modular monolith with an in-process event bus and Se
 * **In-process event bus (trade-off: simplicity vs horizontal scaling).** Fine for one instance. A second instance would need a shared broker behind the existing `EventPublisher` interface (ADR-0002).
 * **SSE behind proxies.** Some proxies buffer streaming responses; the server sends `X-Accel-Buffering: no` and heartbeats every 15 s, and the client reconnects after 40 s of silence.
 * **Device clocks.** Phones may have wrong clocks; every upload carries `sentAt`, and the server shifts all positions by the measured offset (tested with a 5-minute skew).
+* **The driver page must stay in the foreground (risk found in the 6 November walkthrough).** In a background browser tab the simulated driver stopped sending after about five minutes, because browsers throttle timers in hidden pages; mobile browsers can likewise pause location in a page whose screen is off. The server then behaves as designed (delayed → lost), but the information is lost. A web page is therefore a demonstrator; a production driver client would need a native app or a dedicated in-vehicle device that can report in the background. This has not been tested on a phone (issue #3).
 
 ### 6.6 How the architecture addresses the cross-cutting concerns
 
@@ -283,13 +322,13 @@ A complete, locally runnable web application (`npm install`, `npm start`, open `
 * **Student**: live map with route filter; stop selection (remembered per device); next arrivals with minutes, clock time, distance, load and signal badge; delayed/lost indicators; "I'm waiting here" with route option, cancel, served/expired feedback; connection banner.
 * **Driver**: start trip (route, shuttle, GPS source); live trip card with next stop and ETA, GPS and upload status, "what passengers see"; passenger load; end trip with confirmation; resume after reload with the same location source; GPS simulator with speed control, GPS-outage, network-loss and glitch-injection buttons; activity log.
 * **Transport office**: KPI tiles, fleet map with waiting badges, waiting per stop, active-trip table with remote termination; demand forecast (model and date), hourly chart, stop × hour heat map with per-cell explanation, historical trends, model backtest; route management (service status, attributes, new routes); trip history with GPS track and gap statistics; system health, privacy/retention summary and audit log.
-* **Tooling**: deterministic demo seed, headless fleet simulator (`npm run simulate`), load test, demand evaluation, 119 Node tests (unit, integration, an architecture-conformance test and UML-export validation), 22 Chromium browser tests (roles, use cases, accessibility), and a GitHub Actions workflow that runs them on every pull request to `main`.
+* **Tooling**: deterministic demo seed, headless fleet simulator (`npm run simulate`), load test, demand evaluation, 119 Node tests (unit, integration, an architecture-conformance test and UML-export validation), 25 Chromium browser tests (roles, use cases, accessibility of all three role pages), and a GitHub Actions workflow that runs them on every pull request to `main`.
 
 **The two primary end-to-end use cases demonstrated** are UC2 *Run a trip* with UC1 *Track shuttles* (driver → server → many students), and UC3 *Waiting request* feeding UC4/UC5 (student → office demand view → forecast). Both are covered by automated integration and Chromium browser tests and were walked through in a browser on 31 October – 1 November 2026.
 
 ### 8.2 What was not built
 
-Single sign-on and integration with university systems; native apps and push notifications; HTTPS configuration (development runs on `localhost`); field test with a real vehicle and phone GPS; timetable data (no schedule fallback when GPS is lost — the system shows "last seen" instead); multi-instance deployment; Arabic localisation; formal accessibility audit (automated axe WCAG checks and keyboard tests pass in Chromium, but no screen-reader session or physical-device check was done); tests in browsers other than Chromium; a trained ML model (deliberately, §6.7).
+Single sign-on and integration with university systems; native apps and push notifications; HTTPS configuration (development runs on `localhost`); field test with a real vehicle and phone GPS; timetable data (no schedule fallback when GPS is lost — the system shows "last seen" instead); multi-instance deployment; Arabic localisation; formal accessibility audit (automated axe WCAG checks and keyboard tests pass in Chromium for the student, driver and office pages, but no screen-reader session or physical-device check was done); a driver client that keeps reporting in the background (§6.5); tests in browsers other than Chromium; a trained ML model (deliberately, §6.7).
 
 ### 8.3 How the prototype maps onto the architecture
 
@@ -312,52 +351,84 @@ We chose **TypeScript on Node.js 24 LTS with Express 5 and SQLite (Node's built-
 
 ### 8.5 Evidence
 
-| Check | Result (31 Oct – 2 Nov 2026, Windows 11, Node 24.14.1) |
+| Check | Result (31 Oct – 7 Nov 2026, Windows 11, Node 24.14.1) |
 |---|---|
 | `npm run typecheck` | passes, no errors |
 | `npm test` | 119 tests, 119 passed, 0 failed — `docs/evidence/test-run.txt` |
-| `npm run test:browser` | 22 Chromium tests, 22 passed (Playwright 1.64.1, Chrome for Testing 156) — `docs/evidence/browser-test-run.txt` |
+| `npm run test:browser` | 25 Chromium tests, 25 passed (Playwright 1.64.1, Chrome for Testing 156) — `docs/evidence/browser-test-run.txt`. The three office-page tests added on 6 November failed before their fix (`docs/evidence/accessibility-office-2026-11-06.txt`) |
 | `npm audit` | 0 vulnerabilities in all dependencies, including development tools — `docs/evidence/npm-audit.txt` |
-| GitHub Actions (`verify`) | passed on `main` after PRs #12 and #13 (run 41341908650); required for merging into `main` |
+| GitHub Actions (`verify`) | required for every merge into `main`; passed on `main` after each merge, most recently run 41514123139 after PR #16 (2 Nov) |
 | `npm run load-test` (1,000 viewers; local benchmark) | 31 Oct: p50 23 ms, p95 35 ms, p99 47 ms, max 56 ms. 1 Nov: p50 25 ms, p95 37 ms, p99 48 ms, max 55 ms; 60,000/60,000 delivered; 0 skipped — `docs/evidence/load-test-1000*.txt` |
 | `npm run load-test -- --viewers 3000 --rounds 10` | 31 Oct: p95 90 ms, max 108 ms. 1 Nov: p95 98 ms, max 113 ms; 90,000/90,000 delivered; 0 skipped — `docs/evidence/load-test-3000*.txt`. Same process, loopback, one shared session, no browsers |
 | `npm run evaluate` | see §6.7 — `docs/evidence/demand-evaluation.txt` |
-| Browser walkthrough (student, driver, office) | all three interfaces exercised against a running server with the fleet simulator (`docs/test-plan.md` §5), and automated in Chromium since PR #13 |
-| `npm run uml` / `npm run uml:check` | 2 Nov: all 16 diagrams rendered with the checksum-verified PlantUML MIT 1.2026.9 (Java 21, Smetana) and validated: SVGs parsed as well-formed XML, PNGs fully decoded, none clipped, all from the current sources. Zuhair's review of PR #15 showed that the first validator accepted malformed content; it now rejects it. Zuhair's independent render of the same sources (Java 17, Linux) matched in structure. Appendix A prints every diagram at 62 % or more of its rendered size, with overview and detail pages for wide ones; most labels print at 6.2–9.8 pt and the smallest annotations at 5.5 pt (measured on screen). The team's own visual check, including on paper, is still open (issue #1) |
+| Browser walkthrough (student, driver, office) | all three interfaces exercised against a running server with the fleet simulator (`docs/test-plan.md` §5), and automated in Chromium since PR #13. On 6 November an automated browser session observed UC1's full loop lap and UC4's historical trace, and ran the demonstration sequence with timings (`docs/evidence/walkthrough-2026-11-06.txt`). These are tool-driven sessions, not a walkthrough by either member |
+| `npm run uml` / `npm run uml:check` | 7 Nov: diagram 10 re-rendered after two of its interface labels were found printed over each other; the other 15 re-rendered byte-identical. 2 Nov: all 16 diagrams rendered with the checksum-verified PlantUML MIT 1.2026.9 (Java 21, Smetana) and validated: SVGs parsed as well-formed XML, PNGs fully decoded, none clipped, all from the current sources. Zuhair's review of PR #15 showed that the first validator accepted malformed content; it now rejects it. Zuhair's independent render of the same sources (Java 17, Linux) matched in structure. Appendix A prints every diagram at 62 % or more of its rendered size, with overview and detail pages for wide ones; there the smallest annotations print at 5.5 pt. The separate UML-set PDF ("full readable size") now enlarges each diagram towards a 7 pt minimum without cutting class boxes across rows of pages: 9 of the 16 diagrams reach 6.9 pt or more (5 before), and the smallest text is A.9's stereotype labels at 5.7 pt, limited by the A4 page (sizes measured from the build, `docs/evidence/uml-inspection-2026-11-06.txt`). The team's own visual check, including on paper, is still open (issue #1) |
 
 ## 9. Reflection
 
-> **OUTSTANDING — to be written by the team.** The brief rewards honest reflection. It must be your own: what you would do differently, what you learned, and how the work was shared. Useful prompts: Which decision would you revisit with real data (e.g. the 20 s / 60 s thresholds, the 60/40 speed blend)? What did using an AI assistant make easier, and what did you have to check or change yourselves? What would you test on a real shuttle first?
+> **Draft retrospective — personal confirmation OUTSTANDING.** The brief asks what we would do differently, and rewards honesty. This draft was prepared from the project record (the decisions, defects and reviews in `docs/test-plan.md` §4 and the pull requests) with the tool declared in §10.2. It states no personal feelings or opinions. Each member must read it, correct what does not match their own experience and add their own reflection before submission.
 
-Factual engineering observations recorded while building the prototype, which the team may draw on:
+**1. Spread the work over the semester.** The repository record starts on 31 October (Week 9). Almost all recorded design, build and review work happened between 31 October and 2 November, with a completion pass on 6–7 November. The record does not show the Week 4 proposal approval or the Week 9 checkpoint (§3.3). Starting the repository at the proposal, with a dated log, would have left time for stakeholder input and a field test. It would also have produced the timeline the brief asks for.
 
-* **Measuring found a real defect.** The first load-test run hung on one update. The cause was a route-snapping tie-break that preferred the earlier of two segments meeting at a corner, placing the shuttle up to a few metres behind its true position. A regression test now covers it. A test suite that only checked behaviour away from corners would not have found this.
-* **Shutdown order matters.** An integration test revealed that the real-time gateway could still run deferred work after the database had been closed; the gateway now cancels pending work on close.
-* **An independent review found three real defects** (1 November 2026): the driver app abandoned a trip locally even when the server had not confirmed the end; open live streams outlived their session; and the network-loss guarantee and load-test results were stated more strongly than the evidence supported. All were reproduced before fixing, and regression tests now cover the two code defects.
-* **Browser tests found UI defects that unit tests could not** (PR #13): a waiting request that stayed on screen after it expired or was served while offline, keyboard focus lost on every countdown refresh, and insufficient contrast. The owner review of PRs #12/#13 then found two more: reloading a device-GPS trip switched it to simulated positions, and every student waiting at a stop re-fetched their request whenever anyone joined. Each was reproduced by a failing test before the fix.
-* **Simulation is not reality.** All GPS behaviour was exercised with the simulator; real phones produce noisier positions, longer gaps and battery-saving pauses. The thresholds are therefore configurable, and a field test is the first thing we would do next.
-* **No data, no model.** The most important ML decision was *not* to train a model on invented data.
+**2. Talk to real stakeholders before fixing the numbers.** No interviews or observations are recorded (§2.4). The 1-second freshness target, the 20 s / 60 s signal thresholds and the 20-minute waiting expiry are reasoned, not elicited. They drive the architecture (§6.1), and §6.3 shows that the push-versus-polling decision depends on the first of them alone. A short interview with transport-office staff and a few students would be the first thing to do differently.
+
+**3. Check content, not existence.** The first UML render script only checked that files existed; Zuhair's first render found empty and clipped images (test-plan item 14). The replacement validator then accepted malformed SVG and PNG content, which his review of PR #15 reproduced (item 16). Each check encoded its author's assumptions; an independent reviewer with a different method found what the author's tests could not.
+
+**4. Test where the defects live, on every page.** Browser tests found UI defects that unit tests could not see (items 10, 11, 15 and the PR #13 fixes). The office page had no automated accessibility check until 6 November; when it got one, it failed three WCAG criteria at once (item 17). The same checks should have covered all three role pages from the start.
+
+**5. Keep claims at the strength of the evidence.** Several statements were weakened after review: QA-4's "no position lost" became a bounded guarantee; the load test is now described as a same-process benchmark; the draft architecture scores let the polling transport lower option C's modularity score and cited a brief requirement that does not exist (§6.3). Separating what was measured, what is arithmetic and what is judgement, in every claim, would have avoided these corrections.
+
+**6. Simulation is not reality.** All GPS behaviour was exercised with the simulator, and the thresholds are untested on a phone. The 6 November walkthrough added a limit the simulator alone had hidden: a driver page in a background tab stops reporting (§6.5). A field test on a real vehicle would come first, and the driver client may need to be a native app.
+
+**7. No data, no model.** Not training a model on invented data was the most important forecasting decision (§6.7). The synthetic backtest proves only that the pipeline works.
+
+**8. Ownership and tool use.** The baseline and most later corrections were produced with the AI tools declared in §10.2, from the members' accounts and at their request. The members' recorded contributions are the reviews, verifications and corrections listed in §10.1. The course allows AI use with disclosure, but not submitting AI-generated analysis as one's own thinking, and the instructor may ask either member to defend any diagram. A process in which each member first derives part of the design themselves, such as the §6.3 scores or the analysis models of the Week 6 studio, would make the contribution statement and the viva easier to support.
+
+**9. Repository process.** Protected `main` and reviewed pull requests caught real defects before merge (items 14–16). One process lesson: a GitHub rebase merge on 2 November recorded a personal e-mail address as committer on five public commits; later merges used merge commits after the privacy setting was confirmed. Account settings should be checked before the first merge on a public repository.
+
+Other engineering observations: the load test found a corner-snapping defect (item 1); an integration test found work running after shutdown (item 2); an independent review on 1 November found a trip ended locally but not on the server, and live streams outliving their session (items 5–6).
 
 ## 10. Contribution statement and AI-use statement
 
 ### 10.1 Contribution statement
 
-> **OUTSTANDING — must be completed and signed by every member.** List only work each member actually did. The suggested division of remaining work is in `docs/team/work-ownership-plan.md`; record what actually happened, not the plan. The instructor may ask any member to explain any diagram or decision.
+**Factual record.** From the Git history, the pull requests and their reviews. It records which account submitted or approved what. It does not say who personally wrote, read or checked each line; the tools used are in §10.2. The detailed log is in `docs/team/work-ownership-plan.md`, with Zuhair's record in `docs/team/zuhair-contributions.md`.
 
-| Member | Contributions (design, models, code, tests, documentation, presentation) | Signature | Date |
+| | Abdullah (`abdullahshammari796-ctrl`) | Zuhair Halawa (`zuhairhalawa`) |
+|---|---|---|
+| Baseline | Repository created and the baseline imported from this account on 1 Nov (`8d11ad6`). The baseline was generated with Claude Code (§10.2) and is not either member's own authored work | — |
+| Pull requests submitted | #14 (GPS-source resumption, waiting-refresh fix, dependency fix, UML source corrections); #15 (validated UML rendering, readable diagram pages, sign-in form fix, corrections after review); #16 (records and wording); the final completion pull request (6–7 Nov) | #12 (same-weekday median forecaster, issue #6); #13 (browser and simulator tests, accessibility and mobile fixes, waiting-state fixes, use-case evidence, ADR evidence review, CI workflow; issues #5, #7, #8, #9) |
+| Commits, excluding merges (to 2 Nov) | 14, including the baseline import and the set-up commit | 8 |
+| Reviews posted | Approvals of #12 and #13 (prepared with Claude Code; they record the checks that were run, not a personal line-by-line reading) | Approval of #14; changes requested on #15 (validator defect, A.3 layout) and approval of its corrections; approval of #16. Review of #17 supplied as a package on 7 Nov, not posted on GitHub |
+| Repository administration | Branch protection, issues, merges of #12–#16 | — |
+| Independent verification | — | First render of the 16 UML sources (empty and clipped exports found); Linux reproductions with an independent decoder; visual inspection of PDFs and slides |
+
+**Personal statements and signatures — OUTSTANDING.** Each member lists only work they actually did, in their own words: design, models, code, tests, documentation and presentation. Student IDs and signatures are added only in the private submission copy, not in this public repository.
+
+| Member | What I personally did | Signature | Date |
 |---|---|---|---|
-| Abdullah | *to be completed* | | |
-| Zuhair Halawa | *to be completed* | | |
+| Abdullah | *OUTSTANDING* | *(private copy)* | |
+| Zuhair Halawa | *OUTSTANDING* | *(private copy)* | |
 
 ### 10.2 AI-use statement
 
-> **Draft — the team must review the factual record below, add any other AI tools they used, and complete "What we changed".**
+The brief asks which AI tools were used, for what, and what was changed. The full record is in `docs/team/ai-use-statement.md`.
 
-* **Tools**: Claude Code (Anthropic), used from Abdullah's computer and GitHub account; ChatGPT (OpenAI), used from Zuhair's GitHub account. The details are in `docs/team/ai-use-statement.md`.
-* **When**: 31 October – 2 November 2026.
-* **What they were used for**: reading the official project description and the Module 02 slides; analysing architecture alternatives; generating the application code, automated tests, load test and demo scripts; writing the PlantUML diagram sources; drafting this report, the proposal, ADRs, test plan and presentation materials; running the type checker, tests and load tests and fixing the defects they revealed; preparing, reviewing and verifying pull requests #12–#15; and setting up the GitHub repository.
-* **What they were not used for**: they did not create the team, choose the topic or submit anything for marking. Repository and GitHub actions were taken only at the account owner's explicit request. They did not invent rubric details, signatures, timelines, contributions or real-world data; those are marked OUTSTANDING.
-* **What we changed / verified ourselves**: **OUTSTANDING — the team must list the reviews, corrections and additions they made.**
+* **Tools.** Claude Code (Anthropic), used from Abdullah's computer and GitHub account. ChatGPT (OpenAI), including its Work mode, connected to Zuhair's GitHub account. Any other tool a member used is **OUTSTANDING**.
+* **When.** 31 October – 7 November 2026.
+* **Which parts, and for what.**
+
+| Part | Claude Code (Abdullah's account) | ChatGPT (Zuhair's account) |
+|---|---|---|
+| Requirements, architecture and §6 analysis | Drafted §1–§3 and §6, the ADRs and the QA scenarios; produced the §6.3 technical assessment (6 Nov) | Evidence review of ADR-0001, 0002, 0003 and 0008 (PR #13) |
+| UML | Wrote and corrected the 16 PlantUML sources; rendered and validated them; built the PDF layout | First independent render; found export defects |
+| Prototype code and tests | Generated the baseline code and tests; fixed the defects numbered 1–19 in `docs/test-plan.md` §4 | PR #12 forecaster and tests; PR #13 browser tests and UI fixes |
+| Documents and presentation | Drafted the proposal, this report (including the §9 draft and the §10.1 factual record), the test plan, the deck, the speaking script and the demo runbook | Use-case evidence matrix; review findings on PDFs and slides |
+| Verification and repository | Ran checks, load tests and browser walkthroughs; created the repository; opened issues and pull requests; merged after approval | Reviewed PRs #14–#16 on a fresh Linux checkout and posted the reviews; reviewed PR #17 from its verified export and supplied the review as a package |
+
+* **What changed after the baseline.** Nineteen defects and corrections are recorded in `docs/test-plan.md` §4. Among them: two code defects and two overclaims found by an independent review on 1 November; UI defects found by Zuhair's browser tests (PR #13); two defects found in the owner review of PRs #12/#13; the export-validation defects found by Zuhair's render and his review of PR #15; the office-page accessibility failures and UML print sizes found on 6 November; and four wrong or inconsistent statements in the final-pass documents found in Zuhair's review of PR #17. The draft §6.3 scores were also corrected (§6.3).
+* **What the tools did not do.** They did not register the team, choose the topic, contact the instructor or submit anything for marking. They did not invent rubric details, signatures, student IDs, dates, contributions, field observations or real-world data; missing facts are marked **OUTSTANDING** and demonstration data is labelled synthetic.
+* **What each member personally changed or verified: OUTSTANDING.** For example: which parts each member read, checked, decided or rewrote, and which decisions they disagree with.
 
 ---
 

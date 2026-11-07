@@ -9,9 +9,11 @@
 // a finished one.
 //
 // Print readability: a diagram is never printed below MIN_SCALE of its rendered
-// size. One that fits a portrait or landscape A4 page at that scale gets one
-// figure; a larger one gets a vector overview page (zoomable on screen) followed
-// by overlapping detail pages printed at MIN_SCALE or more.
+// size. In the separate UML-set PDF, which the brief asks for "at full readable
+// size", each diagram is also scaled so that its smallest text prints at
+// UML_SET_MIN_TEXT_PT or more. One that fits a portrait or landscape A4 page at
+// that scale gets one figure; a larger one gets a vector overview page (zoomable
+// on screen) followed by overlapping detail pages printed at that scale or more.
 //
 //   npm run docs:build                 (set EDGE_PATH if Edge/Chrome is elsewhere)
 import { spawnSync } from 'node:child_process';
@@ -28,6 +30,11 @@ const UML_OUT = join(DOCS, 'uml', 'out');
 
 /** Smallest print scale of a rendered diagram: its 14 px labels then print at about 6.3 pt. */
 const MIN_SCALE = 0.6;
+/**
+ * Smallest printed text size (pt) in the separate UML-set PDF. At MIN_SCALE alone, 11–12 px annotations printed
+ * at 5.5–5.6 pt (A.5, A.9, A.15). One CSS px prints as 0.75 pt.
+ */
+const UML_SET_MIN_TEXT_PT = 7;
 /** Diagram pixels repeated at the edges of neighbouring detail pages, so most boxes appear whole on one of them. */
 const OVERLAP = 200;
 /**
@@ -93,29 +100,42 @@ interface DocSpec {
   output: string;
   title: string;
   sources: string[];
+  /** Smallest printed text size (pt) of the diagrams; without it, diagrams only respect MIN_SCALE. */
+  minTextPt?: number;
 }
 
 const SPECS: DocSpec[] = [
   { output: 'proposal', title: 'Project proposal', sources: ['01-proposal.md'] },
   { output: 'project-report', title: 'Project report', sources: ['02-project-report.md', '03-uml-diagram-set.md'] },
-  { output: 'uml-diagram-set', title: 'UML diagram set', sources: ['03-uml-diagram-set.md'] },
+  { output: 'uml-diagram-set', title: 'UML diagram set', sources: ['03-uml-diagram-set.md'], minTextPt: UML_SET_MIN_TEXT_PT },
 ];
 
 let missingDiagrams = new Set<string>();
+let minTextPt: number | undefined;
 let exportProblems: ExportProblem[] = [];
 
 const escapeHtml = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 const px = (n: number) => `${Math.floor(n)}px`;
 const percent = (scale: number) => `${Math.round(scale * 100)} %`;
 
-/** Detail tiles of a diagram for one page orientation, printed at MIN_SCALE or more. */
-function tilesFor(width: number, height: number, orientation: Orientation) {
+/** Smallest print scale of one diagram in the document being built: MIN_SCALE, raised so its smallest text reaches minTextPt. */
+function minScaleOf(svgText: string): number {
+  const sizes = [...svgText.matchAll(/font-size="([\d.]+)"/g)].map((m) => Number(m[1]));
+  if (!minTextPt || !sizes.length) return MIN_SCALE;
+  return Math.min(1, Math.max(MIN_SCALE, minTextPt / (0.75 * Math.min(...sizes))));
+}
+
+/**
+ * Detail tiles of a diagram for one page orientation, aiming at the target scale. With maxRows, the diagram is never
+ * cut horizontally into more rows than that: a shorter page then lowers the scale, and only columns are added.
+ */
+function tilesFor(width: number, height: number, orientation: Orientation, target: number, maxRows = Infinity) {
   const area = AREA[orientation];
-  const span = (size: number, room: number) => Math.max(1, Math.ceil((size - OVERLAP) / (room / MIN_SCALE - OVERLAP)));
-  const cols = span(width, area.w);
-  const rows = span(height, area.h);
-  const tileW = (width + (cols - 1) * OVERLAP) / cols;
+  const span = (size: number, room: number, scale: number) => Math.max(1, Math.ceil((size - OVERLAP) / (room / scale - OVERLAP)));
+  const rows = Math.min(span(height, area.h, target), maxRows);
   const tileH = (height + (rows - 1) * OVERLAP) / rows;
+  const cols = span(width, area.w, Math.min(target, area.h / tileH));
+  const tileW = (width + (cols - 1) * OVERLAP) / cols;
   const scale = Math.min(1, area.w / tileW, area.h / tileH);
   const tiles: Array<{ x: number; y: number; row: number; col: number }> = [];
   for (let r = 0; r < rows; r++) {
@@ -129,6 +149,7 @@ function diagramHtml(name: string, caption: string, intro: { heading: boolean; c
   const svgFile = join(UML_OUT, `${name}.svg`);
   const text = readFileSync(svgFile, 'utf8');
   const { width, height } = svgSize(text);
+  const target = minScaleOf(text);
   const label = escapeHtml(caption);
   const headingRoom = (o: Orientation) => (intro.heading ? HEADING_ROOM + Math.ceil(intro.chars / CHARS_PER_LINE[o]) * INTRO_LINE : 0);
   const fit = (o: Orientation, maxHeight: number = AREA[o].h - headingRoom(o)) => Math.min(1, AREA[o].w / width, maxHeight / height);
@@ -137,21 +158,38 @@ function diagramHtml(name: string, caption: string, intro: { heading: boolean; c
   const figure = (body: string, figcaption: string) => `<figure class="uml">${body}<figcaption>${figcaption}</figcaption></figure>`;
   const page = (o: Orientation, body: string) => `<section class="uml-page ${o}">${body}</section>`;
 
-  if (fit('portrait', INLINE_MAX_HEIGHT) >= MIN_SCALE) return figure(img(fit('portrait', INLINE_MAX_HEIGHT)), label);
-  if (fit('landscape') >= MIN_SCALE) return page('landscape', figure(img(fit('landscape')), label));
+  if (fit('portrait', INLINE_MAX_HEIGHT) >= target) return figure(img(fit('portrait', INLINE_MAX_HEIGHT)), label);
+  if (fit('landscape') >= target) return page('landscape', figure(img(fit('landscape')), label));
 
-  const detail = (['landscape', 'portrait'] as const).map((o) => tilesFor(width, height, o))
+  const best = (layouts: Array<ReturnType<typeof tilesFor>>) => layouts.filter((l) => l.scale >= MIN_SCALE - 1e-9)
     .sort((a, b) => a.tiles.length - b.tiles.length || b.scale - a.scale)[0];
+  const orientations = ['landscape', 'portrait'] as const;
+  // A higher target must not cut the diagram horizontally more often than the MIN_SCALE layout does: a class box
+  // split across two rows of pages is harder to read than smaller text.
+  const fitsOnePage = fit('portrait', INLINE_MAX_HEIGHT) >= MIN_SCALE || fit('landscape') >= MIN_SCALE;
+  const baseRows = fitsOnePage ? 1 : best(orientations.map((o) => tilesFor(width, height, o, MIN_SCALE))).rows;
+  const detail = best(orientations.map((o) => tilesFor(width, height, o, target, baseRows)))
+    ?? best(orientations.map((o) => tilesFor(width, height, o, MIN_SCALE)));
   if (detail.tiles.length === 1 && !intro.heading) return page(detail.orientation, figure(img(detail.scale), label));
+  // An overview page is only worth it when the full page that follows is clearly larger than one page with the heading.
+  const onePage = Math.max(fit('portrait', INLINE_MAX_HEIGHT), fit('portrait'), fit('landscape'));
+  if (detail.tiles.length === 1 && fitsOnePage && detail.scale < 1.15 * onePage) {
+    if (fit('portrait', INLINE_MAX_HEIGHT) >= onePage) return figure(img(fit('portrait', INLINE_MAX_HEIGHT)), label);
+    const o: Orientation = fit('portrait') >= fit('landscape') ? 'portrait' : 'landscape';
+    return page(o, figure(img(fit(o)), label));
+  }
   const overview: Orientation = overviewFit('landscape') >= overviewFit('portrait') ? 'landscape' : 'portrait';
   const start = text.indexOf('>', text.search(/<svg\b/)) + 1;
   const inner = text.slice(start, text.lastIndexOf('</svg>')).replace(/<\?[\s\S]*?\?>/g, '').replace(/\r?\n/g, ' ');
+  const single = detail.tiles.length === 1;
+  const guide = single ? `the next page prints it at ${percent(detail.scale)}` : `read the ${detail.tiles.length} detail pages that follow, at ${percent(detail.scale)}`;
   const pages = [page(overview, figure(img(overviewFit(overview)),
-    `${label} — overview at ${percent(overviewFit(overview))} <span class="uml-note">(read the ${detail.tiles.length} detail pages that follow, at ${percent(detail.scale)}; on screen, zoom in)</span>`))];
+    `${label} — overview at ${percent(overviewFit(overview))} <span class="uml-note">(${guide}; on screen, zoom in)</span>`))];
   detail.tiles.forEach((tile, i) => {
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="${tile.x} ${tile.y} ${detail.tileW} ${detail.tileH}" style="width:${px(detail.tileW * detail.scale)};height:${px(detail.tileH * detail.scale)}" preserveAspectRatio="xMinYMin meet">${inner}</svg>`;
     const where = [detail.rows > 1 ? `row ${tile.row} of ${detail.rows}` : '', detail.cols > 1 ? `column ${tile.col} of ${detail.cols}` : ''].filter(Boolean).join(', ');
-    pages.push(page(detail.orientation, figure(svg, `${label} — detail ${i + 1} of ${detail.tiles.length} (${where}), at ${percent(detail.scale)}`)));
+    const what = single ? 'full page' : `detail ${i + 1} of ${detail.tiles.length} (${where})`;
+    pages.push(page(detail.orientation, figure(svg, `${label} — ${what}, at ${percent(detail.scale)}`)));
   });
   return pages.join('');
 }
@@ -181,6 +219,7 @@ if (!browser) console.warn('No Edge/Chrome found: HTML is built, PDFs are skippe
 exportProblems = checkExports(join(DOCS, 'uml'), UML_OUT);
 for (const spec of SPECS) {
   missingDiagrams = new Set();
+  minTextPt = spec.minTextPt;
   const parts = spec.sources.map((file, i) => {
     const markdown = embedDiagrams(readFileSync(join(DOCS, file), 'utf8'));
     const html = marked.parse(markdown, { async: false }) as string;

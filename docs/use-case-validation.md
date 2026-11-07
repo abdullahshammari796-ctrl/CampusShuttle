@@ -1,11 +1,11 @@
-# Use-case validation — 1 November 2026
+# Use-case validation — 1 November 2026, updated 6 November 2026
 
 Prepared for Zuhair (issue #5) on the actual application, with isolated demo data. B = real Chromium UI and HTTP/SSE; I = API integration; U = domain/unit tests; S = source comparison. A source check is not a browser observation. The team still needs its own walkthrough and diagram-render inspection.
 
 | Scenario / extension | Evidence and outcome |
 |---|---|
 | UC1 main 1–4: map, stop, arrivals, updates | B: `roles.spec.ts` student persistence and cross-role stream; `use-cases.spec.ts` GPS transition test. |
-| UC1 main 5: stop reached / next lap | U: `trip-tracker.test.ts`, `eta.test.ts`, `route-path.test.ts`; I: served-at-stop path. S: UI sorts next-stop arrival timestamps. Corrected description to distinguish loop/non-loop routes; full physical lap not driven in a browser. |
+| UC1 main 5: stop reached / next lap | U: `trip-tracker.test.ts`, `eta.test.ts`, `route-path.test.ts`; I: served-at-stop path. S: UI sorts next-stop arrival timestamps. Corrected description to distinguish loop/non-loop routes. **B (6 Nov, tool-driven session):** a full Campus Loop lap observed in the browser: at the student's stop "8 m · Now", three seconds later "2,390 m · 8 min" and the list re-sorted (`docs/evidence/walkthrough-2026-11-06.txt`). |
 | UC1 3a: no shuttle | B: role stream test sees empty fleet after end; I: `start → live position and ETAs for students → end → removed`. |
 | UC1 4a/4b: delayed/lost/no ETA | B: real stream at controlled 21 s and 61 s; restores Live after fresh upload. |
 | UC1 4c: reconnect snapshot | B: offline student misses a served event, reconnects and sees its closed request; I: SSE snapshot and slow-client resync. |
@@ -23,7 +23,7 @@ Prepared for Zuhair (issue #5) on the actual application, with isolated demo dat
 | UC3 1a/1b/1c | I: idempotent registration, replacement, invalid-route rejection. S: idempotence requires same stop **and route**, corrected prose. |
 | UC3 1d/3a/4a | I: rate limit, cancellation, expiry; B: cancel and visible expiry without reload. |
 | UC3 retention postcondition | I: erases requester link after 24 h; no real personal data used. |
-| UC4 main 1–2 | B: live fleet and audit; I: trip-track endpoints and restart recovery. S: office renders stored trace/stats; historical-trace visual review remains in team walkthrough. |
+| UC4 main 1–2 | B: live fleet and audit; I: trip-track endpoints and restart recovery. S: office renders stored trace/stats. **B (6 Nov, tool-driven session):** the trace of an ended trip showed 214 positions, 4.2 km, 12 min 35 s, longest gap 1 min 15 s and 2 gaps over the stale threshold, with the gap drawn dotted; the values match the walkthrough's own GPS outage. |
 | UC4 1a | B: reason-required termination, driver removal and audit. |
 | UC4 1b | B: edit and disable route through form; I: validates/audits route changes and prevents new trips on disabled routes. |
 | UC5 main 1–4 | B: median selector, historical explanation, four-model backtest and synthetic notice; I: 9×15 forecast/explanation/evaluation; U: hand-computed predictions/backtest. |
@@ -37,4 +37,4 @@ Text corrected: simulator/device update cadence; loop versus non-loop arrivals; 
 
 ## Remaining bounded limitations
 
-The earlier reload limitation (every reload resumed simulated GPS, even for a device-GPS trip) was corrected in the owner review; see UC2 4b above. Device GPS on a real phone is still untested (issue #3). Session logout does not implement full token revocation. Queues are memory-only and fixes older than ten minutes are rejected. Human screen-reader listening, full browser lap/trace walkthrough, physical GPS, presentation rehearsal and signatures are not performed by this automation.
+The earlier reload limitation (every reload resumed simulated GPS, even for a device-GPS trip) was corrected in the owner review; see UC2 4b above. Device GPS on a real phone is still untested (issue #3). Session logout does not implement full token revocation. Queues are memory-only and fixes older than ten minutes are rejected. The full lap (UC1 step 5) and the historical trace (UC4 step 2) were observed in a browser on 6 November, in a session driven by the tool declared in the AI-use statement; A.1, A.3, A.4, A.6 and A.7 matched what was observed. That session is not the team's own walkthrough (issue #5). Human screen-reader listening, physical GPS, a presentation rehearsal and signatures are not performed by this automation.

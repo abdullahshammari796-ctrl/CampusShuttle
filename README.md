@@ -42,10 +42,10 @@ These are defined in `src/seed/demo-data.ts`. They exist only in the local SQLit
 ### A two-minute tour
 1. In a second terminal run `npm run simulate -- --outage --outage-at 30` — two shuttles start driving (as `driver2`/`driver3`), and the Campus Loop shuttle loses GPS for 75 s, starting 30 s into every 4-minute cycle (the terminal prints the exact times).
 2. Sign in as **student1**: watch the shuttles move, pick a stop, see the arrival list; tap *I'm waiting here*.
-3. In a private window sign in as **driver1**, start a trip with *Simulated GPS*; try *Simulate network loss* (then *End trip*: the trip is **not** ended while offline), *Simulate GPS outage* (students see "Location delayed" after ~20 s and "GPS lost" after ~60 s) and *Inject GPS glitch*.
-4. In another private window sign in as **office1**: live operations, *Demand & forecast* (click a heat-map cell for its explanation), *Routes*, *Trip history* (open a track), *System* (audit log).
+3. In a second window sign in as **driver1**, using `http://127.0.0.1:3000` so the session is separate (private windows of one browser share one session), start a trip with *Simulated GPS*; try *Simulate network loss* (then *End trip*: the trip is **not** ended while offline), *Simulate GPS outage* (students see "Location delayed" after ~20 s and "GPS lost" after ~60 s) and *Inject GPS glitch*.
+4. In a third window at `http://office.localhost:3000` sign in as **office1**: live operations, *Demand & forecast* (click a heat-map cell for its explanation), *Routes*, *Trip history* (open a track), *System* (audit log).
 
-The full presentation script is in [`docs/demo-script.md`](docs/demo-script.md).
+The demo runbook, with timings and a failure fallback, is in [`docs/demo-script.md`](docs/demo-script.md); the slide-by-slide speaking script is in [`docs/presentation/speaking-script.md`](docs/presentation/speaking-script.md).
 
 ## Scripts
 
@@ -114,14 +114,15 @@ docs/            proposal, report, UML set, ADRs, QA scenarios, test plan, priva
 | UML diagram set + use-case descriptions | [`docs/03-uml-diagram-set.md`](docs/03-uml-diagram-set.md), sources in [`docs/uml/`](docs/uml) |
 | Architecture decision records | [`docs/adr/`](docs/adr/README.md) |
 | Quality-attribute scenarios | [`docs/architecture/quality-attribute-scenarios.md`](docs/architecture/quality-attribute-scenarios.md) |
+| Technical assessment of options A–D and the ADRs | [`docs/architecture/technical-assessment.md`](docs/architecture/technical-assessment.md) |
 | Test plan and results | [`docs/test-plan.md`](docs/test-plan.md), raw outputs in [`docs/evidence/`](docs/evidence) |
 | Demand prediction | [`docs/demand-prediction.md`](docs/demand-prediction.md) |
 | Privacy and security | [`docs/privacy-and-security.md`](docs/privacy-and-security.md) |
-| Demo script / presentation | [`docs/demo-script.md`](docs/demo-script.md), [`docs/presentation/`](docs/presentation) |
+| Demo runbook / presentation and speaking script | [`docs/demo-script.md`](docs/demo-script.md), [`docs/presentation/`](docs/presentation) |
 | Team: ownership plan, contribution statement, AI-use statement | [`docs/team/`](docs/team) |
 
 ### Rendering the UML diagrams
-The diagrams are PlantUML sources (standard UML notation, editable text). They were compared with the code member by member and rendered on 2 November 2026; the exports are committed in `docs/uml/out/` with a `manifest.json`. To render them again on any machine with Java 11+ (Graphviz is not needed; the diagrams use the built-in *smetana* layout):
+The diagrams are PlantUML sources (standard UML notation, editable text). They were compared with the code member by member and rendered on 2 November 2026 (diagram 10 again on 7 November, after a label fix); the exports are committed in `docs/uml/out/` with a `manifest.json`. To render them again on any machine with Java 11+ (Graphviz is not needed; the diagrams use the built-in *smetana* layout):
 
 1. Download `plantuml-mit-1.2026.9.jar` from Maven Central: `https://repo1.maven.org/maven2/net/sourceforge/plantuml/plantuml-mit/1.2026.9/`. This is the MIT-licensed build, so no installer and no admin rights are needed.
 2. Verify it before running it. The SHA-256 published next to the jar (`.jar.sha256`) is `e84e45b37ad3030cf802e7be18a687d209eca55733a5679b1f1f1a515f7f70dd`. Check it with `Get-FileHash -Algorithm SHA256 <jar>` on Windows or `sha256sum <jar>` elsewhere.
