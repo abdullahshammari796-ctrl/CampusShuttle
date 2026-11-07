@@ -38,7 +38,7 @@ After *Simulate GPS outage* is pressed, the driver's shuttle produces no positio
 | D5 | Zuhair | Student: *I'm waiting here*. Office: map badge and "Students waiting"; *Demand & forecast* → select a cell (mouse, or Tab to it and press Enter) | Office counts 1 waiting; explanation lists past dates, counts and range, with the synthetic-data banner | 90 s (about 45 s of it was the tool locating the cell) / 60 s |
 | D6 (15-min slot) | Zuhair | Office: *Live operations* → *End* on Shuttle 01 → reason → *End trip*; then *System* → audit log | Driver window: "This trip is no longer active…", start form; audit entry with the reason | 13 s / 30 s |
 
-D1–D5 take about 4 minutes with explanation, which is the demo share of the 12-minute plan.
+The 12:00 plan budgets 3:30 for D1–D5: 2:15 for Abdullah (D1–D4) and 1:15 for Zuhair (D5). The spoken estimates in the last column add up to about 3:10. In the dry run, D1–D5 took about 3:00, of which about 45 s was the tool's own latency.
 
 ## Failure fallback
 | If… | Then |

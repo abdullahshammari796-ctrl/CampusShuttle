@@ -2,29 +2,37 @@
 
 **Status (7 November 2026).** This is a proposed script and a proposed division between Abdullah and Zuhair. Neither member has rehearsed it, and it records no rehearsal. Change the wording into your own words: the brief says every member speaks, and the instructor may ask either of you about any slide.
 
-**Time limit.** The official limit and the running order are published in Week 12 and are **not yet known**. Until then the script is fitted to a **provisional 12-minute target**, with cut points for an 8-minute and a 15-minute slot below. Spoken times are estimates at about 130 words per minute: the quoted text below counts about 1,080 words, or 8 min 20 s. The demo adds about 3 minutes of clicks and waits, including the fixed 60 s GPS-loss wait, for an estimated total of 11–12 minutes. The measured demo times come from the tool-driven dry run of 6 November (`docs/evidence/walkthrough-2026-11-06.txt`), not from a rehearsal.
+**Time limit.** The official limit and the running order are published in Week 12 and are **not yet known**. Until then the script is fitted to a **provisional budget of 12:00**, with 8- and 15-minute versions below. None of these is an official limit, and none has been rehearsed.
+
+**How the budget is estimated.** Speech is estimated at 130 words per minute. The quoted text below has about 1,090 words, so speaking takes about **8:25**. The demo adds clicks and waits that nobody talks over, about **1:45**:
+* about 35 s of clicks in D1, D2 and D4;
+* about 35 s of the 60 s GPS-loss wait in D3, the rest of which is talked over;
+* about 35 s of clicks and window switching in D5.
+
+Speech and the uncovered demo time come to about **10:10**. The remaining 1:50 of the budget is for slide changes, pauses and window switching. The demo times come from the tool-driven dry run of 6 November (`docs/evidence/walkthrough-2026-11-06.txt`), not from a rehearsal.
 
 **Before you present.**
 * Decide whether you agree with the §6.3 scores and the ADRs (issues #2 and #9). If you changed a score, say so on slide 4.
 * Practise the demo with the runbook in `docs/demo-script.md`, using separate windows.
 
-| # | Slide | Proposed speaker | Target |
-|---|---|---|---|
-| 1 | Title | Abdullah | 0:30 |
-| 2 | Students wait blind; the office plans without data | Zuhair | 0:45 |
-| 3 | The hard quality: timely and honest information | Zuhair | 0:45 |
-| 4 | Four architectures compared | Abdullah | 1:15 |
-| 5 | One process, eight components | Abdullah | 0:45 |
-| 6 | One GPS upload reaches every viewer | Abdullah | 0:40 |
-| 7 | When GPS fails, the system says so | Zuhair | 0:40 |
-| 8 | Five design patterns | Zuhair | 0:40 |
-| 9 | Three roles, one live system | Zuhair | 0:15 |
-| 10 | Demand forecasts the office can explain | Zuhair | 0:30 |
-| 11 | Synthetic backtest | Zuhair | 0:30 |
-| 12 | Live demonstration | Abdullah (demo 1), Zuhair (demo 2) | 4:00 |
-| 13 | Tested, measured — and honest about the gaps | Abdullah | 0:45 |
-| 14 | What we would do next · questions | both | 0:30 |
-| | **Total** | Abdullah about 6:00 · Zuhair about 5:30 | **about 12:00** |
+| # | Slide | Proposed speaker | 12:00 budget | 8-minute version |
+|---|---|---|---|---|
+| 1 | Title | Abdullah | 0:30 | 0:20 |
+| 2 | Students wait blind; the office plans without data | Zuhair | 0:45 | 0:30 |
+| 3 | The hard quality: timely and honest information | Zuhair | 0:45 | 0:30 |
+| 4 | Four architectures compared | Abdullah | 1:15 | 0:50 |
+| 5 | One process, eight components | Abdullah | 0:45 | 0:50 (adds one sentence from slide 6) |
+| 6 | One GPS upload reaches every viewer | Abdullah | 0:40 | — |
+| 7 | When GPS fails, the system says so | Zuhair | 0:40 | 0:30 |
+| 8 | Five design patterns | Zuhair | 0:40 | 0:15 (names only) |
+| 9 | Three roles, one live system | Zuhair | 0:15 | — |
+| 10 | Demand forecasts the office can explain | Zuhair | 0:30 | 0:35 (adds one sentence from slide 11) |
+| 11 | Synthetic backtest | Zuhair | 0:30 | — |
+| 12 | Live demonstration: demo 1 | Abdullah | 2:15 | 1:15 (D1, D3 with demo thresholds) |
+| 12 | Live demonstration: demo 2 | Zuhair | 1:15 | 1:00 (D5) |
+| 13 | Tested, measured — and honest about the gaps | Abdullah | 0:45 | 0:30 |
+| 14 | What we would do next · questions | Abdullah 0:15, Zuhair 0:15 | 0:30 | 0:20 |
+| | **Total** | | **12:00** (Abdullah 6:25, Zuhair 5:35) | **7:25** + about 0:35 for changes = **8:00** (Abdullah 3:55, Zuhair 3:30) |
 
 ## Slide by slide
 
@@ -62,23 +70,36 @@
 **11 · Synthetic backtest — Zuhair (0:30)**
 "This backtest runs on synthetic data that we generated from our own assumptions. The weekday-aware models beat the naive one only because the data was built that way. So this checks the pipeline, not real accuracy. With one semester of real requests, the same backtest will decide whether a trained model is worth adding."
 
-**12 · Live demonstration — 4:00 (see the runbook for every click)**
-*Demo 1 — Abdullah, driver and student windows (about 2:30):*
+**12 · Live demonstration — 3:30 (see the runbook for every click)**
+
+*Demo 1 — Abdullah, driver and student windows (2:15: about 45 s of speech, about 35 s of clicks, and the 60 s GPS-loss wait, partly talked over):*
 "I start a trip on the Campus Loop with simulated GPS… and the shuttle appears in the student window with its arrival time. Now I cut the phone's network and try to end the trip: the app says the trip was *not* ended, because the server could not confirm it. I restore the network and the queued positions arrive in one batch. An impossible jump is rejected. Now a GPS outage: no positions at all." *[Talk over the wait; it takes about 20 s, then 60 s.]* "There is 'location delayed'… and there is 'GPS lost', with no estimate. I restore GPS, and it is Live again within a few seconds."
-*Demo 2 — Zuhair, student and office windows (about 1:30):*
+
+*Demo 2 — Zuhair, student and office windows (1:15: about 25 s of speech and about 35 s of clicks and window switching):*
 "As a student, I tap 'I'm waiting here'. The office sees one student waiting at the Library, on the map and in the counters, but not who I am. In Demand and forecast I select a cell, and the office sees exactly how that number was calculated." *[In a 15-minute slot, also run D6 from the runbook: the office ends the trip with a reason, and the driver's window returns to the start form.]*
 
 **13 · Evidence — Abdullah (0:45)**
-"144 automated tests pass: 119 in Node and 25 in a real browser, including accessibility checks of all three role pages. They run on every pull request to our protected main branch. Testing and independent review found 18 defects, all fixed with regression tests, for example a trip that the app ended while the server had not. What we have *not* done: a field test with a real phone, a screen-reader session, real demand data, and our own check of the diagrams on paper."
+"144 automated tests pass: 119 in Node and 25 in a real browser, including accessibility checks of all three role pages, on every pull request. The test plan records 19 defects and corrections, each checked the way that fits it: tests, audits, source comparison or visual checks. For example, a regression test covers the trip the driver's page abandoned before the server confirmed its end. Not done yet: a real-phone field test, a screen-reader session, real demand data, and our own paper check of the diagrams, whose smallest labels are below 6 points on A4."
 
-**14 · Next steps and questions — both (0:30)**
+**14 · Next steps and questions — Abdullah and Zuhair (0:30)**
 *Abdullah:* "First, a field test on a real shuttle, to tune the 20- and 60-second thresholds."
 *Zuhair:* "Then one semester of real requests, and a trained model only if it beats the baseline."
 *Both:* "How the work was produced, including the AI tools we used, is declared in section 10 of the report. Thank you; we are happy to take questions."
 
 ## Cut points
-* **8 minutes:** drop slides 6 and 11 (one sentence each on slides 5 and 10). On slide 8, name the patterns in one sentence. Demo: D1, D3 with the demo thresholds (start the server with `STALE_AFTER_SECONDS=10 LOST_AFTER_SECONDS=30` and *say* that you did), and D5. That is about 8:00.
-* **15 minutes:** the full demo including D2 and D6 (about 5:00), plus 1:30 more on slides 4 and 13 (what would change our mind; how the defects were found), leaving time for questions. That is about 15:00.
+* **8 minutes:** use the last column of the table.
+  * Drop slides 6, 9 and 11, with one sentence each from slides 6 and 11 moved to slides 5 and 10.
+  * On slide 8, name the patterns only.
+  * Demo: D1, then D3 with the demo thresholds. Start the server with `STALE_AFTER_SECONDS=10 LOST_AFTER_SECONDS=30` and *say* that you did; the wait then drops from 60 s to 30 s. Then D5.
+
+  That gives about 7:25 of slides and demo, plus about 0:35 for slide changes.
+* **15 minutes:** the 12:00 plan, plus:
+  * D6 (office ends the trip; Zuhair, +0:30);
+  * 0:45 more on slide 4, on what would change the decision (Abdullah);
+  * 0:45 more on slide 13, on how the defects were found (Abdullah);
+  * about 1:00 kept for questions.
+
+  That gives Abdullah 7:55, Zuhair 6:05 and questions 1:00, which is 15:00.
 
 ## Likely questions (answer in your own words)
 See "Likely questions" in `docs/demo-script.md`, the explain-it checklist in `docs/team/work-ownership-plan.md`, and `docs/architecture/technical-assessment.md` §1.3 ("what would change the decision").

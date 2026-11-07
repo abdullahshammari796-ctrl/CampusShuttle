@@ -98,7 +98,7 @@ Every pointer below was checked against the code on `main` at `695eb88`. "Retain
 ### ADR-0006 Signed HttpOnly session cookies and role checks at the edge
 * **Rationale.** Works with EventSource; tokens are unreadable by page scripts.
 * **Alternatives.** JWT in localStorage, a server-side session table, university SSO.
-* **Trade-offs.** No lookup per request, against no early revocation.
+* **Trade-offs.** Signed tokens avoid a server-side session-record lookup, but authentication still checks on every request that the user account exists (`AuthService.authenticate` calls `users.get`). The cost is that logout cannot revoke a copied token before it expires.
 * **Evidence.** `src/identity/password-hasher.ts` (salted scrypt); HMAC-signed tokens; `src/web/middleware.ts` (CSP, `frame-ancestors 'none'`, `X-Frame-Options: DENY`, the `X-Requested-With: campus-shuttle` check); role matrix of 26 endpoints × 4 caller types in `test/integration/api.test.ts`.
 * **Limitations.** Logout cannot revoke a copied token; demo passwords are public.
 * **Assessment.** Retain for the prototype. Before any deployment: SSO or a revocation list, `SECURE_COOKIES=true` behind HTTPS, and no demo accounts.

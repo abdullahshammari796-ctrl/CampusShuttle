@@ -3,6 +3,7 @@
 Updated 7 November 2026. Sources read on this machine:
 * **Brief**: the official *BCS 305 Course Project* description (`Project_description.docx`; all three local copies are identical). The copy ends at §4.4. It refers to a grading rubric in "Section 8" and to presentation timing that it does not contain; it states that 17 of the 30 marks are for planning, modelling and architectural reasoning and that report §6 carries 5 marks.
 * **Course slides**: the instructor's decks for Modules 00–04 and 06 and the Week 6 Model Set Studio sheet, as distributed on Moodle. They add later instructions (marked **I** below). Their schedule dates are marked "indicative" by the instructor.
+* **Local copies used** (dates are the files' dates on this computer; slide numbers are the numbers printed on the slides): `Project_description.docx` (31 Oct 2026), `BCS305_00_Course_Introduction.pptx` (24 Sep 2026), `BCS305_03_Requirements_Engineering.pptx`, `BCS305_04_System_Analysis_Models.pptx`, `BCS305_06.pptx` and `BCS305_Week6_Model_Set_Studio.docx` (29 Oct 2026). These course files are not published in this repository. Zuhair's review of PR #17 did not have them, so the instructions marked **I** have been checked against them only on Abdullah's computer.
 
 **Class:** R = required by the brief · I = later instructor instruction in the course slides · G = internal project goal · O = optional additional evidence.
 **Status:** ✅ done and verified · ◐ done, with a stated limitation · ⏳ OUTSTANDING (needs the team or the instructor) · ✗ not done.
@@ -28,7 +29,7 @@ Updated 7 November 2026. Sources read on this machine:
 | Brief §4.1 (3) | R | SDLC approach and why; the actual timeline | Report §3.1–3.3 | ◐ repository dates complete; registration, approval and checkpoint dates ⏳ |
 | Brief §4.1 (4) | R | Use case diagram and descriptions; activity; system sequence; state machine where relevant | Appendix A.1–A.7 | ✅ (team inspection on paper ⏳, issue #1) |
 | Brief §4.1 (5) | R | Domain model; class diagram; component; deployment | Appendix A.8–A.12 | ✅ (team inspection ⏳) |
-| Module 06 | I | Report shows the logical view and at least one other (4+1) | Report §5, view table | ✅ |
+| Module 06 (slide 35) | I | Report shows the logical view and at least one other (4+1) | Report §5, view table | ✅ |
 | Brief §4.1 (6) | R | ≥ 2 candidate styles compared against the quality attributes; justified choice (5 marks) | Report §6 (4 candidates, weighted and justified, with uncertainty); technical assessment; ADR-0001 | ✅ (the scores are a disclosed technical assessment; the members' own scores ⏳, issue #2) |
 | Module 03 (slide 17) | I | Name the three requirements that drove the architecture | Report §6.1 | ✅ |
 | Brief §4.1 (7) | R | ≥ 3 design patterns, each with its problem and a class diagram | Report §7 (5 patterns); A.13–A.17 | ✅ |
@@ -41,7 +42,7 @@ Updated 7 November 2026. Sources read on this machine:
 | Brief §4.2 | R | ≥ 3 written use-case descriptions | Appendix A.2 (five) | ✅ |
 | Brief §4.2 | R | Class diagram with attributes, operations, associations and multiplicity | A.9, A.10 | ✅ |
 | Brief §4.2 | R | Drawn with a UML tool, standard notation | PlantUML sources, checksum-verified renderer, `npm run uml:check` in CI; on-screen inspection `docs/evidence/uml-inspection-2026-11-06.txt` | ◐ two review questions there; team inspection ⏳ |
-| Module 04 (slide 17); Week 6 sheet | I | Run the consistency checks over the model set before submitting | `docs/evidence/uml-inspection-2026-11-06.txt` (five checks) | ◐ run by the tool; the team's own check ⏳ |
+| Module 04 (slide 20); Week 6 sheet | I | Run the consistency checks over the model set before submitting | `docs/evidence/uml-inspection-2026-11-06.txt` (five checks) | ◐ run by the tool; the team's own check ⏳ |
 | Week 6 sheet, part 3 | I | SSD: one actor on the left, the system as one box, messages as operations with parameters, no Database or Controller lifeline | A.4 | ◐ A.4 shows two actors (Driver and Student) because it models UC2 and UC1 together |
 | Module 06 (last slide) | I | Project Checkpoint 1, due Week 9: requirements, the four analysis models and the class diagram in one document | — | ⏳ whether it was submitted is not recorded |
 | Brief §4.3 | R | Prototype runs in a live demonstration | `npm start`; demo runbook; timed dry run (`docs/evidence/walkthrough-2026-11-06.txt`) | ✅ |

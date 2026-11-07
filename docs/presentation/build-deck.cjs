@@ -334,7 +334,7 @@ pres.addSection({ title: 'Evidence' });
   stat(s, { x: M, y: 1.35, w: 2.8, value: '144', label: '119 Node + 25 Chromium tests, all passing' });
   stat(s, { x: 3.7, y: 1.35, w: 2.8, value: '26 × 4', label: 'endpoints × caller types checked for role access' });
   stat(s, { x: 6.8, y: 1.35, w: 2.8, value: '113 ms', label: 'worst of 3,000 simulated viewers (local benchmark)' });
-  stat(s, { x: 9.9, y: 1.35, w: 2.8, value: '18', label: 'defects and corrections in the test plan, all resolved', color: C.accent2 });
+  stat(s, { x: 9.9, y: 1.35, w: 2.8, value: '19', label: 'defects and corrections in the test plan, all resolved', color: C.accent2 });
   card(s, { x: M, y: 3.6, w: 5.9, h: 2.6, title: 'Found by tests and independent review', body: [
     { text: 'Shuttle snapped behind at route corners (load test); hub worked after shutdown (integration test)', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
     { text: 'Driver app gave up a trip the server had not ended; live streams outlived their session (review)', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
@@ -342,7 +342,7 @@ pres.addSection({ title: 'Evidence' });
   ] });
   card(s, { x: 6.8, y: 3.6, w: 5.9, h: 2.6, title: 'Not done yet', body: [
     { text: 'Field test with a real phone on a real shuttle', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
-    { text: 'HTTPS, sign-on, Arabic, a screen-reader session; a driver app that reports in the background', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
+    { text: 'HTTPS, university single sign-on, Arabic, a screen-reader session; a driver app that reports in the background', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
     { text: 'Real demand data — forecasts shown on synthetic data only', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
     { text: 'Team inspection of the UML on paper; deployment load test', options: { bullet: true, paraSpaceAfter: 8 } },
   ] });
@@ -353,7 +353,7 @@ pres.addSection({ title: 'Evidence' });
   s.addText('What we would do next', { placeholder: 'title' });
   const next = [
     ['Field test', 'Real phones on a real route; tune the 20 s / 60 s thresholds and the speed blend'],
-    ['Production basics', 'HTTPS behind a reverse proxy, university sign-on, backups'],
+    ['Production basics', 'HTTPS behind a reverse proxy, university single sign-on, backups'],
     ['Real data, then ML', 'One semester of requests → rerun the backtest → add a model only if it wins'],
   ];
   next.forEach(([title, body], i) => {

@@ -9,7 +9,7 @@ The project description (section 10) requires a statement of *which AI tools wer
 ## Which parts, and what for
 **Claude Code, at Abdullah's request (31 October – 7 November 2026):**
 * **Baseline (31 Oct – 1 Nov):** read the project description, the Module 02 slides and the RBC Borealis article. Proposed the architecture recorded in the ADRs. Wrote the source code, automated tests, scripts and PlantUML sources. Drafted the proposal, report, UML set, ADRs, quality-attribute scenarios, test plan, demand, privacy and team documents, demo script and slides.
-* **Verification and corrections:** ran the type checker, tests, load tests and browser walkthroughs, and fixed the defects they revealed: items 1–18 in `docs/test-plan.md` §4, including the corrections after Zuhair's reviews.
+* **Verification and corrections:** ran the type checker, tests, load tests and browser walkthroughs, and fixed the defects they revealed: items 1–19 in `docs/test-plan.md` §4, including the corrections after Zuhair's reviews.
 * **Repository:** ran the public-release audit, created the repository and made the commits from Abdullah's account (using his GitHub no-reply address). It also:
   * invited Zuhair and opened the issues;
   * verified, reviewed and merged pull requests #12–#16 from Abdullah's account, and configured branch protection;
@@ -28,7 +28,7 @@ The project description (section 10) requires a statement of *which AI tools wer
 **ChatGPT, at Zuhair's request (1–2 November 2026):**
 * Prepared PR #12, the same-weekday median forecaster with tests and evaluation (issue #6).
 * Prepared PR #13: browser and simulator tests, accessibility and mobile fixes, waiting-state fixes, use-case evidence, the technical review of ADR-0001/0002/0003/0008 and the CI workflow (issues #5, #7, #8, #9).
-* Reviewed PRs #14, #15 and #16 on a fresh Linux checkout. This included:
+* Reviewed PRs #14, #15 and #16 on a fresh Linux checkout, and PR #17 from its verified export (7 Nov; supplied as a review package because posting the review was refused with HTTP 403). This included:
   * the first render of the 16 UML sources;
   * reproductions of the export-validation defects;
   * independent decoder checks;
@@ -46,6 +46,7 @@ The project description (section 10) requires a statement of *which AI tools wer
 | Zuhair's first render and his review of PR #15 (1–2 Nov) | Export checks that accepted empty, clipped and then malformed files; A.3 page layout | items 14, 16 |
 | A failed browser run (2 Nov) | Credentials could reach a URL from the sign-in form | item 15 |
 | Final pass walkthrough and measurements (6–7 Nov) | Office accessibility failures; UML-set print sizes; draft §6.3 scores corrected | items 17–18; report §6.3 |
+| Zuhair's review of PR #17 (7 Nov, supplied as a package) | Authentication trade-off wording; the claim that every defect has a regression test; inconsistent slide times; "sign-on" wording on slide 13 | item 19 |
 
 ## What the tools did not do
 * They did not register the team, choose the topic, contact the instructor or submit anything for marking. Git and GitHub actions were taken only at the account owner's explicit request; nothing was committed as the other student. The app was not deployed, and no licence was chosen.

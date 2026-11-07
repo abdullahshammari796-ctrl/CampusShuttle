@@ -57,7 +57,7 @@ NOTATION AND LAYOUT (what was checked on screen)
 - A.12: devices, execution environments and artifacts; the production recommendation is a note.
 - A.13–A.17: one problem and one class structure per pattern; A.17 labels GpsSource as a duck-typed contract.
 
-CONSISTENCY CHECKS (Module 04 slide 17; Week 6 sheet part 5)
+CONSISTENCY CHECKS (Module 04, printed slide 20; Week 6 sheet part 5)
 1. Every actor appears elsewhere: Student, Driver, Transport office staff, GPS receiver and Scheduler all appear in
    the A.2 descriptions; Driver and Student in A.4. PASS.
 2. One SSD for the main scenario modelled: A.4 covers UC2 with UC1. PASS for that scenario; the other use cases have

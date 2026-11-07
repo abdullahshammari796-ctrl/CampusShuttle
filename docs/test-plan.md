@@ -62,7 +62,7 @@ Found by the independent review (1 Nov 2026), reproduced before fixing:
 8. **UML diagrams did not match the code in places.** A member-by-member comparison found, among others: Observer drawn as an interface implemented by `SseHub` (the code uses callbacks); `GpsSource` drawn as a declared interface (it is a duck-typed contract); the hub calling `TrackingService` directly (it calls `LiveView`); the 30-minute auto-close guard worded as "no fix at all"; and hidden fields in the domain model. All 16 sources were corrected on 1 Nov 2026. (Rendering followed on 2 Nov 2026; see §6.)
 9. **Flaky privacy test** (found when the review-packaging run failed once): "public vehicle views never contain the driver identity" checked that the view JSON did not contain the driver id `d1`, but the view also contains the trip's random UUID, which includes "d1" in roughly one run in eight. Not a privacy leak; the test now uses an id that cannot occur in a UUID and also checks for the driver's display name. Verified with 5 full-suite runs and 30 runs of that test.
 
-Found in the owner review of PRs #12 and #13 (1 Nov 2026; items 10–13), in the first UML render (item 14), in a failed browser run on 2 Nov 2026 (item 15), in Zuhair's review of PR #15 (item 16) and in the final completion pass of 6–7 Nov 2026 (items 17–18). The regression evidence differs by item, so each item names its own baseline:
+Found in the owner review of PRs #12 and #13 (1 Nov 2026; items 10–13), in the first UML render (item 14), in a failed browser run on 2 Nov 2026 (item 15), in Zuhair's review of PR #15 (item 16), in the final completion pass of 6–7 Nov 2026 (items 17–18) and in Zuhair's review of PR #17 (item 19). The regression evidence differs by item, so each item names its own baseline:
 * items 10 and 11: tests that fail on commit `f62b472` (`npx playwright test` and `node --test`, 1 Nov 2026);
 * item 12: `npm audit`;
 * item 13: reading the sources against the code;
@@ -70,9 +70,10 @@ Found in the owner review of PRs #12 and #13 (1 Nov 2026; items 10–13), in the
 * item 15: the new Chromium test, run with the fix temporarily removed (2 Nov 2026);
 * item 16: tests that fail on the validator from commit `87aceaf` (`docs/evidence/uml-validator-regression.txt`);
 * item 17: the new Chromium tests, run against the unfixed `public/` files of `main` at `695eb88` (`docs/evidence/accessibility-office-2026-11-06.txt`);
-* item 18: text sizes measured from the built HTML; there is no automated test of print size.
+* item 18: text sizes measured from the built HTML; there is no automated test of print size;
+* item 19: reading the documents against the code and this test plan; documentation only, no automated test.
 
-The fixes for items 10–16 were made in the owner pull requests #14 and #15, and for items 17–18 in the final completion pull request:
+The fixes for items 10–16 were made in the owner pull requests #14 and #15, and for items 17–19 in the final completion pull request (#17):
 
 10. **A reloaded device-GPS trip switched to simulated positions.** `driver.js` always restarted the simulator after a reload, so a real trip would have uploaded fabricated positions. Fixed: `GET /api/driver/trip` returns `locationSource` (the source of the latest accepted position, also after a server restart). The page resumes that source; when it is unknown, it shares nothing until the driver chooses. Tests: `e2e/driver-location-source.spec.ts` (2), `api.test.ts` "tells a reloaded driver page which location source its trip is using", and a restart assertion.
 11. **Waiting-count refresh amplification.** Every student waiting at a stop re-fetched their own request whenever anyone joined that stop. With K students waiting, each join cost about K requests (5 extra requests for 5 joins in the test). Fixed: the page re-fetches only when the stop's count falls. Test: `e2e/use-cases.spec.ts` "UC3: other students joining the same stop do not make a waiting student re-fetch its request".
@@ -110,6 +111,13 @@ The fixes for items 10–16 were made in the owner pull requests #14 and #15, an
 
     Fixed: cell buttons with accessible names; ink chosen by computed contrast and the ramp colour replaced; focusable, named table regions; a polite live region for the explanation. Tests in `e2e/accessibility.spec.ts`: "office light/dark: automated WCAG checks on every tab at phone width" (with one audited change, so the audit table has a real row) and "office can open a forecast explanation (UC5 step 3) using only the keyboard". All three fail on the unfixed files.
 18. **The separate UML-set PDF printed some text at 5.5 pt** (found by measuring the build: A.5's 11 px labels at 67 %, A.15 at 62 %, A.9 at 63 %). The brief asks for that PDF "at full readable size". Fixed in `scripts/build-docs.ts`: in the UML-set PDF each diagram is enlarged towards a 7 pt minimum, but never cut horizontally into more rows of pages than before, because a class box split across pages is harder to read than smaller text. Nine diagrams now reach 6.9 pt or more (five before); the smallest text is 5.7 pt (A.9's stereotype labels, limited by the A4 page). The report's Appendix A keeps its layout. The page inspection also found that two interface labels in A.11 ("WaitingRequest & DemandHistory repositories" and "UserRepository") were drawn over each other; the source now breaks them over several lines, and diagram 10 was re-rendered with the verified jar (the other 15 exports re-rendered byte-identical). Details: `docs/evidence/uml-inspection-2026-11-06.txt`.
+19. **Four statements in the final-pass documents were wrong or inconsistent** (found in Zuhair's review of PR #17 at `1a21cc6`; the review was supplied as a package on 7 Nov 2026 and was not posted on GitHub):
+    * the technical assessment said ADR-0006 needs "no lookup per request", although `AuthService.authenticate` looks up the user account after verifying every token (`src/identity/auth-service.ts`); only a server-side *session-record* lookup is avoided;
+    * the speaking script said all 18 items were "fixed with regression tests", although items 12, 13 and 18 were checked by an audit, a source comparison and a measurement;
+    * the script's slide times added up to 12:30, its total row said 12:00 and its speaker totals to 11:30;
+    * slide 13 listed "sign-on" as missing, although the prototype has sign-in; university single sign-on is what is missing.
+
+    Corrected in the technical assessment, the speaking script (one consistent 12:00 budget, with 8- and 15-minute versions that add up), the runbook and the deck. No code was changed.
 
 ## 5. Manual browser verification (acceptance)
 
