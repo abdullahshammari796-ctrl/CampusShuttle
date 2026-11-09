@@ -61,3 +61,51 @@ test('student can skip navigation and choose a map stop using only keyboard acti
   await page.keyboard.press('Enter');
   await expect(page.getByLabel('Your stop')).toHaveValue('library');
 });
+
+// The office page had no automated accessibility check. Its forecast heat map failed WCAG 1.4.3 (white numbers on a
+// mid-blue cell, about 3.6:1) and, at phone width, 2.1.1 (scrollable tables that no key could reach).
+const OFFICE_TABS = [
+  { name: 'Live operations', ready: '#kpi-active' },
+  { name: 'Demand & forecast', ready: '#eval-table tbody tr' },
+  { name: 'Routes', ready: '#routes-table tbody tr' },
+  { name: 'Trip history', ready: '#trips-table tbody tr' },
+  { name: 'System', ready: '#audit-table tbody tr' },
+] as const;
+for (const colorScheme of ['light', 'dark'] as const) {
+  test(`office ${colorScheme}: automated WCAG checks on every tab at phone width`, async ({ page, appURL }) => {
+    await page.emulateMedia({ colorScheme });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await login(page, appURL, 'office');
+    // One audited change, so the audit table has a real (wide) row to scroll, as it does in use.
+    const update = await page.request.patch(`${appURL}/api/office/routes/campus-loop`, {
+      headers: { 'X-Requested-With': 'campus-shuttle' },
+      data: { name: 'Campus Loop', color: '#2563eb', nominalSpeedKmh: 18, dwellSeconds: 20 },
+    });
+    expect(update.status()).toBe(200);
+    for (const tab of OFFICE_TABS) {
+      await page.getByRole('tab', { name: tab.name, exact: true }).click();
+      await expect(page.locator(tab.ready).first()).toBeVisible();
+      if (tab.name === 'Demand & forecast') await expect(page.locator('#forecast-heat td.clickable').first()).toBeVisible();
+      const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa']).analyze();
+      expect(results.violations.map(v => ({ tab: tab.name, id: v.id, nodes: v.nodes.map(n => n.target) }))).toEqual([]);
+    }
+  });
+}
+
+test('office can open a forecast explanation (UC5 step 3) using only the keyboard', async ({ page, appURL }) => {
+  await login(page, appURL, 'office');
+  await page.getByRole('tab', { name: 'Demand & forecast', exact: true }).click();
+  await expect(page.locator('#forecast-heat td.clickable').first()).toBeVisible();
+  await page.locator('#forecast-model').focus();
+  for (let i = 0; i < 25; i++) {
+    await page.keyboard.press('Tab');
+    if (await page.evaluate(() => Boolean(document.activeElement?.closest('#forecast-heat')))) break;
+  }
+  const cell = page.locator('#forecast-heat :focus');
+  await expect(cell).toHaveCount(1);
+  const label = (await cell.getAttribute('aria-label')) ?? '';
+  const [, stop, hour] = /^(.+) (\d\d:\d\d):/.exec(label) ?? [];
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#explain')).toContainText(`${stop} · ${hour}–`);
+  await expect(page.locator('#explain')).toHaveAttribute('aria-live', 'polite');
+});

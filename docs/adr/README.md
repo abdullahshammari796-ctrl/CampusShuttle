@@ -15,4 +15,4 @@ Each record states the context, the decision, the alternatives considered and th
 
 To propose a change, add a new numbered record (do not rewrite an accepted one) and mark the record it replaces as *Superseded by ADR-xxxx*.
 
-Technical evidence for issue #9: [Zuhair-requested review of ADR-0001, 0002, 0003 and 0008](zuhair-technical-review.md) and [review of ADR-0004 to 0007 prepared for Abdullah](abdullah-technical-review.md). Both are evidence reviews and do not replace each member's personal cross-review, which is still OUTSTANDING.
+Technical evidence for issue #9: [Zuhair-requested review of ADR-0001, 0002, 0003 and 0008](zuhair-technical-review.md), [review of ADR-0004 to 0007 prepared for Abdullah](abdullah-technical-review.md), and the [technical assessment of all eight ADRs and options A–D](../architecture/technical-assessment.md) (6 November 2026). All three are evidence reviews and do not replace each member's personal cross-review, which is still OUTSTANDING.

@@ -33,8 +33,8 @@ interface "Live feed\n(Server-Sent Events)" as ISSE
 interface "NetworkReader" as INet
 interface "EventPublisher /\nsubscribe" as IBus
 interface "Trip & LocationFix\nrepositories" as ITrackRepo
-interface "WaitingRequest & DemandHistory\nrepositories" as IDemandRepo
-interface "UserRepository" as IUserRepo
+interface "WaitingRequest &\nDemandHistory\nrepositories" as IDemandRepo
+interface "User\nRepository" as IUserRepo
 interface "Stop, Route & Shuttle\nrepositories" as INetRepo
 interface "AuditLog" as IAudit
 

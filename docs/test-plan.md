@@ -11,7 +11,7 @@ Show that the two primary end-to-end flows work, that role restrictions hold, th
 | Architecture conformance | Component dependency rules of the component diagram — **imports only**; UML operations, attributes, associations and multiplicities are not checked automatically (compared with the code by hand) | `node:test` (static import analysis) | `test/architecture.test.ts` |
 | Integration / system | Real HTTP server + SQLite (in memory) + SSE clients; security, use cases, persistence recovery | `node:test`, `fetch`, `node:http` | `test/integration/` |
 | Performance | Fan-out latency with 1,000 and 3,000 simulated viewers — a local benchmark (same process, loopback, one shared session, no browsers), not a deployment test | `scripts/load-test.ts` | `docs/evidence/load-test-*.txt` |
-| Browser (end to end) | Role workflows, UC1–UC5 steps and extensions, accessibility (axe WCAG tags, keyboard) and driver location-source resumption, each against a fresh in-memory server with a controllable server clock | Playwright 1.64.1, Chromium | `e2e/` |
+| Browser (end to end) | Role workflows, UC1–UC5 steps and extensions, accessibility of the student, driver and office pages (axe WCAG tags, keyboard) and driver location-source resumption, each against a fresh in-memory server with a controllable server clock | Playwright 1.64.1, Chromium | `e2e/` |
 | Acceptance | UC1–UC5 in a real browser against a running server | manual, scripted | §5 below, `docs/demo-script.md` |
 
 Time is controlled with a `ManualClock`, so staleness, expiry, session expiry and retention are tested deterministically without waiting.
@@ -28,7 +28,7 @@ npm run uml:check     # rendered UML exports well-formed / fully decoded, unclip
 
 ## 4. Automated test inventory and results
 
-Current run (2 Nov 2026, branch `abdullah/docs-wording-and-records` from `main` at `5232999`, Windows 11, Node 24.14.1): **119 Node tests, 119 passed, 0 failed** (`docs/evidence/test-run.txt`) and **22 Chromium tests, 22 passed** (two consecutive full runs) (`docs/evidence/browser-test-run.txt`). The same checks run in GitHub Actions (`verify`) on every pull request to `main`.
+Current run (7 Nov 2026, branch `abdullah/final-completion` from `main` at `695eb88`, Windows 11, Node 24.14.1): **119 Node tests, 119 passed, 0 failed** (`docs/evidence/test-run.txt`) and **25 Chromium tests, 25 passed** in one full run (`docs/evidence/browser-test-run.txt`). The same checks run in GitHub Actions (`verify`) on every pull request to `main`. Earlier browser runs: the PR #15 work recorded two consecutive full runs (22/22); PR #16 and Zuhair's review of it each recorded one full run (22/22).
 
 Historical baseline run: 1 Nov 2026, Windows 11, Node 24.14.1 — **103 tests, 103 passed, 0 failed, ≈ 4.7 s** (before PRs #12 and #13).
 
@@ -62,15 +62,18 @@ Found by the independent review (1 Nov 2026), reproduced before fixing:
 8. **UML diagrams did not match the code in places.** A member-by-member comparison found, among others: Observer drawn as an interface implemented by `SseHub` (the code uses callbacks); `GpsSource` drawn as a declared interface (it is a duck-typed contract); the hub calling `TrackingService` directly (it calls `LiveView`); the 30-minute auto-close guard worded as "no fix at all"; and hidden fields in the domain model. All 16 sources were corrected on 1 Nov 2026. (Rendering followed on 2 Nov 2026; see §6.)
 9. **Flaky privacy test** (found when the review-packaging run failed once): "public vehicle views never contain the driver identity" checked that the view JSON did not contain the driver id `d1`, but the view also contains the trip's random UUID, which includes "d1" in roughly one run in eight. Not a privacy leak; the test now uses an id that cannot occur in a UUID and also checks for the driver's display name. Verified with 5 full-suite runs and 30 runs of that test.
 
-Found in the owner review of PRs #12 and #13 (1 Nov 2026; items 10–13), in the first UML render (item 14) in a failed browser run on 2 Nov 2026 (item 15) and in Zuhair's review of PR #15 (item 16). The regression evidence differs by item, so each item names its own baseline:
+Found in the owner review of PRs #12 and #13 (1 Nov 2026; items 10–13), in the first UML render (item 14), in a failed browser run on 2 Nov 2026 (item 15), in Zuhair's review of PR #15 (item 16), in the final completion pass of 6–7 Nov 2026 (items 17–18) and in Zuhair's review of PR #17 (item 19). The regression evidence differs by item, so each item names its own baseline:
 * items 10 and 11: tests that fail on commit `f62b472` (`npx playwright test` and `node --test`, 1 Nov 2026);
 * item 12: `npm audit`;
 * item 13: reading the sources against the code;
 * item 14: tests that reproduce the failure kinds Zuhair's render reported (no separate run against the old script was recorded);
 * item 15: the new Chromium test, run with the fix temporarily removed (2 Nov 2026);
-* item 16: tests that fail on the validator from commit `87aceaf` (`docs/evidence/uml-validator-regression.txt`).
+* item 16: tests that fail on the validator from commit `87aceaf` (`docs/evidence/uml-validator-regression.txt`);
+* item 17: the new Chromium tests, run against the unfixed `public/` files of `main` at `695eb88` (`docs/evidence/accessibility-office-2026-11-06.txt`);
+* item 18: text sizes measured from the built HTML; there is no automated test of print size;
+* item 19: reading the documents against the code and this test plan; documentation only, no automated test.
 
-The fixes were made in the owner pull requests #14 and #15:
+The fixes for items 10–16 were made in the owner pull requests #14 and #15, and for items 17–19 in the final completion pull request (#17):
 
 10. **A reloaded device-GPS trip switched to simulated positions.** `driver.js` always restarted the simulator after a reload, so a real trip would have uploaded fabricated positions. Fixed: `GET /api/driver/trip` returns `locationSource` (the source of the latest accepted position, also after a server restart). The page resumes that source; when it is unknown, it shares nothing until the driver chooses. Tests: `e2e/driver-location-source.spec.ts` (2), `api.test.ts` "tells a reloaded driver page which location source its trip is using", and a restart assertion.
 11. **Waiting-count refresh amplification.** Every student waiting at a stop re-fetched their own request whenever anyone joined that stop. With K students waiting, each join cost about K requests (5 extra requests for 5 joins in the test). Fixed: the page re-fetches only when the stop's count falls. Test: `e2e/use-cases.spec.ts` "UC3: other students joining the same stop do not make a waiting student re-fetch its request".
@@ -101,6 +104,20 @@ The fixes were made in the owner pull requests #14 and #15:
     * `recordDiagram` validates before recording.
 
     Tests in `test/unit/uml-exports.test.ts`: "rejects well-wrapped exports whose content does not parse or decode", and "refuses to record malformed exports, and the manifest check rejects them even when their hashes match". On the old validator the first fails with "Missing expected exception" and the second because `checkExports` returned `[]`. The reviewer's reproducer now stops at the first rejection.
+17. **The office page failed WCAG checks and kept the forecast explanation from keyboard users** (found in the 6 November walkthrough and the first automated scan of the office page, which the PR #13 checks did not cover):
+    * the forecast heat-map cells were `<td>` elements with only a click handler, so UC5 step 3 needed a mouse;
+    * white numbers on the mid-blue cells reached about 3.6:1 contrast (small text needs 4.5:1), and one dark-mode ramp colour could not reach 4.5:1 with either ink;
+    * at phone width, the history, backtest and audit tables scrolled sideways but no key could reach them.
+
+    Fixed: cell buttons with accessible names; ink chosen by computed contrast and the ramp colour replaced; focusable, named table regions; a polite live region for the explanation. Tests in `e2e/accessibility.spec.ts`: "office light/dark: automated WCAG checks on every tab at phone width" (with one audited change, so the audit table has a real row) and "office can open a forecast explanation (UC5 step 3) using only the keyboard". All three fail on the unfixed files.
+18. **The separate UML-set PDF printed some text at 5.5 pt** (found by measuring the build: A.5's 11 px labels at 67 %, A.15 at 62 %, A.9 at 63 %). The brief asks for that PDF "at full readable size". Fixed in `scripts/build-docs.ts`: in the UML-set PDF each diagram is enlarged towards a 7 pt minimum, but never cut horizontally into more rows of pages than before, because a class box split across pages is harder to read than smaller text. Nine diagrams now reach 6.9 pt or more (five before); the smallest text is 5.7 pt (A.9's stereotype labels, limited by the A4 page). The report's Appendix A keeps its layout. The page inspection also found that two interface labels in A.11 ("WaitingRequest & DemandHistory repositories" and "UserRepository") were drawn over each other; the source now breaks them over several lines, and diagram 10 was re-rendered with the verified jar (the other 15 exports re-rendered byte-identical). Details: `docs/evidence/uml-inspection-2026-11-06.txt`.
+19. **Four statements in the final-pass documents were wrong or inconsistent** (found in Zuhair's review of PR #17 at `1a21cc6`; the review was supplied as a package on 7 Nov 2026 and was not posted on GitHub):
+    * the technical assessment said ADR-0006 needs "no lookup per request", although `AuthService.authenticate` looks up the user account after verifying every token (`src/identity/auth-service.ts`); only a server-side *session-record* lookup is avoided;
+    * the speaking script said all 18 items were "fixed with regression tests", although items 12, 13 and 18 were checked by an audit, a source comparison and a measurement;
+    * the script's slide times added up to 12:30, its total row said 12:00 and its speaker totals to 11:30;
+    * slide 13 listed "sign-on" as missing, although the prototype has sign-in; university single sign-on is what is missing.
+
+    Corrected in the technical assessment, the speaking script (one consistent 12:00 budget, with 8- and 15-minute versions that add up), the runbook and the deck. No code was changed.
 
 ## 5. Manual browser verification (acceptance)
 
@@ -134,16 +151,31 @@ Re-verified on 1 Nov 2026 after the review fixes (fresh server, fleet simulator 
 | Student: live map, stop selection, arrivals, waiting request | live badge; arrivals; abandoned shuttle shown as delayed | ✔ "Live updates"; two arrivals; the shuttle whose driver page had closed showed "Location delayed ~7 min"; request registered ("1 person is waiting here") |
 | Office: live operations, system, forecast, remote end | KPIs; stream counters incl. session expiry; audited end | ✔ 3 shuttles, 1 GPS problem, 1 waiting; "… 0 closed at session expiry"; forecast with synthetic-data banner; audit "trip.terminate — Walkthrough: driver page closed, GPS lost" |
 
+Third walkthrough, 6 November 2026, 23:35–23:51: a fresh demonstration database, the fleet simulator with `--outage --outage-at 30 --outage-for 75`, three sessions in separate browser tabs. Driven by the tool declared in the AI-use statement, not by a team member; positions simulated. Details and times: `docs/evidence/walkthrough-2026-11-06.txt`.
+
+| Step | Expected | Observed |
+|---|---|---|
+| UC1 step 5: a shuttle on the loop reaches the student's stop | next-lap estimate, list re-sorted | ✔ Shuttle 01 at Library "8 m · Now" (23:45:41), then "2,390 m · 8 min" (23:45:44) and re-sorted; loop length computed as 2,389 m |
+| UC3 step 4: waiting request served | closed when a matching shuttle arrives | ✔ "A shuttle reached Library & Learning Commons at 11:44 PM and your request was closed" |
+| UC4 step 2: historical trace of an ended trip | positions, distance, duration, gaps | ✔ 214 positions, 4.2 km, 12 min 35 s, longest gap 1 min 15 s, 2 gaps over the stale threshold; gap drawn dotted |
+| GPS outage, timed from the press | delayed ≤ 22 s, lost ≤ 62 s, recovery on next fix | ✔ delayed 19 s, lost 59 s (no estimate), Live 2 s after restore |
+| Network loss, end trip, restore | trip not ended; queue delivered | ✔ "Trip NOT ended…"; "Delivered 7 queued positions in one batch (7 accepted)" |
+| UC5 step 3 with the keyboard | explanation reachable | ✘ heat-map cells not focusable → fixed (item 17) |
+| Driver page left in a background tab | positions continue | ✘ stopped after about 5 min (browser throttling), resumed when shown; server showed "delayed" meanwhile. Not a code defect; the demo runbook now keeps the driver window visible |
+
 ## 6. Not tested (known gaps)
 * Real phone GPS on a moving vehicle (only the simulator and the API were exercised).
-* Browsers other than Chromium; small-screen phones beyond the responsive layout check; screen readers.
-* Additional browser engines and real assistive-technology sessions (Chromium automation is now covered below).
+* Browsers other than Chromium; physical phones (only emulated 390 px viewports were used).
+* Screen readers. No screen reader whose output can be observed was available for the 6–7 November pass: NVDA (which has a speech viewer) is not installed, and Windows Narrator's speech cannot be captured by the tools used. Automated axe scans and the accessibility tree are not a screen-reader session.
+* A driver page in the background: on 6 November the simulated driver stopped sending after about five minutes in a background tab (browser timer throttling). Behaviour on a phone with its screen off is untested (issue #3).
 * Load beyond 3,000 viewers; long-running (multi-day) operation; database growth over a semester.
 * **UML rendering — history and status.**
   * On 1 Nov 2026 the authoring environment twice refused to run the checksum-verified `plantuml-mit` 1.2026.9 jar.
   * On 1 Nov 2026, Zuhair's review rendered all 16 unchanged sources (Java 17, Linux). That run exposed the export-checking defect (item 14).
   * On 2 Nov 2026, with Abdullah's explicit authorisation, the same jar rendered all 16 sources on Windows (Java 21) through the validating `npm run uml`; the committed exports come from this run.
-  * Not yet done: the team's own visual inspection of every diagram, and print checks on paper rather than on screen (issue #1). On screen, the reading pages print most labels at 6.2–9.8 pt and the smallest annotations at 5.5–6.2 pt; whether that is acceptable on paper is for the team to judge.
+  * On 6–7 November the pages of both PDFs were inspected on screen by the tool declared in the AI-use statement (`docs/evidence/uml-inspection-2026-11-06.txt`), and the separate UML-set PDF was enlarged (item 18).
+  * On 7 November diagram 10 was re-rendered with the same verified jar after the label fix in item 18.
+  * Not yet done: the team's own inspection of every diagram, and any check on paper (issue #1). An on-screen inspection does not show that the pages are readable when printed.
 * Session expiry is now covered in Chromium with the server clock advanced; a real eight-hour soak remains untested.
 * HTTPS deployment.
 

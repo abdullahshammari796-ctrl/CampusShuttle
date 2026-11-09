@@ -1,0 +1,88 @@
+Browser walkthrough and timed demonstration dry run — 6 November 2026, 23:35–23:51 (Gulf Standard Time)
+
+WHO AND HOW
+- Driven by the AI coding tool declared in docs/team/ai-use-statement.md, from Abdullah's computer, in the
+  Chromium-based browser pane of its desktop app. This is NOT a walkthrough or rehearsal by either team member
+  (issue #5 and issue #10 still need theirs), and it is not a physical-device or real-GPS test.
+- Windows 11, Node 24.14.1. Fresh demonstration database (`npm run seed`; the previous local demo database was
+  backed up and restored afterwards). Server: `node --disable-warning=ExperimentalWarning src/main.ts` (the same
+  command as `npm start`). Fleet simulator: `npm run simulate -- --outage --outage-at 30 --outage-for 75`.
+- Three browser tabs on three host names (localhost, 127.0.0.1, office.localhost), so the student1, driver1 and
+  office1 sessions kept separate cookies. Times below were recorded by a DOM observer in each page (host clock).
+- All positions are simulated; all data is demonstration data.
+
+TIMED DEMONSTRATION DRY RUN (steps D1–D6 of docs/demo-script.md, executed by the tool)
+Measured execution time includes the tool's own latency; spoken explanation is not included.
+  D1 Driver starts a simulated trip (Campus Loop, Shuttle 01)
+     23:37:17 trip started, "Live"; 23:37:22 student list shows Shuttle 01, 422 m, 1 min.  ~5 s
+  D2 Network loss → End trip refused → restore → glitch
+     23:37:30 network loss on; 23:37:41 "Trip NOT ended: Cannot reach the server (simulated network loss)…";
+     23:37:49 student sees "Location delayed" for Shuttle 01 (no positions delivered for 20 s);
+     23:37:52 network restored: "Delivered 7 queued positions in one batch (7 accepted)"; student back to Live;
+     23:37:56 injected 1.5 km jump: "Server rejected 1 position(s): implausible jump".             26 s
+  D3 GPS outage
+     23:38:06 outage pressed; 23:38:25 student "Location delayed", estimate "Due" (19 s);
+     23:39:05 student "GPS signal lost · last seen 1 min ago – no estimate", shuttle moved to the end of the
+     list (59 s). The driver page showed the same states at 23:38:28 and 23:39:08.                   59 s
+  D4 GPS restored
+     23:39:18 restored; 23:39:20 student "Live" with a next-lap estimate (2,124 m, 7 min).            2 s
+  D5 Waiting request → office demand view → forecast explanation
+     23:39:50 "You're on the waiting list at Library & Learning Commons"; office KPI "Students waiting 1",
+     map badge 1; 23:40:10 Demand & forecast tab; 23:41:12 explanation of Library 08:00: "Average of 4
+     previous Fridays … 10, 6, 8, 6 → 7.5", range 6–10, with the synthetic-data banner.                90 s
+     (about 45 s of this was the tool retrying to locate the heat-map cell; see defect A below)
+  D6 Office ends the trip with a reason
+     23:49:40 End pressed; reason typed; 23:49:53 driver page: "This trip is no longer active (ended by
+     the transport office or after a long signal loss)", start form shown; audit entry
+     "trip.terminate … Walkthrough 6 Nov: demo vehicle returned to depot".                           13 s
+  Sum of measured step times: about 3 min 15 s; the GPS-outage wait (about 60 s) is fixed by design.
+  D6 was run after the lap observation below, not directly after D5.
+
+USE-CASE OBSERVATIONS
+UC1 main step 5 (full loop lap), Shuttle 01 on Campus Loop, student stop Library & Learning Commons:
+  - Passed the Library during the D3 outage (no position sent); from 23:39:20 the list showed its next-lap
+    estimate (2,124 m, 7 min).
+  - Tracked round the loop; driver page next stops Engineering 23:39:20, Student Residences 23:39:41,
+    Sports Complex 23:41:06, Main Gate 23:42:48, Library 23:44:42.
+  - 23:45:41 at the stop: "8 m away · Now". 23:45:44 estimate recalculated for the next lap: "2,390 m away
+    · 8 min at 11:54 PM", and the list re-sorted (Shuttle 04 at 7 min first). Computed loop length 2,389 m.
+  - Shuttle 04 (simulator) behaved the same: at the stop at 23:44:15 ("1 m away · Now"), then a next-lap
+    estimate of 1,985 m / 7 min at 23:45:36, after its own simulated outage.
+UC3 main step 4: 23:44:13 "A shuttle reached Library & Learning Commons at 11:44 PM and your request was
+  closed" when Shuttle 04 reached the stop.
+UC4 main step 2 (historical trace), 23:50: Trip history listed "Shuttle 01 · Campus Loop · Terminated ·
+  12 min 35 s · Ended by office". Track: 214 GPS positions, 4.2 km from GPS, longest gap 1 min 15 s (the D3
+  outage), 2 gaps over the stale threshold (the D3 outage and the background-tab pause below), first/last
+  fix 11:37 PM / 11:49 PM; the map drew the gap as a dotted segment. The 7 positions queued during D2 were
+  recorded with their own times, so D2 left no gap.
+System tab: 1,593 push messages sent, 0 skipped for slow clients, 7 snapshots, 0 closed at session expiry.
+
+COMPARISON WITH THE MODELS
+- A.1 use cases: UC1, UC2 (with Start trip, Share location updates), UC3, UC4 with «extend» End a trip
+  remotely, and the Scheduler's "Detect delayed / lost GPS signal" were all exercised; no mismatch.
+- A.3 activity diagram: network-loss branch (positions queued, retried, delivered in one batch); the
+  end-trip loop repeating while the server does not confirm; the server ending the trip (office). Matches.
+- A.6 trip state machine: Live → Stale after 19 s (≤ 20 s + check interval), Stale → Lost at 59 s,
+  Lost → Live on the first accepted position, Active → Terminated by the office. Matches.
+- A.7 waiting request: Waiting → Served when a matching shuttle reached the stop. Matches.
+- A.4 system sequence diagram: startTrip, sendLocations (batched after the outage), vehicleUpdate with
+  STALE/LOST signal, endTrip refused, vehicleRemoved after termination. Matches.
+
+DEFECTS FOUND AND FIXED (test plan item 17)
+A. Forecast heat-map cells (UC5 step 3) were <td> elements with a click handler only: not focusable and not
+   exposed as controls, so the explanation could not be opened with the keyboard.
+B. An automated scan of the office page (never scanned before) found WCAG 1.4.3 contrast failures on
+   heat-map cells and, at 390 px, scrollable tables that no key could reach. Details:
+   docs/evidence/accessibility-office-2026-11-06.txt.
+
+OBSERVATIONS NOT CHANGED (for the team's review)
+1. Background tabs: the driver tab stopped sending simulated positions at 23:44:51, about five minutes after
+   it was last in front, and resumed at 23:45:31 when brought to the front. Browsers throttle timers in hidden
+   pages; the server correctly showed "Location delayed" meanwhile. For the live demonstration, keep the driver
+   window visible (separate windows, not background tabs). A phone with its screen off may behave the same way
+   (report §6.5).
+2. The student list showed "Now" while a shuttle was 357 m (about 50 s) away: minutes are rounded down.
+3. Near a minute boundary the driver's next-stop estimate alternated between "1 min" and "2 min" for about
+   20 s (23:48:27–23:48:47): the local countdown and each new server estimate disagree by a few seconds.
+4. The Track and End buttons in the office tables have the same accessible name in every row; a screen-reader
+   user must use table navigation to know which trip a button belongs to.

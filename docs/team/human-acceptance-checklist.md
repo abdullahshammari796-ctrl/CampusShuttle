@@ -2,6 +2,10 @@
 
 This form collects the facts and observations that only Abdullah and Zuhair can supply. Each item is still **OUTSTANDING** until a member fills it in from their own work. Nothing in it has been filled in on anyone's behalf. Fill it in, commit it under your own name through a reviewed pull request, and then update the linked issue.
 
+**Private fields.** Student IDs and signatures never go into this public file. They belong only in the private submission copy (the team's `TEAM-FACTS-INTAKE.md` and the documents uploaded to Moodle), unless both members decide to publish them.
+
+Tool-driven technical evidence from 6–7 November 2026 (a browser walkthrough, automated accessibility scans, an on-screen inspection of the UML pages and a timed demo dry run; see `docs/evidence/`) can help with §1, §4, §5 and §6, but it does not fill in any field below.
+
 ## 1. UML inspection (issue #1) — Abdullah, reviewed by Zuhair
 Open `docs/build/uml-diagram-set.pdf`, both on screen at 100 % and as a printed A4 page.
 
@@ -63,12 +67,12 @@ Run this only on a private network with HTTPS. Never deploy the demo publicly.
 | | | | |
 
 ## 7. Team facts (issue #11) — both
-* Student IDs:
+* Student IDs: **not here** — private submission copy only.
 * Proposal approval date (from the instructor):
 * Actual timeline (report §3.3):
 * Official rubric and presentation time limit (source):
 * Reflection (report §9), in your own words:
-* Contribution statement (report §10.1), with signatures and dates:
+* Contribution statement (report §10.1): each member's own list of work here or in the report; signatures and dates in the private submission copy only.
 * AI-use statement, "what we changed" (`ai-use-statement.md`):
 
 ## 8. Licence (issue #4) — both

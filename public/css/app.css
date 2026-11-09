@@ -261,7 +261,9 @@ table.data tr.best td { background: var(--good-soft); }
 .heat th { font-weight: 600; color: var(--text-3); padding: 2px 4px; white-space: nowrap; text-align: right; }
 .heat thead th { text-align: center; }
 .heat td { text-align: center; padding: 6px 2px; border-radius: 4px; font-variant-numeric: tabular-nums; min-width: 30px; cursor: default; }
-.heat td.clickable { cursor: pointer; }
+.heat td.clickable { cursor: pointer; padding: 0; }
+.heat .heat-cell { display: block; width: 100%; padding: 6px 2px; border: 0; border-radius: 4px; background: transparent; color: inherit; font: inherit; cursor: pointer; }
+.heat .heat-cell:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
 .heat td.selected { outline: 2px solid var(--text); outline-offset: -2px; }
 .heat td.nodata { color: var(--text-3); background: var(--surface-2); }
 .chart svg { display: block; width: 100%; height: auto; }

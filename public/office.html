@@ -72,7 +72,7 @@
             <div class="table-wrap"><table class="heat" id="forecast-heat"></table></div>
             <div class="legend"><span><span class="swatch seq-low"></span>fewer</span><span><span class="swatch seq-high"></span>more expected requests</span><span>– no history yet</span></div>
           </div>
-          <div id="explain" class="explain"><span class="muted small">Select a cell in the table above to see the basis of that forecast.</span></div>
+          <div id="explain" class="explain" aria-live="polite"><span class="muted small">Select a cell in the table above to see the basis of that forecast.</span></div>
         </div>
       </section>
       <section class="card">
@@ -85,7 +85,7 @@
           </div>
           <div>
             <div class="section-title">Average requests by weekday and hour</div>
-            <div class="table-wrap"><table class="heat" id="history-heat"></table></div>
+            <div class="table-wrap" tabindex="0" role="region" aria-label="Average requests by weekday and hour"><table class="heat" id="history-heat"></table></div>
           </div>
           <div>
             <div class="section-title">Busiest stops (period total)</div>
@@ -97,7 +97,7 @@
         <div class="card-header"><h2>Model evaluation (backtest)</h2><span class="hint" id="eval-hint"></span></div>
         <div class="card-body stack">
           <p class="small muted">Each model forecasts every stop-hour of the last 14 days using only earlier data; the forecasts are then compared with what happened. Lower MAE (mean absolute error, requests per stop-hour) is better. Coverage = share of actual values inside the model's low–high range.</p>
-          <div class="table-wrap"><table class="data" id="eval-table"></table></div>
+          <div class="table-wrap" tabindex="0" role="region" aria-label="Model backtest results"><table class="data" id="eval-table"></table></div>
           <div id="eval-note"></div>
         </div>
       </section>
@@ -170,7 +170,7 @@
       </div>
       <section class="card">
         <div class="card-header"><h2>Audit log</h2><span class="hint">Privileged actions by transport-office staff</span></div>
-        <div class="card-body table-wrap"><table class="data" id="audit-table"></table></div>
+        <div class="card-body table-wrap" tabindex="0" role="region" aria-label="Audit log"><table class="data" id="audit-table"></table></div>
       </section>
     </section>
   </main>

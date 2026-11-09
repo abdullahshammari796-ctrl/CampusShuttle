@@ -5,7 +5,9 @@
 import { enableTooltips, esc } from './ui.js';
 
 const LIGHT_RAMP = ['#cde2fb', '#9ec5f4', '#6da7ec', '#3987e5', '#256abf', '#184f95', '#0d366b'];
-const DARK_RAMP = ['#184f95', '#1c5cab', '#256abf', '#2a78d6', '#3987e5', '#6da7ec', '#9ec5f4'];
+// '#2672cc' replaces '#2a78d6', on which neither ink reached the 4.5:1 contrast that small text needs.
+const DARK_RAMP = ['#184f95', '#1c5cab', '#256abf', '#2672cc', '#3987e5', '#6da7ec', '#9ec5f4'];
+const INKS = ['#0b1220', '#ffffff'];
 const dark = () => window.matchMedia('(prefers-color-scheme: dark)').matches;
 
 function niceMax(value) {
@@ -27,9 +29,22 @@ export function sequentialColor(value, max) {
 /** Readable ink for text drawn on a sequential cell. */
 export function inkFor(background) {
   if (!background) return '';
-  const index = (dark() ? DARK_RAMP : LIGHT_RAMP).indexOf(background);
-  if (dark()) return index >= 5 ? '#0b1220' : '#ffffff';
-  return index >= 3 ? '#ffffff' : '#0b1220';
+  // The ink with the higher WCAG contrast ratio against the cell (every ramp colour reaches 4.5:1 with one of them).
+  return INKS.reduce((best, ink) => (contrast(ink, background) > contrast(best, background) ? ink : best));
+}
+
+/** WCAG 2 relative luminance of a #rrggbb colour. */
+function luminance(hex) {
+  const [r, g, b] = [1, 3, 5].map((i) => {
+    const c = parseInt(hex.slice(i, i + 2), 16) / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+function contrast(a, b) {
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (hi + 0.05) / (lo + 0.05);
 }
 
 /**
