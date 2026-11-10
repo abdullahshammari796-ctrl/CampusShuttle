@@ -2,14 +2,14 @@
 
 **Campus Shuttle Tracking & Demand Prediction** · BCS 305 Software Architecture · Fall 2026
 
-All diagrams are drawn with **PlantUML** (a text-based UML tool) using standard UML 2 notation. The editable sources are in `docs/uml/*.puml`; rendered SVG/PNG files go to `docs/uml/out/` (`npm run uml`). The class, component and sequence diagrams were written from the actual source code and were compared with it member by member on 1 November 2026 (corrections are listed in `docs/test-plan.md` §4). They were compared again in the owner review after PRs #12 and #13, which corrected diagrams 02, 04, 05, 07–12, 14 and 16 (`docs/test-plan.md` §4, item 13). **Rendering (2 November 2026; diagram 10 again on 7 November after a label fix):** all 16 sources render with the checksum-verified PlantUML MIT 1.2026.9 (built-in Smetana layout, no Graphviz). `npm run uml` validates every export (complete, unclipped, rendered from the current source) and records it in `docs/uml/out/manifest.json`; `npm run uml:check` repeats that check without Java. Every SVG is checked as well-formed XML and every PNG is fully decoded. No diagram is printed below 60 % of its rendered size: one that is too large for a page gets a vector overview page (zoom in on screen) followed by overlapping detail pages. **Two printings.** In the report (Appendix A) the reading pages print most labels at 6.2–9.8 pt and the smallest annotations at 5.5 pt. The separate UML-set PDF, which the brief asks for at full readable size, enlarges each diagram towards a 7 pt minimum without cutting class boxes across more rows of pages: 9 of the 16 diagrams then print their smallest text at 6.9 pt or more (5 before), and the smallest is 5.7 pt (stereotype labels in A.9, whose 1,502-pixel height limits it on an A4 page; print A.9 and A.10 on A3 or read them on screen). These sizes were measured from the build, not from paper; nobody has yet checked a printed copy (issue #1). Only one aspect is checked automatically: `test/architecture.test.ts` fails if a source file imports a component that the component diagram does not allow. It does **not** check UML operations, attributes, associations, multiplicities or sequence messages; those were reviewed by hand and can drift when the code changes. Where a diagram writes a type as `{…}`, the code uses an inline TypeScript object type with no class name.
+All diagrams are drawn with **PlantUML** (a text-based UML tool) using standard UML 2 notation. The editable sources are in `docs/uml/*.puml`; rendered SVG/PNG files go to `docs/uml/out/` (`npm run uml`). The class, component and sequence diagrams were written from the actual source code and were compared with it member by member on 1 November 2026 (corrections are listed in `docs/test-plan.md` §4). They were compared again in the owner review after PRs #12 and #13, which corrected diagrams 02, 04, 05, 07–12, 14 and 16 (`docs/test-plan.md` §4, item 13). **Rendering (2 November 2026; diagram 10 again on 7 November after a label fix; diagrams 03, 04, 08, 09 and 12–16 on 10 November):** all 16 sources render with the checksum-verified PlantUML MIT 1.2026.9 (built-in Smetana layout, no Graphviz). `npm run uml` validates every export (complete, unclipped, rendered from the current source) and records it in `docs/uml/out/manifest.json`; `npm run uml:check` repeats that check without Java. Every SVG is checked as well-formed XML and every PNG is fully decoded. No diagram is printed below 60 % of its rendered size: one that is too large for a page gets a vector overview page (zoom in on screen) followed by detail pages. **Two printings.** In the report (Appendix A) the reading pages print most labels at about 6.5–10.5 pt and the smallest annotations at 6.1 pt. The separate UML-set PDF, which the brief asks for at full readable size, prints the smallest text of every diagram at 7.0 pt or more. Where overlapping detail pages cannot reach that size, a diagram is split only along empty lines that no box or label crosses; where a class diagram has no such line, overlapping page windows each show whole classes, and a class cut by a page edge is faded on that page. The overview page outlines and numbers these detail views. On 10 November the stereotype labels of the class diagrams and the guard texts of A.5 were enlarged from 11–12 px to 13 px, and A.5's participant names and longest messages were broken over several lines; no element, attribute, operation, association, multiplicity or message was removed or renamed. These sizes were measured from the build, not from paper; nobody has yet checked a printed copy (issue #1). Only one aspect is checked automatically: `test/architecture.test.ts` fails if a source file imports a component that the component diagram does not allow. It does **not** check UML operations, attributes, associations, multiplicities or sequence messages; those were reviewed by hand and can drift when the code changes. Where a diagram writes a type as `{…}`, the code uses an inline TypeScript object type with no class name.
 
 | # | Diagram | Required by the brief | Source file |
 |---|---|---|---|
 | A.1 | Use case diagram | Yes | `01-use-case-diagram.puml` |
 | A.2 | Use case descriptions (5 primary use cases) | Yes (≥ 3) | this document |
 | A.3 | Activity diagram — Run a trip | Yes | `02-activity-run-trip.puml` |
-| A.4 | System sequence diagram — Run a trip and track it | Yes | `03-system-sequence-diagram.puml` |
+| A.4 | System sequence diagram — UC2 Run a trip (main success scenario) | Yes | `03-system-sequence-diagram.puml` |
 | A.5 | Design sequence diagram — processing a location upload | Extra | `04-sequence-location-update.puml` |
 | A.6 | State machine — Trip and GPS signal | "Where relevant" | `05-state-machine-trip.puml` |
 | A.7 | State machine — Waiting request | "Where relevant" | `06-state-machine-waiting-request.puml` |
@@ -94,11 +94,11 @@ Swimlanes separate the driver app from the server. The two interruption paths ar
 
 ![Figure A.3 — Activity diagram: Run a trip with GPS and network interruptions](uml/out/02-activity-run-trip.svg)
 
-## A.4 System sequence diagram — Run a trip and track it
+## A.4 System sequence diagram — UC2 Run a trip
 
-The system is a black box; messages are the system operations of the REST API and the live feed. The `opt` fragments are system-initiated (time) events.
+One scenario: the main success scenario of UC2 (A.2). As the Week 6 notation guidance asks, the Driver is the only actor, on the left; the system is one black box; each message is a system operation with its parameters, and each reply is what the system returns. While the trip is active, two loops run in parallel: position uploads (queued positions are sent together) and the trip poll that tells the driver what passengers see. The `opt` fragment is the optional load report. A student's view of the same trip is UC1 (A.2); what the system does inside for one upload is A.5.
 
-![Figure A.4 — System sequence diagram for UC2 + UC1](uml/out/03-system-sequence-diagram.svg)
+![Figure A.4 — System sequence diagram for UC2 Run a trip (main success scenario)](uml/out/03-system-sequence-diagram.svg)
 
 ## A.5 Design sequence diagram — processing one location upload
 
@@ -116,9 +116,9 @@ The system is a black box; messages are the system operations of the REST API an
 
 ## A.8 Domain model
 
-![Figure A.8 — Domain model](uml/out/07-domain-model.svg)
-
 Conceptual classes only (no operations). `RouteStop` is an association class carrying the stop order of a route.
+
+![Figure A.8 — Domain model](uml/out/07-domain-model.svg)
 
 ## A.9 Design class diagram 1 of 2 — tracking, network, real-time
 

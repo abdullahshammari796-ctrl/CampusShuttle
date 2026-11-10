@@ -28,7 +28,7 @@ npm run uml:check     # rendered UML exports well-formed / fully decoded, unclip
 
 ## 4. Automated test inventory and results
 
-Current run (7 Nov 2026, branch `abdullah/final-completion` from `main` at `695eb88`, Windows 11, Node 24.14.1): **119 Node tests, 119 passed, 0 failed** (`docs/evidence/test-run.txt`) and **25 Chromium tests, 25 passed** in one full run (`docs/evidence/browser-test-run.txt`). The same checks run in GitHub Actions (`verify`) on every pull request to `main`. Earlier browser runs: the PR #15 work recorded two consecutive full runs (22/22); PR #16 and Zuhair's review of it each recorded one full run (22/22).
+Current run (10 Nov 2026, branch `abdullah/submission-package` from `main` at `e989b97`, Windows 11, Node 24.14.1): **119 Node tests, 119 passed, 0 failed** (`docs/evidence/test-run.txt`). Browser tests: **25 Chromium tests, 25 passed** in one full run on 7 Nov (`docs/evidence/browser-test-run.txt`); the submission pass changed no application code, and the `verify` check runs them again on the pull request. The same checks run in GitHub Actions (`verify`) on every pull request to `main`. Earlier browser runs: the PR #15 work recorded two consecutive full runs (22/22); PR #16 and Zuhair's review of it each recorded one full run (22/22).
 
 Historical baseline run: 1 Nov 2026, Windows 11, Node 24.14.1 — **103 tests, 103 passed, 0 failed, ≈ 4.7 s** (before PRs #12 and #13).
 
@@ -62,7 +62,7 @@ Found by the independent review (1 Nov 2026), reproduced before fixing:
 8. **UML diagrams did not match the code in places.** A member-by-member comparison found, among others: Observer drawn as an interface implemented by `SseHub` (the code uses callbacks); `GpsSource` drawn as a declared interface (it is a duck-typed contract); the hub calling `TrackingService` directly (it calls `LiveView`); the 30-minute auto-close guard worded as "no fix at all"; and hidden fields in the domain model. All 16 sources were corrected on 1 Nov 2026. (Rendering followed on 2 Nov 2026; see §6.)
 9. **Flaky privacy test** (found when the review-packaging run failed once): "public vehicle views never contain the driver identity" checked that the view JSON did not contain the driver id `d1`, but the view also contains the trip's random UUID, which includes "d1" in roughly one run in eight. Not a privacy leak; the test now uses an id that cannot occur in a UUID and also checks for the driver's display name. Verified with 5 full-suite runs and 30 runs of that test.
 
-Found in the owner review of PRs #12 and #13 (1 Nov 2026; items 10–13), in the first UML render (item 14), in a failed browser run on 2 Nov 2026 (item 15), in Zuhair's review of PR #15 (item 16), in the final completion pass of 6–7 Nov 2026 (items 17–18) and in Zuhair's review of PR #17 (item 19). The regression evidence differs by item, so each item names its own baseline:
+Found in the owner review of PRs #12 and #13 (1 Nov 2026; items 10–13), in the first UML render (item 14), in a failed browser run on 2 Nov 2026 (item 15), in Zuhair's review of PR #15 (item 16), in the final completion pass of 6–7 Nov 2026 (items 17–18), in Zuhair's review of PR #17 (item 19) and in the submission pass of 10 Nov 2026 (items 20–21). The regression evidence differs by item, so each item names its own baseline:
 * items 10 and 11: tests that fail on commit `f62b472` (`npx playwright test` and `node --test`, 1 Nov 2026);
 * item 12: `npm audit`;
 * item 13: reading the sources against the code;
@@ -71,9 +71,11 @@ Found in the owner review of PRs #12 and #13 (1 Nov 2026; items 10–13), in the
 * item 16: tests that fail on the validator from commit `87aceaf` (`docs/evidence/uml-validator-regression.txt`);
 * item 17: the new Chromium tests, run against the unfixed `public/` files of `main` at `695eb88` (`docs/evidence/accessibility-office-2026-11-06.txt`);
 * item 18: text sizes measured from the built HTML; there is no automated test of print size;
-* item 19: reading the documents against the code and this test plan; documentation only, no automated test.
+* item 19: reading the documents against the code and this test plan; documentation only, no automated test;
+* item 20: reading diagram A.4 against the Week 6 notation guidance and the driver routes; no automated test;
+* item 21: text sizes measured from the built HTML and every page of the UML-set PDF inspected; no automated test of print size.
 
-The fixes for items 10–16 were made in the owner pull requests #14 and #15, and for items 17–19 in the final completion pull request (#17):
+The fixes for items 10–16 were made in the owner pull requests #14 and #15, for items 17–19 in the final completion pull request (#17), and for items 20–21 in the submission pull request:
 
 10. **A reloaded device-GPS trip switched to simulated positions.** `driver.js` always restarted the simulator after a reload, so a real trip would have uploaded fabricated positions. Fixed: `GET /api/driver/trip` returns `locationSource` (the source of the latest accepted position, also after a server restart). The page resumes that source; when it is unknown, it shares nothing until the driver chooses. Tests: `e2e/driver-location-source.spec.ts` (2), `api.test.ts` "tells a reloaded driver page which location source its trip is using", and a restart assertion.
 11. **Waiting-count refresh amplification.** Every student waiting at a stop re-fetched their own request whenever anyone joined that stop. With K students waiting, each join cost about K requests (5 extra requests for 5 joins in the test). Fixed: the page re-fetches only when the stop's count falls. Test: `e2e/use-cases.spec.ts` "UC3: other students joining the same stop do not make a waiting student re-fetch its request".
@@ -118,6 +120,11 @@ The fixes for items 10–16 were made in the owner pull requests #14 and #15, an
     * slide 13 listed "sign-on" as missing, although the prototype has sign-in; university single sign-on is what is missing.
 
     Corrected in the technical assessment, the speaking script (one consistent 12:00 budget, with 8- and 15-minute versions that add up), the runbook and the deck. No code was changed.
+20. **The system sequence diagram modelled two actors** (found by checking A.4 against the Week 6 sheet, part 3: one actor on the left, the system as one box, messages as operations with parameters). A.4 combined UC2 (Driver) and UC1 (Student). It is redrawn as the main success scenario of UC2 *Run a trip* only: the Driver is the only actor, `:Campus Shuttle System` is one box, and twelve numbered messages name the system operations with their parameters, matching the driver routes in `src/web/routes/driver-routes.ts` and the replies they return. Position uploads and the trip poll are two loops in a `par` fragment; the load report is an `opt` fragment. The student's side stays in UC1 (A.2) and in A.5.
+21. **The separate UML-set PDF still printed text below 7 pt** (item 18 had left A.3–A.6, A.8–A.10 and A.14 at 5.7–6.9 pt). Fixed:
+    * Sources: the class diagrams' stereotype labels («record», «repository» …) and the guard texts of A.5's fragments were enlarged from 11–12 px to 13 px. A.5's participant names and longest messages were broken over several lines, so it is 1,365 px wide instead of 1,799 px. No element, attribute, operation, association, multiplicity or message was removed or renamed.
+    * `scripts/build-docs.ts`: where overlapping detail pages cannot reach 7 pt, a diagram is split recursively, only along empty lines that no text, box or class crosses. Where a class diagram has no such line, overlapping page windows each show whole classes, and a class cut by a page edge is faded on that page. The overview page outlines and numbers each detail. A.6 now gets a full page of its own instead of a 6.9 pt page with its heading.
+    * Result: every diagram's smallest text prints at 7.0 pt or more in the UML-set PDF. The report's Appendix A keeps its layout, and its smallest annotations now print at 6.1 pt instead of 5.5 pt, because the labels are larger. Details: `docs/evidence/uml-inspection-2026-11-10.txt`.
 
 ## 5. Manual browser verification (acceptance)
 

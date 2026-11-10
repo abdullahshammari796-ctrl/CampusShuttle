@@ -18,7 +18,7 @@ Updated 7 November 2026. Sources read on this machine:
 | Brief §1 | R | A real UAE problem with genuine stakeholders, quality attributes and trade-offs | Report §1–2, §6 | ✅ |
 | Brief §2 | R | Team of 3 (± 1 allowed), registered on Moodle by Week 4 | A team of two is within ± 1 | ⏳ registration not recorded |
 | Brief §2, §4.1(10) | R | Signed contribution statement listing what each member did; every member contributes to the design | Report §10.1 factual record; `docs/team/contribution-statement.md` | ⏳ personal statements and signatures (private copy) |
-| Brief §2; slides 00 (slide 13) | R, I | Any member can explain any diagram or decision in the viva; the mark is adjusted otherwise | Explain-it checklist; `docs/architecture/technical-assessment.md`; speaking script | ⏳ each member's own preparation |
+| Brief §2; slides 00 (slide 13) | R, I | Any member can explain any diagram or decision in the viva; the mark is adjusted otherwise | Explain-it checklist; `docs/architecture/technical-assessment.md`; speaking script; viva sheet (`docs/presentation/viva-sheet.md`) | ⏳ each member's own preparation |
 | Brief §3 | R | Topic approved in Week 4 (one paragraph on Moodle and a two-minute conversation) | `docs/01-proposal.md` | ⏳ approval date not recorded |
 | Brief §3 | R | Proposal content: problem, ≥ 3 kinds of user, 3–5 functions, one hard quality attribute, planned prototype | `docs/01-proposal.md` | ✅ |
 | Brief §3 | R | Say how personal data is protected | `docs/privacy-and-security.md`, report §6.6 | ✅ |
@@ -38,19 +38,19 @@ Updated 7 November 2026. Sources read on this machine:
 | Brief §4.1 (10); slides 00 (slide 13) | R, I | AI-use statement: which tool, which part, what you changed | Report §10.2; `docs/team/ai-use-statement.md` | ◐ factual record complete; each member's "what I changed" ⏳ |
 | Slides 00 (slide 13) | I | Not allowed: AI-generated UML or analysis submitted as one's own thinking; a report a member cannot explain; AI in place of a teammate's contribution | Disclosure in §10.2; the technical assessment and §9 are labelled; §10.1 separates account records from personal statements | ⏳ the members must be able to explain and defend all of it |
 | Slides 00 (slide 13) | I | Turnitin similarity limit of 20 % | Cannot be checked here | ⏳ checked at upload |
-| Brief §4.2 | R | UML set as a report appendix and as a separate PDF at full readable size | `docs/build/project-report.pdf` (Appendix A); `docs/build/uml-diagram-set.pdf` (enlarged towards 7 pt, test plan item 18) | ◐ smallest text 5.7 pt (A.9); paper check ⏳ |
+| Brief §4.2 | R | UML set as a report appendix and as a separate PDF at full readable size | `docs/build/project-report.pdf` (Appendix A); `docs/build/uml-diagram-set.pdf` (every diagram's smallest text at 7.0 pt or more; large diagrams split only between boxes and labels; test plan items 18 and 21) | ✅ measured from the build; paper check ⏳ |
 | Brief §4.2 | R | ≥ 3 written use-case descriptions | Appendix A.2 (five) | ✅ |
 | Brief §4.2 | R | Class diagram with attributes, operations, associations and multiplicity | A.9, A.10 | ✅ |
 | Brief §4.2 | R | Drawn with a UML tool, standard notation | PlantUML sources, checksum-verified renderer, `npm run uml:check` in CI; on-screen inspection `docs/evidence/uml-inspection-2026-11-06.txt` | ◐ two review questions there; team inspection ⏳ |
 | Module 04 (slide 20); Week 6 sheet | I | Run the consistency checks over the model set before submitting | `docs/evidence/uml-inspection-2026-11-06.txt` (five checks) | ◐ run by the tool; the team's own check ⏳ |
-| Week 6 sheet, part 3 | I | SSD: one actor on the left, the system as one box, messages as operations with parameters, no Database or Controller lifeline | A.4 | ◐ A.4 shows two actors (Driver and Student) because it models UC2 and UC1 together |
+| Week 6 sheet, part 3 | I | SSD: one actor on the left, the system as one box, messages as operations with parameters, no Database or Controller lifeline | A.4 | ✅ redrawn on 10 Nov as one scenario (UC2 main success): the Driver as the only actor, the system as one box, operations with parameters (test plan item 20); team inspection ⏳ |
 | Module 06 (last slide) | I | Project Checkpoint 1, due Week 9: requirements, the four analysis models and the class diagram in one document | — | ⏳ whether it was submitted is not recorded |
-| Brief §4.3 | R | Prototype runs in a live demonstration | `npm start`; demo runbook; timed dry run (`docs/evidence/walkthrough-2026-11-06.txt`) | ✅ |
+| Brief §4.3 | R | Prototype runs in a live demonstration | `npm start`; demo runbook; timed dry run (`docs/evidence/walkthrough-2026-11-06.txt`); recorded demonstration video (submitted as `06-Demo.mp4`, 4:11) as support and fallback | ✅ live run is the team's to give |
 | Brief §4.3 | R | Component boundaries visible in the code | `src/<component>/`; `test/architecture.test.ts` (imports only) | ✅ |
 | Brief §4.3 | R | ≥ 2 primary use cases end to end | UC2 + UC1, UC3 → UC4/UC5 (tests, walkthroughs) | ✅ |
 | Brief §4.3 | R | Technology justified in one paragraph | Report §8.4 | ✅ |
 | Brief §4.3 | R | Source code submitted (repository link or archive) with a README | https://github.com/abdullahshammari796-ctrl/CampusShuttle, `README.md` | ✅ (⏳ the link is uploaded by the team) |
-| Brief §4.4 | R | Presentation with live demonstration; every member speaks; strict timing; running order published in Week 12 | `docs/presentation/` (deck, speaking script with a proposed allocation), `docs/demo-script.md` | ⏳ official time limit and slot; rehearsal by both members (issue #10) |
+| Brief §4.4 | R | Presentation with live demonstration; every member speaks; strict timing; running order published in Week 12 | `docs/presentation/` (nine slides and three backups with speaker notes, speaking script with a proposed allocation and a provisional 12:00 plan, viva sheet), `docs/demo-script.md` | ⏳ official time limit and slot; whether a recording may replace the live demonstration; rehearsal by both members (issue #10) |
 
 ## B. Internal project goals (the team's brief for this build)
 

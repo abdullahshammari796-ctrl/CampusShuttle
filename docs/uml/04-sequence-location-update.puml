@@ -2,23 +2,30 @@
 skinparam shadowing false
 skinparam defaultFontName Arial
 skinparam sequenceMessageAlign left
+<style>
+sequenceDiagram {
+  group {
+    FontSize 13
+  }
+}
+</style>
 title Design sequence diagram — processing one location upload (inside the system)
 
-participant ":LocationUploader\n(driver browser)" as App
-participant ":driverRoutes\n(web)" as Web
-participant ":TrackingService" as TS
+participant ":Location\nUploader\n(driver browser)" as App
+participant ":driver\nRoutes\n(web)" as Web
+participant ":Tracking\nService" as TS
 participant ":TripTracker" as TT
-participant ":LocationFixRepository" as Repo
+participant ":LocationFix\nRepository" as Repo
 participant ":EventBus" as Bus
-participant ":WaitingService" as WS
+participant ":Waiting\nService" as WS
 participant ":SseHub" as Hub
 participant ":LiveView" as LV
-participant ":EtaStrategy\n(BlendedSpeedEta by default)" as Eta
-participant "Viewer browsers" as Viewers
+participant ":EtaStrategy\n(BlendedSpeedEta\nby default)" as Eta
+participant "Viewer\nbrowsers" as Viewers
 
-App -> Web : POST /api/driver/trips/{id}/locations\n{fixes[], sentAt}
-Web -> TS : recordFixes(driverId, tripId, fixes, sentAt)
-TS -> TS : parse, correct clock skew,\nfilter accuracy / service area / age
+App -> Web : POST /api/driver/\ntrips/{id}/locations\n{fixes[], sentAt}
+Web -> TS : recordFixes(driverId,\ntripId, fixes, sentAt)
+TS -> TS : parse, correct clock skew,\nfilter accuracy, service\narea and age
 TS -> TT : validateSequence(candidates)
 TT --> TS : accepted[], rejected[]
 opt accepted is not empty
@@ -43,12 +50,12 @@ end
 TS -> Eta : estimate(context)
 Eta --> TS : StopEta[]
 TS --> Web : RecordFixesResult
-Web --> App : 200 {accepted, rejected[], vehicle}
+Web --> App : 200 {accepted,\nrejected[], vehicle}
 
 == next event-loop turn (coalesces all updates of this batch) ==
 Hub -> LV : vehicle(tripId)
 LV -> TS : vehicle(tripId)
 TS --> LV : VehicleView
 LV --> Hub : VehicleView
-Hub ->> Viewers : SSE "vehicle" (serialised once, written to every\nconnection whose session has not expired)
+Hub ->> Viewers : SSE "vehicle"\n(serialised once,\nwritten to every\nconnection whose\nsession has not\nexpired)
 @enduml

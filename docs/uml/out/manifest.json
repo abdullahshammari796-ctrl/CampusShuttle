@@ -1,6 +1,6 @@
 {
   "generator": "scripts/render-uml.ts",
-  "renderedAt": "2026-11-06T20:15:20.298Z",
+  "renderedAt": "2026-11-10T06:51:38.211Z",
   "renderer": {
     "plantumlJar": "plantuml-mit-1.2026.9.jar",
     "jarSha256": "e84e45b37ad3030cf802e7be18a687d209eca55733a5679b1f1f1a515f7f70dd",
@@ -38,30 +38,30 @@
     },
     "03-system-sequence-diagram": {
       "source": "docs/uml/03-system-sequence-diagram.puml",
-      "sourceSha256": "2ab745783c7fe2e40a1f581ff1b8176911564fb70fcfa47e8f8e3df9bd7ed612",
+      "sourceSha256": "9a0a8d5ac31e7497bd052e23db36d4e858ba02cb5741f3aa27154ffe82c576f6",
       "svg": {
-        "sha256": "c3f52a324793362fabd30472d473fddb3c19e59b76a462b12a099818f558f379",
-        "width": 641,
-        "height": 1050
+        "sha256": "2a634699cf0163d81a50f74ffa10a8a6bad3a3385257b262d2b72d61f0fc7450",
+        "width": 698,
+        "height": 816
       },
       "png": {
-        "sha256": "8b2707eefe940c4d9ed2897541a7c72009dc10bc32695db20a8538603bc25f3c",
-        "width": 640,
-        "height": 1049
+        "sha256": "d0c9a9d741de35dfd04da6d74cd9faefe550ebf937c53cf52cc0548f1b26f449",
+        "width": 697,
+        "height": 815
       }
     },
     "04-sequence-location-update": {
       "source": "docs/uml/04-sequence-location-update.puml",
-      "sourceSha256": "4dd0e922899619443c18d3b21e534d7891926f129c6e60481cd15df6c63c794a",
+      "sourceSha256": "a92925b9b4e08ecbef4679d35347df296a9846982b052dfa503702cf2e075248",
       "svg": {
-        "sha256": "97ae181f0abd8276d358fa3986dc79fd64d1bde14160f7d9dacb1ae0785e5b6b",
-        "width": 1799,
-        "height": 1158
+        "sha256": "7c15ad946209983c71e39fb90147a6b469e0526ec2747327a88c2d47f48983e2",
+        "width": 1365,
+        "height": 1305
       },
       "png": {
-        "sha256": "3acb629824ada2b989c26b44134c6c8e15d87f1dfdf2a270d5af4ee0df95900f",
-        "width": 1798,
-        "height": 1157
+        "sha256": "90f8e822b9301f0e81949d02a67a7451014fbab1cef9ec9edf02c67bfd0505c5",
+        "width": 1364,
+        "height": 1304
       }
     },
     "05-state-machine-trip": {
@@ -108,30 +108,30 @@
     },
     "08-class-diagram-tracking": {
       "source": "docs/uml/08-class-diagram-tracking.puml",
-      "sourceSha256": "c60077a30dbef2a23dc567521fe5d3c57926ab9d68a6c7b41fd020085ad6d3e0",
+      "sourceSha256": "57df96d4cab93f5d15f5384d652b224780a7acfa8666077ab5be046e91aee44f",
       "svg": {
-        "sha256": "ea89dd4baf78b2807e98faec25e44d9e89335bd76084c9dc37a5b3ef18c2ba8e",
+        "sha256": "1f11b3a452a8b831dad979f2e4cea9b8208426fb319db3ddf38d6fffb4a3ef82",
         "width": 3667,
-        "height": 1502
+        "height": 1504
       },
       "png": {
-        "sha256": "5f1fbaa089bcf01ee0f3d6493644cdd78bfe844d574f3410606a51eb6d7a144c",
+        "sha256": "5e50f8f3b67a248c2be80608567c3c74905de735ce96bc4cb5d257cf957b7536",
         "width": 3666,
-        "height": 1501
+        "height": 1503
       }
     },
     "09-class-diagram-demand-identity": {
       "source": "docs/uml/09-class-diagram-demand-identity.puml",
-      "sourceSha256": "4fd5a12087c711b3959e789c29f8c8fd350dac5e16d1f11a5bc8f931fc8f710b",
+      "sourceSha256": "05a14cfebc210031e03717e30c67097506b6094246499bf3588165296f3dc487",
       "svg": {
-        "sha256": "e607f8d6c82e9b1b0ec8b5f9cfeb67acdf481710370b4916be14c4db0abbed0f",
+        "sha256": "cea5c2c29f62f9d13bbcef8c00156e6205c7f9ce0ff2731828a8b77ae6b678cb",
         "width": 4297,
-        "height": 935
+        "height": 938
       },
       "png": {
-        "sha256": "d0e23f76c1ee81737a775353799bb121350e249fc5311f8caea76e81fd5082eb",
+        "sha256": "1f7a3bce20114d1e2f0d019bce31cebf8fbb68f90759915e2fc46a395ced95d4",
         "width": 4296,
-        "height": 934
+        "height": 937
       }
     },
     "10-component-diagram": {
@@ -164,72 +164,72 @@
     },
     "12-pattern-strategy": {
       "source": "docs/uml/12-pattern-strategy.puml",
-      "sourceSha256": "d3a26a069cb648fe2ac35bddfc114a2aac13f8da201d98087da7c49e741479dd",
+      "sourceSha256": "8e09e1767c2816a1861321ed5c27c51b06f6f190510667d1f9863b57bb4de5b7",
       "svg": {
-        "sha256": "ab9a46253461c35be7e1ac5bf9d3f4b2030dbd41fd36ca295ad853d6f332a51b",
+        "sha256": "02ded84c034d6bc8ff6d78f15f28589d498c0ff20bedf0e379d20dba0f4bcc46",
         "width": 2375,
-        "height": 572
+        "height": 575
       },
       "png": {
-        "sha256": "bc41ba6572e79accbc01fc4943b6a37fe9c61bf8f6beee48f1c6e0cd8e3f8a07",
+        "sha256": "6b9804d849cb2412d9c561d23c672484aa38c2110b7fdd15530afaae4b377212",
         "width": 2374,
-        "height": 571
+        "height": 574
       }
     },
     "13-pattern-observer": {
       "source": "docs/uml/13-pattern-observer.puml",
-      "sourceSha256": "cfe997c15e4f2c39013dd456d507e87dc59502beff891198dd4fd0edf3018aa8",
+      "sourceSha256": "63a405904e04dd6a55590f70a07fe5f833434c61a24b4ec7d2a5fe1e036b86a3",
       "svg": {
-        "sha256": "4772fdb7b901afdca09f83ab110ac16fc833b2501b47f0019552ecc8a60d18fa",
+        "sha256": "3c7dc8a4e843061ee62a1e730578b9a19661d7b23ae013bf94b5ff6fbf1b7d4b",
         "width": 1125,
-        "height": 941
+        "height": 945
       },
       "png": {
-        "sha256": "e61f6cd9843c018a3419ef83e4092c63ac5369a671f2eb662ca4f9051bb25c70",
+        "sha256": "95f59e96c883b67a2c9123a1a2317e3d665fc3cb6b223f6aec72191b3c4afa04",
         "width": 1124,
-        "height": 940
+        "height": 944
       }
     },
     "14-pattern-state": {
       "source": "docs/uml/14-pattern-state.puml",
-      "sourceSha256": "f3c92b616282d65197a5d4988e7487d03240dcb06f0c9acbde60007d2230bad5",
+      "sourceSha256": "4135863f8ba2d5749408ff65d021221ea675fae6c4db10249a461ad196c6af23",
       "svg": {
-        "sha256": "62b59228fd7635ce8eea44a2380dcb64144c8fb111949355136a0472885a75b8",
+        "sha256": "8c5f837f9eb35cc7b50ba40938e8a7686b1a4e3c1c34e5b05c1b6ae4053d720a",
         "width": 1627,
-        "height": 632
+        "height": 636
       },
       "png": {
-        "sha256": "aa39ed74ec98d0926c4be9854f333857f3a1fb89ac20b81751cc018e3628e612",
+        "sha256": "fb0932830b3f4462e03c64193cb18fbf2b80846488bae0d8a6c81d613f811d53",
         "width": 1626,
-        "height": 631
+        "height": 635
       }
     },
     "15-pattern-repository": {
       "source": "docs/uml/15-pattern-repository.puml",
-      "sourceSha256": "7414ec00c2e0e2ee757837b87453873195c6ba27c9579f02d6eaa7a797a3b8bb",
+      "sourceSha256": "21ee4398922901bdd34afe6f1b486564bb94dc10d386db26a3f89c93ed5e6201",
       "svg": {
-        "sha256": "9d3eb2ba665c57e8390a63c066b3af23413688d95576cb351a34a5062588c480",
+        "sha256": "7ec1f384bb981f9c9a509894e8ffbc2fdfbad51ddffae5ea870f8f4ad49d8553",
         "width": 1488,
-        "height": 562
+        "height": 563
       },
       "png": {
-        "sha256": "fc7599976851bec15a2e4c9a2a06170e3a34b0884433e6093ca6a21dbc9fa52a",
+        "sha256": "980ab110f7012c8ac1296b37fefd7367fd42cfbfee737110af1534d5595e9326",
         "width": 1487,
-        "height": 561
+        "height": 562
       }
     },
     "16-pattern-adapter": {
       "source": "docs/uml/16-pattern-adapter.puml",
-      "sourceSha256": "c38c01d027e59b7edd6a203d853d5364fa7f0d5b1d074ca06a71fc9f2176b972",
+      "sourceSha256": "84a1b1c33998430cb4cfbba863ecdd31be28aa8bfd00314de11f008a6e3d452b",
       "svg": {
-        "sha256": "dc6def582e17c0fd05d9c657db7542273740d724b9bc08ad83234eb141481717",
+        "sha256": "1a3ff8e86e542be6c30ff5366e7e32ab1e3e225016b4ea168ba57def151aa6b8",
         "width": 987,
-        "height": 813
+        "height": 816
       },
       "png": {
-        "sha256": "134a6f53241c3c83c5fadcc96e384ff8fb4f8ac8f19625e872a5f28e6c27227b",
+        "sha256": "72645b73c628bc8b515aaf08cddafea9d997eb461cd42834b1835635eca9b935",
         "width": 986,
-        "height": 812
+        "height": 815
       }
     }
   }

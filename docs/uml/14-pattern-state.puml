@@ -3,6 +3,7 @@
 skinparam shadowing false
 skinparam defaultFontName Arial
 skinparam classAttributeIconSize 0
+skinparam classStereotypeFontSize 13
 title Design pattern 3 — State (GPS signal of an active trip)
 
 class TripTracker <<context>> {

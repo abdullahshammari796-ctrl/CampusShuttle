@@ -3,6 +3,7 @@
 skinparam shadowing false
 skinparam defaultFontName Arial
 skinparam classAttributeIconSize 0
+skinparam classStereotypeFontSize 13
 title Design class diagram (2 of 2) — demand, forecasting and identity components
 
 package "demand" {

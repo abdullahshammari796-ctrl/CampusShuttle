@@ -3,6 +3,7 @@
 skinparam shadowing false
 skinparam defaultFontName Arial
 skinparam classAttributeIconSize 0
+skinparam classStereotypeFontSize 13
 title Design pattern 5 — Adapter (interchangeable GPS sources in the driver app)
 
 class "Driver app\n(public/js/driver.js)" as DriverApp <<client>>

@@ -3,6 +3,7 @@
 skinparam shadowing false
 skinparam defaultFontName Arial
 skinparam classAttributeIconSize 0
+skinparam classStereotypeFontSize 13
 title Design pattern 2 — Observer (publish/subscribe domain events with callbacks)
 
 interface "EventPublisher<E>" as EventPublisher {

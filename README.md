@@ -45,7 +45,7 @@ These are defined in `src/seed/demo-data.ts`. They exist only in the local SQLit
 3. In a second window sign in as **driver1**, using `http://127.0.0.1:3000` so the session is separate (private windows of one browser share one session), start a trip with *Simulated GPS*; try *Simulate network loss* (then *End trip*: the trip is **not** ended while offline), *Simulate GPS outage* (students see "Location delayed" after ~20 s and "GPS lost" after ~60 s) and *Inject GPS glitch*.
 4. In a third window at `http://office.localhost:3000` sign in as **office1**: live operations, *Demand & forecast* (click a heat-map cell for its explanation), *Routes*, *Trip history* (open a track), *System* (audit log).
 
-The demo runbook, with timings and a failure fallback, is in [`docs/demo-script.md`](docs/demo-script.md); the slide-by-slide speaking script is in [`docs/presentation/speaking-script.md`](docs/presentation/speaking-script.md).
+The demo runbook, with timings and a failure fallback, is in [`docs/demo-script.md`](docs/demo-script.md); the slide-by-slide speaking script is in [`docs/presentation/speaking-script.md`](docs/presentation/speaking-script.md). Likely viva questions with evidence-based answers are in [`docs/presentation/viva-sheet.md`](docs/presentation/viva-sheet.md). The recorded demonstration video (4:11, with subtitles and a transcript) is not kept in Git because of its size; it is part of the submission folder, and the deck in this repository shows its poster frame.
 
 ## Scripts
 

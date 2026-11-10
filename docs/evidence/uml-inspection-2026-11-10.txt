@@ -1,0 +1,73 @@
+UML inspection and print sizes — submission pass, 10 November 2026
+====================================================================
+Machine: Windows 11, Node 24.14.1, PlantUML MIT 1.2026.9 (checksum-verified jar, Java 21, Smetana),
+Microsoft Edge (headless) for the PDFs. Branch abdullah/submission-package, from main at e989b97.
+
+1. System sequence diagram (A.4, docs/uml/03-system-sequence-diagram.puml)  — test plan item 20
+   Checked against: Week 6 Model Set Studio sheet, part 3 ("one actor on the left, the system as one box,
+   messages as operations with parameters, no Database or Controller lifeline") and the brief's "one scenario".
+   Before: two actors (Driver and Student), UC2 and UC1 combined, time events as opt fragments.
+   After:  one scenario (UC2 Run a trip, main success scenario); actor Driver only; ":Campus Shuttle System" as one
+           box; 12 numbered messages. Operations and returns compared with src/web/routes/driver-routes.ts:
+             getTripOptions()                  GET  /api/driver/options        → routes[], shuttles[] (busy)
+             startTrip(routeId, shuttleId)     POST /api/driver/trips          → trip (ACTIVE), vehicle (AWAITING_FIX)
+             sendLocations(tripId, fixes[], sentAt)  POST …/locations          → accepted, rejected[], vehicle
+             getTrip()                         GET  /api/driver/trip           → vehicle, locationSource
+             setOccupancy(tripId, level)       POST …/occupancy                → trip (occupancy)
+             endTrip(tripId)                   POST …/end                      → trip (COMPLETED)
+           Uploads (every ~3 s) and the trip poll (every 5 s) are loops inside a par fragment; the load report is opt.
+   Rendered export: 698 x 816 px; uml:check passes.
+
+2. Print sizes of the separate UML-set PDF (docs/build/uml-diagram-set.pdf)  — test plan item 21
+   Method: printed size = rendered font size (px) x print scale x 0.75 pt/px, measured from the built HTML for every
+   reading page (the detail pages where a diagram has them, otherwise its single figure). Not measured on paper.
+   Target: smallest text of every diagram at 7.0 pt or more.
+
+     Figure  Source                               Reading pages            Scale   Smallest text
+     A.1     01-use-case-diagram                  2 detail pages           82.9 %  13 px = 8.08 pt
+     A.3     02-activity-run-trip                 3 coherent details       85.0 %  11 px = 7.01 pt
+     A.4     03-system-sequence-diagram           one figure               93.1 %  11 px = 7.68 pt
+     A.5     04-sequence-location-update          2 coherent details       74.4 %  13 px = 7.26 pt
+     A.6     05-state-machine-trip                1 full page              78.1 %  13 px = 7.62 pt
+     A.7     06-state-machine-waiting-request     one figure              100.0 %  13 px = 9.75 pt
+     A.8     07-domain-model                      2 coherent details       71.9 %  13 px = 7.01 pt
+     A.9     08-class-diagram-tracking            6 coherent details       71.9 %  13 px = 7.01 pt
+     A.10    09-class-diagram-demand-identity     4 coherent details       71.9 %  13 px = 7.01 pt
+     A.11    10-component-diagram                 2 detail pages           72.3 %  13 px = 7.05 pt
+     A.12    11-deployment-diagram                2 detail pages           92.5 %  13 px = 9.02 pt
+     A.13    12-pattern-strategy                  2 detail pages           78.9 %  13 px = 7.69 pt
+     A.14    13-pattern-observer                  2 coherent details       71.9 %  13 px = 7.01 pt
+     A.15    14-pattern-state                     2 detail pages           99.9 %  13 px = 9.74 pt
+     A.16    15-pattern-repository                2 detail pages          100.0 %  13 px = 9.75 pt
+     A.17    16-pattern-adapter                   one figure               79.6 %  13 px = 7.76 pt
+   Before this pass (item 18): A.3–A.6, A.8–A.10 and A.14 printed their smallest text at 5.7–6.9 pt.
+   The UML-set PDF has 53 pages (47 before). The report's Appendix A keeps its layout: smallest annotation
+   6.1 pt (A.15 at 62.4 %), most labels about 6.5–10.5 pt.
+
+3. How the sizes were reached
+   * Sources (no element, attribute, operation, association, multiplicity or message removed or renamed):
+     - stereotype labels of the class diagrams 08, 09, 12–16 enlarged from 12 px to 13 px
+       (skinparam classStereotypeFontSize 13);
+     - guard texts of A.5's fragments enlarged from 11 px to 13 px (<style> sequenceDiagram { group { FontSize 13 } });
+     - A.5's participant names and its five longest messages broken over several lines: 1,799 → 1,365 px wide.
+   * Layout (scripts/build-docs.ts, UML-set PDF only): where overlapping detail pages could not reach 7 pt, the
+     diagram is split recursively along empty lines that no text, box or class crosses ("coherent details"). Where a
+     class diagram has no such line, overlapping page windows each show whole classes, and a class cut by a window's
+     edge is faded on that page. The overview page outlines and numbers each detail. A.6 now gets a full page of its
+     own instead of a 6.9 pt page shared with its heading.
+
+4. Visual inspection (rendered with the Windows PDF engine; every page of the 54-page build looked at, then the one page it left almost empty, after A.8, was removed by moving that note above the figure)
+   * A.3: 3 details (top, centre, bottom), numbered on the overview; no action box or decision split.
+   * A.5: 2 details; band 1 has the participant heads, band 2 the participant feet.
+   * A.9: 6 details; every class whole on at least one page, multiplicities and role names legible; faded
+     fragments only at window edges (e.g. the note "Type names written as {…}" on detail 2).
+   * A.10: 4 details (left, centre, centre, right).
+   * A.4: single page, 93 %; heading, introduction and caption on the same page.
+   Open: the team's own inspection, including on paper (issue #1).
+
+5. Checks
+   npm run uml (PLANTUML_JAR, JAVA set)   → "Rendered and verified 16 diagrams (SVG + PNG, limit 8192 px)"
+   npm run uml:check                       → "All 16 diagrams have well-formed SVG and fully decoded PNG exports,
+                                              unclipped and rendered from their current sources"
+   npm run docs:build                      → proposal.pdf (1 page), project-report.pdf (64 pages),
+                                              uml-diagram-set.pdf (53 pages)
