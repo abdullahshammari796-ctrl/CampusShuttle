@@ -2,49 +2,40 @@
 skinparam shadowing false
 skinparam defaultFontName Arial
 skinparam sequenceMessageAlign left
-title System sequence diagram — Run a trip (UC2) and track it (UC1)
+title System sequence diagram — UC2 Run a trip (main success scenario)
 autonumber
 
 actor Driver
-actor Student
 participant ":Campus Shuttle System" as System
 
-Student -> System : openLiveFeed()
-System --> Student : snapshot(vehicles[], waitingCounts)
+Driver -> System : getTripOptions()
+System --> Driver : routes[], shuttles[](busy)
 Driver -> System : startTrip(routeId, shuttleId)
-System --> Driver : trip(id, status = ACTIVE)
-System ->> Student : vehicleUpdate(tripId, signal = AWAITING_FIX)
+System --> Driver : trip(tripId, status = ACTIVE), vehicle(signal = AWAITING_FIX)
 
-loop every ~3 s while the trip is active
-  Driver -> System : sendLocations(fixes[], sentAt)
-  System --> Driver : result(accepted, rejected[], vehicle)
-  System ->> Student : vehicleUpdate(position, nextStops[eta], signal = LIVE)
+par while the trip is active
+  loop every ~3 s (queued positions are sent together)
+    Driver -> System : sendLocations(tripId, fixes[], sentAt)
+    System --> Driver : result(accepted, rejected[], vehicle(nextStop, eta, signal))
+  end
+else
+  loop every 5 s
+    Driver -> System : getTrip()
+    System --> Driver : vehicle(signal, nextStop, eta), locationSource
+  end
 end
 
-opt no position received for more than 20 s
-  System ->> Student : vehicleUpdate(signal = STALE, ETAs approximate)
-end
-opt no position received for more than 60 s
-  System ->> Student : vehicleUpdate(signal = LOST, no ETAs)
-end
-
-note over Student, System
-  The student page derives its arrival list from the
-  nextStops of the pushed vehicle updates; the same list
-  is also available on request (used by tests and API clients).
+note right of System
+  The signal is what passengers see:
+  LIVE, STALE after 20 s or LOST after
+  60 s without an accepted position.
 end note
-Student -> System : getArrivals(stopId)
-System --> Student : arrivals[](route, shuttle, eta, confidence)
 
-alt driver ends the trip
-  Driver -> System : endTrip(tripId)
-  System --> Driver : trip(status = COMPLETED)
-  System ->> Student : vehicleRemoved(tripId, COMPLETED)
-else no position for 30 min
-  System ->> Student : vehicleRemoved(tripId, TERMINATED)
+opt the passenger load changes
+  Driver -> System : setOccupancy(tripId, level)
+  System --> Driver : trip(occupancy)
 end
-opt the student's session expires (8 h)
-  System ->> Student : sessionExpired()
-  note right of System : the live stream is closed
-end
+
+Driver -> System : endTrip(tripId)
+System --> Driver : trip(status = COMPLETED)
 @enduml

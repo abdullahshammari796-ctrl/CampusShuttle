@@ -1,15 +1,20 @@
-// Builds docs/presentation/campus-shuttle-presentation.pptx (editable PowerPoint).
-//   node docs/presentation/build-deck.cjs
-// The deck uses a theme, named layouts and placeholders, so it can be restyled in
-// PowerPoint (Design → Variants) or here. Edit the text in PowerPoint freely; rebuilding
-// overwrites the file.
+// Builds docs/presentation/campus-shuttle-presentation.pptx (editable PowerPoint): 9 main slides + 3 backup slides.
+//   node docs/presentation/build-deck.cjs                                   repository version (video poster only)
+//   node docs/presentation/build-deck.cjs --video <mp4> --out <pptx>        submission copy with the video embedded
+// The demonstration video is large and is not kept in Git; the repository deck shows its poster frame and names the
+// file. The deck uses a theme, named layouts and placeholders, so it can be restyled in PowerPoint (Design →
+// Variants) or here. Rebuilding overwrites the output file.
 const path = require('node:path');
 const fs = require('node:fs');
 const PptxGenJS = require('pptxgenjs');
 const JSZip = require(require.resolve('jszip', { paths: [require.resolve('pptxgenjs')] }));
 
-const OUT = path.join(__dirname, 'campus-shuttle-presentation.pptx');
+const arg = (name) => { const i = process.argv.indexOf(name); return i > 0 ? process.argv[i + 1] : undefined; };
+const VIDEO = arg('--video');
+const OUT = arg('--out') ?? path.join(__dirname, 'campus-shuttle-presentation.pptx');
 const SHOT = (name) => path.join(__dirname, 'screenshots', name);
+const UML = (name) => path.join(__dirname, '..', 'uml', 'out', name);
+const VIDEO_LENGTH = '4:11';
 
 const THEME = {
   name: 'Campus Shuttle',
@@ -37,8 +42,8 @@ pres.defineSlideMaster({
   title: 'Title dark',
   background: { color: C.text2 },
   objects: [
-    { placeholder: { options: { name: 'title', type: 'title', x: M, y: 1.7, w: 7.2, h: 2.2, fontSize: 40, bold: true, color: C.background1, valign: 'bottom', align: 'left', margin: 0 }, text: '' } },
-    { placeholder: { options: { name: 'body', type: 'body', x: M, y: 4.1, w: 7.2, h: 2.4, fontSize: 18, color: C.background2, valign: 'top', margin: 0 }, text: '' } },
+    { placeholder: { options: { name: 'title', type: 'title', x: M, y: 1.2, w: 7.3, h: 2.0, fontSize: 38, bold: true, color: C.background1, valign: 'bottom', align: 'left', margin: 0 }, text: '' } },
+    { placeholder: { options: { name: 'body', type: 'body', x: M, y: 3.45, w: 7.3, h: 3.4, fontSize: 17, color: C.background2, valign: 'top', margin: 0 }, text: '' } },
   ],
 });
 pres.defineSlideMaster({
@@ -62,25 +67,25 @@ pres.defineSlideMaster({
 // ---------- Helpers ----------
 const tb = (slide, text, opts) => slide.addText(text, { isTextBox: true, margin: 0, fontSize: 14, color: C.text1, valign: 'top', ...opts });
 
-function card(slide, { x, y, w, h, badge, title, body, foot, fill = C.background2, objectName }) {
+function card(slide, { x, y, w, h, badge, title, body, foot, fill = C.background2, objectName, bodySize = 14 }) {
   slide.addShape(pres.ShapeType.roundRect, { x, y, w, h, fill: { color: fill }, line: { color: fill }, rectRadius: 0.12, objectName });
-  let top = y + 0.25;
+  let top = y + 0.22;
   if (badge) {
-    slide.addShape(pres.ShapeType.ellipse, { x: x + 0.25, y: top, w: 0.5, h: 0.5, fill: { color: C.accent1 }, line: { color: C.accent1 } });
-    tb(slide, badge, { x: x + 0.25, y: top, w: 0.5, h: 0.5, fontSize: 16, bold: true, color: C.background1, align: 'center', valign: 'middle' });
-    tb(slide, title, { x: x + 0.9, y: top, w: w - 1.15, h: 0.5, fontSize: 18, bold: true, valign: 'middle' });
-    top += 0.65;
+    slide.addShape(pres.ShapeType.ellipse, { x: x + 0.22, y: top, w: 0.48, h: 0.48, fill: { color: C.accent1 }, line: { color: C.accent1 } });
+    tb(slide, badge, { x: x + 0.22, y: top, w: 0.48, h: 0.48, fontSize: 15, bold: true, color: C.background1, align: 'center', valign: 'middle' });
+    tb(slide, title, { x: x + 0.82, y: top, w: w - 1.05, h: 0.48, fontSize: 17, bold: true, valign: 'middle' });
+    top += 0.62;
   } else {
-    tb(slide, title, { x: x + 0.25, y: top, w: w - 0.5, h: 0.45, fontSize: 18, bold: true });
-    top += 0.5;
+    tb(slide, title, { x: x + 0.25, y: top, w: w - 0.5, h: 0.42, fontSize: 17, bold: true });
+    top += 0.48;
   }
-  tb(slide, body, { x: x + 0.25, y: top, w: w - 0.5, h: y + h - top - (foot ? 0.55 : 0.2), fontSize: 14, color: C.text1 });
-  if (foot) tb(slide, foot, { x: x + 0.25, y: y + h - 0.5, w: w - 0.5, h: 0.35, fontSize: 11, color: C.accent6, valign: 'bottom' });
+  tb(slide, body, { x: x + 0.25, y: top, w: w - 0.5, h: y + h - top - (foot ? 0.5 : 0.18), fontSize: bodySize, color: C.text1 });
+  if (foot) tb(slide, foot, { x: x + 0.25, y: y + h - 0.45, w: w - 0.5, h: 0.32, fontSize: 11, color: C.accent6, valign: 'bottom' });
 }
 
 function stat(slide, { x, y, w, value, label, color = C.accent1 }) {
-  tb(slide, value, { x, y, w, h: 0.95, fontSize: 44, bold: true, color, fontFace: THEME.headFontFace, valign: 'bottom' });
-  tb(slide, label, { x, y: y + 1.0, w, h: 0.7, fontSize: 14, color: C.text1 });
+  tb(slide, value, { x, y, w, h: 0.8, fontSize: 34, bold: true, color, fontFace: THEME.headFontFace, valign: 'bottom' });
+  tb(slide, label, { x, y: y + 0.85, w, h: 0.62, fontSize: 13, color: C.text1 });
 }
 
 function box(slide, { x, y, w, h, text, fill = C.accent1, color = C.background1, fontSize = 14, bold = true }) {
@@ -92,70 +97,130 @@ function arrow(slide, x1, y1, x2, y2, color = C.accent6) {
   slide.addShape(pres.ShapeType.line, { x: x1, y: y1, w: x2 - x1, h: y2 - y1, line: { color, width: 2, endArrowType: 'triangle' } });
 }
 
-function picture(slide, file, { x, y, w, h }) {
+function picture(slide, file, { x, y, w, h }, altText) {
   slide.addShape(pres.ShapeType.rect, { x: x - 0.04, y: y - 0.04, w: w + 0.08, h: h + 0.08, fill: { color: C.background2 }, line: { color: C.background2 } });
-  slide.addImage({ path: file, x, y, w, h, altText: path.basename(file, '.jpg') });
+  slide.addImage({ path: file, x, y, w, h, altText: altText ?? path.basename(file) });
 }
 
+const bulletRuns = (items, size) => items.map((t, i) => ({ text: t, options: { bullet: true, breakLine: i < items.length - 1, paraSpaceAfter: 6, ...(size ? { fontSize: size } : {}) } }));
 function bullets(slide, items, opts) {
-  slide.addText(items.map((t, i) => ({ text: t, options: { bullet: true, breakLine: i < items.length - 1, paraSpaceAfter: 6 } })), { isTextBox: true, margin: 0, fontSize: 16, color: C.text1, valign: 'top', ...opts });
+  slide.addText(bulletRuns(items), { isTextBox: true, margin: 0, fontSize: 15, color: C.text1, valign: 'top', ...opts });
 }
 
 const content = (section) => pres.addSlide({ masterName: 'Content', sectionTitle: section });
 
-// ---------- Slides ----------
-pres.addSection({ title: 'Problem' });
+// ---------- 1 · Problem, purpose, team ----------
+pres.addSection({ title: 'Problem and requirements' });
 {
-  const s = pres.addSlide({ masterName: 'Title dark', sectionTitle: 'Problem' });
+  const s = pres.addSlide({ masterName: 'Title dark', sectionTitle: 'Problem and requirements' });
   s.addText('Campus Shuttle Tracking & Demand Prediction', { placeholder: 'title' });
   s.addText([
-    { text: 'Timely, honest shuttle information — and the demand data to plan with', options: { breakLine: true } },
-    { text: ' ', options: { breakLine: true, fontSize: 10 } },
+    { text: 'Problem  ', options: { bold: true, color: 'FCD34D' } },
+    { text: 'Students cannot see where the campus shuttle is, so they wait outdoors or miss it; the transport office plans the fleet without data.', options: { breakLine: true } },
+    { text: ' ', options: { breakLine: true, fontSize: 8 } },
+    { text: 'Purpose  ', options: { bold: true, color: 'FCD34D' } },
+    { text: 'Live positions and honest arrival estimates — honest above all when GPS or mobile data fails — and "I\'m waiting here" requests that become demand history and explainable forecasts.', options: { breakLine: true } },
+    { text: ' ', options: { breakLine: true, fontSize: 8 } },
     { text: 'Abdullah · Zuhair Halawa', options: { bold: true, breakLine: true } },
-    { text: 'BCS 305 Software Architecture · Dr. Khaled Ammar · Fall 2026', options: { fontSize: 14 } },
+    { text: 'BCS 305 Software Architecture · Dr. Khaled Ammar · Fall 2026', options: { fontSize: 13 } },
   ], { placeholder: 'body' });
   s.addImage({ path: SHOT('student.jpg'), x: 8.3, y: 1.9, w: 4.45, h: 2.81, altText: 'Student view of the prototype' });
-  s.addNotes('Proposed speaker: Abdullah (see docs/presentation/speaking-script.md). Introduce the team and the one-sentence problem. The screenshot is the real student view of our prototype, running on a laptop.');
-}
-{
-  const s = content('Problem');
-  s.addText('Students wait blind; the office plans without data', { placeholder: 'title' });
-  const cards = [
-    ['1', 'Students', 'Cannot see where the shuttle is, so they wait outdoors — often in the heat — or miss it.', 'We give: live map, arrival times with a confidence level, "I\'m waiting here".'],
-    ['2', 'Drivers', 'Interrupted by calls asking where they are; blamed when GPS or mobile data fails.', 'We give: one-tap trips, offline-tolerant location sharing, a GPS simulator.'],
-    ['3', 'Transport office', 'Sees neither the fleet nor where and when students actually wait.', 'We give: live operations, routes, trip tracks, demand trends and explainable forecasts.'],
-  ];
-  cards.forEach(([badge, title, body, give], i) => {
-    const x = M + i * 4.12;
-    card(s, { x, y: 1.45, w: 3.85, h: 3.45, badge, title, body: [{ text: body, options: { breakLine: true } }, { text: ' ', options: { breakLine: true } }, { text: give, options: { color: C.accent1, bold: true } }], objectName: `stakeholder-${title}` });
-  });
-  s.addShape(pres.ShapeType.roundRect, { x: M, y: 5.2, w: W - 2 * M, h: 1.2, fill: { color: 'F8FAFC' }, line: { color: 'E2E8F0' }, rectRadius: 0.12 });
-  tb(s, [{ text: 'Also affected  ', options: { bold: true, color: C.text2 } }, { text: 'University IT, who must run it securely and cheaply · the data-protection officer, because driver locations and student identities are personal data · university management, who fund the fleet.' }], { x: M + 0.3, y: 5.2, w: W - 2 * M - 0.6, h: 1.2, fontSize: 15, valign: 'middle' });
-  s.addNotes('Proposed speaker: Zuhair. Three distinct user groups (the brief requires at least three). Also affected: university IT and the data-protection officer — location and identity data. All data in the prototype is demonstration data, not a real university.');
-}
-{
-  const s = content('Problem');
-  s.addText('The hard quality: information that is timely and honest', { placeholder: 'title' });
-  tb(s, [
-    { text: 'When GPS and mobile data are good, every viewer must see a new position within about a second.', options: { breakLine: true } },
-    { text: ' ', options: { breakLine: true } },
-    { text: 'When they fail, the system must say so — "location delayed", "GPS lost" — instead of showing a confident but wrong arrival time, and recover — delivering positions buffered during a network outage, within stated limits.', options: { breakLine: true } },
-    { text: ' ', options: { breakLine: true } },
-    { text: 'Second hard concern: privacy of location and identity data.', options: { color: C.accent6 } },
-  ], { x: M, y: 1.55, w: 5.6, h: 4.6, fontSize: 18 });
-  stat(s, { x: 6.9, y: 1.4, w: 2.8, value: '35 ms', label: 'p95 to 1,000 simulated viewers (local benchmark, one PC)' });
-  stat(s, { x: 10.0, y: 1.4, w: 2.8, value: '20 / 60 s', label: 'no position → "delayed" → "GPS lost", no ETA', color: C.accent2 });
-  stat(s, { x: 6.9, y: 4.0, w: 2.8, value: '10 min', label: 'network outage with no validated position lost (page open; tested)' });
-  stat(s, { x: 10.0, y: 4.0, w: 2.8, value: '9', label: 'measurable quality-attribute scenarios (report §2.3)', color: C.text2 });
-  s.addNotes('Proposed speaker: Zuhair. This is the quality attribute named in our proposal. Every number here comes from a test or a local benchmark, not an estimate. The 35 ms is a local benchmark: simulated viewers in the same process over loopback, no browsers, not a field measurement. The network-outage guarantee is bounded: newest 500 positions kept, at most 10 minutes old on arrival, lost if the driver closes the page. The thresholds are configurable and must be validated with real phones.');
+  tb(s, 'Student view of the running prototype (demonstration data)', { x: 8.3, y: 4.8, w: 4.45, h: 0.3, fontSize: 11, color: C.background2 });
+  s.addNotes([
+    'Speaker: Abdullah (0:40).',
+    'Say: who we are, the problem in one sentence, and the purpose: timely and honest information, plus demand data for the office.',
+    'Point at the screenshot: it is the real student page of the prototype, with demonstration data (no real university).',
+  ].join('\n'));
 }
 
-pres.addSection({ title: 'Architecture' });
+// ---------- 2 · Stakeholders, use cases, quality requirements ----------
 {
-  const s = content('Architecture');
+  const s = content('Problem and requirements');
+  s.addText('Three user groups, five use cases, one hard quality', { placeholder: 'title' });
+  card(s, { x: M, y: 1.4, w: 3.85, h: 4.3, title: 'Stakeholders', bodySize: 13, body: [
+    { text: 'Students', options: { bold: true } }, { text: ' — where is the shuttle, when will it come?', options: { breakLine: true } },
+    { text: 'Drivers', options: { bold: true } }, { text: ' — one-tap trips; not blamed for GPS faults', options: { breakLine: true } },
+    { text: 'Transport office', options: { bold: true } }, { text: ' — live fleet, incidents, demand to plan with', options: { breakLine: true } },
+    { text: ' ', options: { breakLine: true } },
+    { text: 'Also affected: university IT (runs it), the data-protection officer (driver locations and student identities are personal data), management (funds the fleet).', options: { color: C.accent6 } },
+  ] });
+  card(s, { x: 4.72, y: 1.4, w: 3.85, h: 4.3, title: 'Primary use cases', bodySize: 13, body: [
+    { text: 'UC1 Track shuttles and view arrival times', options: { bullet: true, breakLine: true } },
+    { text: 'UC2 Run a trip (driver; GPS receiver)', options: { bullet: true, breakLine: true } },
+    { text: 'UC3 Register a waiting request', options: { bullet: true, breakLine: true } },
+    { text: 'UC4 Monitor fleet and waiting demand; end a trip remotely', options: { bullet: true, breakLine: true } },
+    { text: 'UC5 View and explain a demand forecast', options: { bullet: true, breakLine: true } },
+    { text: ' ', options: { breakLine: true } },
+    { text: 'Demonstrated end to end: UC2 → UC1, and UC3 → UC4 → UC5', options: { bold: true, color: C.accent1 } },
+  ] });
+  card(s, { x: 8.84, y: 1.4, w: 3.89, h: 4.3, title: 'Quality scenarios (measured)', bodySize: 13, body: [
+    { text: 'Freshness: new position to every viewer, p95 ≤ 1 s', options: { bullet: true, breakLine: true } },
+    { text: 'GPS outage: "delayed" after 20 s, "lost" after 60 s, no estimate when lost', options: { bullet: true, breakLine: true } },
+    { text: 'Network loss: positions queued and delivered in order (bounded: 10 min, newest 500)', options: { bullet: true, breakLine: true } },
+    { text: 'Security: 26 endpoints × 4 caller types checked', options: { bullet: true, breakLine: true } },
+    { text: 'Privacy: no student location collected', options: { bullet: true } },
+  ] });
+  s.addShape(pres.ShapeType.roundRect, { x: M, y: 5.95, w: W - 2 * M, h: 0.82, fill: { color: 'FFF7E6' }, line: { color: 'F59E0B' }, rectRadius: 0.1 });
+  tb(s, [{ text: 'Hard quality attribute  ', options: { bold: true, color: C.text2 } }, { text: 'timely and honest shuttle information under unreliable GPS and mobile connectivity: fast when the data is good, and saying so — instead of guessing — when it is not.' }], { x: M + 0.3, y: 5.95, w: W - 2 * M - 0.6, h: 0.82, fontSize: 15, valign: 'middle' });
+  s.addNotes([
+    'Speaker: Zuhair (1:00).',
+    'Stakeholders: the brief asks for at least three user groups; ours are students, drivers and the transport office. Name the other affected parties briefly.',
+    'Use cases: five fully dressed descriptions are in Appendix A.2; the use case diagram is A.1. Two use cases run end to end in the demonstration.',
+    'Quality scenarios: nine six-part scenarios in report §2.3. Every number is measured or tested; the 1-second target and the thresholds are reasoned, not elicited from stakeholders (§2.4, §9).',
+  ].join('\n'));
+}
+
+// ---------- 3 · SDLC approach and timeline ----------
+pres.addSection({ title: 'Process and architecture' });
+{
+  const s = content('Process and architecture');
+  s.addText('Process: incremental, risk first, then reviewed iterations', { placeholder: 'title' });
+  card(s, { x: M, y: 1.35, w: 5.1, h: 4.15, title: 'What we actually did (Module 02 terms)', bodySize: 13, body: [
+    { text: 'Incremental', options: { bold: true, color: C.accent1 } }, { text: ' — new parts in each slice: skeleton → tracking → driver and student pages → demand → hardening (baseline); a 4th forecaster (#12); browser tests and CI (#13)', options: { breakLine: true } },
+    { text: ' ', options: { breakLine: true, fontSize: 6 } },
+    { text: 'Spiral idea', options: { bold: true, color: C.accent2 } }, { text: ' — four unknowns prototyped first: SSE fan-out (load test), GPS states, route snapping, ML feasibility', options: { breakLine: true } },
+    { text: ' ', options: { breakLine: true, fontSize: 6 } },
+    { text: 'Iterative', options: { bold: true, color: C.accent3 } }, { text: ' — the same parts improved in reviewed rounds: #14–#17 and this submission pass, each through a pull request with approval and a passing check', options: { breakLine: true } },
+    { text: ' ', options: { breakLine: true, fontSize: 6 } },
+    { text: 'V-model pairing for tests. Not used: Scrum sprints, waterfall sign-off.', options: { color: C.accent6 } },
+  ] });
+  // Timeline
+  const items = [
+    ['Wk 3', 'Team studio, topic proposal', 'course plan', false],
+    ['Wk 4', 'Topic approval; proposal due', 'date not recorded', false],
+    ['31 Oct', 'Baseline: 5 slices, load tests', 'repository', true],
+    ['1–2 Nov', 'PRs #12–#16, reviews, protected main', 'GitHub', true],
+    ['6–9 Nov', 'PR #17: review, 4 fixes, approval, merge', 'GitHub', true],
+    ['10 Nov', 'Submission pass: SSD, UML print, video', 'this branch', true],
+    ['Wk 14–15', 'Presentation and demo', 'slot not yet published', false],
+  ];
+  const x0 = 6.05;
+  const y0 = 1.55;
+  s.addShape(pres.ShapeType.line, { x: x0 + 0.22, y: y0 + 0.15, w: 0, h: 0.62 * (items.length - 1), line: { color: C.accent6, width: 2 } });
+  items.forEach(([when, what, source, recorded], i) => {
+    const y = y0 + i * 0.62;
+    s.addShape(pres.ShapeType.ellipse, { x: x0 + 0.08, y: y + 0.01, w: 0.28, h: 0.28, fill: { color: recorded ? C.accent1 : C.background1 }, line: { color: C.accent1, width: 2 } });
+    tb(s, when, { x: x0 + 0.5, y: y - 0.04, w: 1.05, h: 0.36, fontSize: 13, bold: true, color: C.text2 });
+    tb(s, [{ text: what, options: { breakLine: true } }, { text: source, options: { fontSize: 10, color: C.accent6 } }], { x: x0 + 1.55, y: y - 0.05, w: 5.1, h: 0.6, fontSize: 13 });
+  });
+  tb(s, 'Filled dot: in the repository record · open dot: course schedule (indicative) — our own dates for these are not recorded', { x: x0, y: 5.95, w: 6.7, h: 0.4, fontSize: 11, color: C.accent6 });
+  s.addShape(pres.ShapeType.roundRect, { x: M, y: 5.7, w: 5.1, h: 1.05, fill: { color: 'F8FAFC' }, line: { color: 'E2E8F0' }, rectRadius: 0.1 });
+  tb(s, [{ text: 'Lesson: ', options: { bold: true } }, { text: 'the recorded work is compressed into 31 Oct – 10 Nov. Starting the repository at the proposal would have left time for stakeholders and a field test (report §9).' }], { x: M + 0.2, y: 5.7, w: 4.7, h: 1.05, fontSize: 12, valign: 'middle' });
+  s.addNotes([
+    'Speaker: Abdullah (1:00).',
+    'Incremental vs iterative (Module 02): incremental adds new parts in each slice; iterative improves the same part in each round. Our baseline was built as five slices on an architectural skeleton chosen first, because increment 1 must carry every later increment. After that, most work was iterative: reviewed pull requests improving existing parts (GPS resumption, the UML validator after Zuhair requested changes, records, the review findings on #17, and this submission pass). #12 and #13 added new parts, so they were increments.',
+    'Spiral idea: we tested the four riskiest unknowns first with prototypes or a feasibility check (report §3.1 table). These were risk-driven steps inside the build, not separate spiral loops.',
+    'Timeline honesty: the Week 3 studio, Week 4 approval and Week 9 checkpoint come from the course schedule; the dates of our own actions there are not in the project record, so the slide does not invent them. The repository record starts on 31 October.',
+    'Be ready for: "Why not agile?" — two people, fixed course gates, quality attributes known early; we kept short review loops on a protected main branch but no sprints.',
+  ].join('\n'));
+}
+
+// ---------- 4 · Alternatives and why ----------
+{
+  const s = content('Process and architecture');
   s.addText('Four architectures compared — the modular monolith wins', { placeholder: 'title' });
   s.addChart(pres.ChartType.bar, [{ name: 'Weighted score (max 70)', labels: ['A  Modular monolith + SSE', 'C  Monolith + client polling', 'D  Serverless backend-as-a-service', 'B  Microservices + broker'], values: [61, 52, 45, 44] }], {
-    x: M, y: 1.45, w: 6.6, h: 4.9, barDir: 'bar', catAxisOrientation: 'maxMin', chartColors: [THEME.colors.accent1],
+    x: M, y: 1.45, w: 6.6, h: 4.6, barDir: 'bar', catAxisOrientation: 'maxMin', chartColors: [THEME.colors.accent1],
     showValue: true, dataLabelPosition: 'outEnd', dataLabelFontSize: 16, dataLabelColor: THEME.colors.dk1, dataLabelFontFace: '+mn-lt',
     catAxisLabelFontSize: 14, catAxisLabelColor: THEME.colors.dk1, catAxisLabelFontFace: '+mn-lt', valAxisHidden: true, valAxisMaxVal: 70,
     valGridLine: { style: 'none' }, catGridLine: { style: 'none' }, showLegend: false, showTitle: false, barGapWidthPct: 60,
@@ -163,32 +228,196 @@ pres.addSection({ title: 'Architecture' });
   bullets(s, [
     'Weighted against freshness, robustness, security & privacy, modifiability, team-of-two simplicity, growth',
     'A: best measured freshness, one trust boundary, one command to run',
-    'C: as good as A except freshness: 1 s polling means 1,000–3,000 requests/s',
+    'C: equal to A except freshness — 1 s polling means 1,000–3,000 requests/s',
     'D: location data held by a third party; GPS timeouts need a scheduler',
     'B: independent scaling one campus does not need; ≥ 5 deployables',
-  ], { x: 7.6, y: 1.55, w: 5.1, h: 4.8, fontSize: 15 });
-  s.addNotes('Proposed speaker: Abdullah. The scores are a technical assessment (report section 6.3, docs/architecture/technical-assessment.md), not a measurement; only A\'s freshness is measured. Be ready to defend or change any score. Key point: A and C differ only on freshness, so the push decision rests on the one-second requirement. What would change our mind: several campuses or server instances (a broker behind EventPublisher), or a relaxed freshness requirement (polling).');
+  ], { x: 7.6, y: 1.55, w: 5.1, h: 3.9, fontSize: 15 });
+  tb(s, 'Scores are a technical judgement (report §6.3); only A\'s freshness is measured.', { x: 7.6, y: 5.6, w: 5.1, h: 0.5, fontSize: 12, color: C.accent6 });
+  s.addNotes([
+    'Speaker: Abdullah (1:00).',
+    'Key point: A and C differ only on freshness, so the push decision rests on the one-second requirement. If the office accepted data a few seconds old, polling would be a good choice.',
+    'What would change our mind: several campuses or several server instances (a broker behind EventPublisher), or a relaxed freshness requirement (polling).',
+    'If either of you changed a score in your own review (issues #2, #9), say which one and why. Otherwise say the scores are the technical assessment in docs/architecture/technical-assessment.md.',
+  ].join('\n'));
 }
+
+// ---------- 5 · Architecture, components, deployment ----------
 {
-  const s = content('Architecture');
+  const s = content('Process and architecture');
   s.addText('One process, eight components, enforced boundaries', { placeholder: 'title' });
   const clients = ['Student UI', 'Driver UI + GPS simulator', 'Office UI'];
-  clients.forEach((t, i) => box(s, { x: 0.9 + i * 3.95, y: 1.4, w: 3.6, h: 0.6, text: t, fill: C.accent3 }));
-  tb(s, 'REST (JSON) + Server-Sent Events over HTTP', { x: 0.9, y: 2.08, w: 11.5, h: 0.3, fontSize: 12, color: C.accent6, align: 'center' });
-  s.addShape(pres.ShapeType.roundRect, { x: M, y: 2.45, w: W - 2 * M, h: 4.3, fill: { color: C.background2 }, line: { color: C.background2 }, rectRadius: 0.12 });
-  tb(s, 'Campus Shuttle server — one Node.js process (src/)', { x: 0.85, y: 2.55, w: 8, h: 0.35, fontSize: 13, bold: true, color: C.text2 });
-  box(s, { x: 0.9, y: 3.0, w: 5.6, h: 0.65, text: 'Web API — auth, role checks, CSRF, CSP (web/)' });
-  box(s, { x: 6.85, y: 3.0, w: 5.6, h: 0.65, text: 'Real-time Gateway — SSE, coalescing (realtime/)' });
+  clients.forEach((t, i) => box(s, { x: 0.9 + i * 3.95, y: 1.35, w: 3.6, h: 0.55, text: t, fill: C.accent3 }));
+  tb(s, 'Browsers: REST (JSON) + Server-Sent Events over HTTP', { x: 0.9, y: 1.95, w: 11.5, h: 0.3, fontSize: 12, color: C.accent6, align: 'center' });
+  s.addShape(pres.ShapeType.roundRect, { x: M, y: 2.3, w: W - 2 * M, h: 3.55, fill: { color: C.background2 }, line: { color: C.background2 }, rectRadius: 0.12 });
+  tb(s, 'Campus Shuttle server — one Node.js process in TypeScript (src/)', { x: 0.85, y: 2.38, w: 8, h: 0.33, fontSize: 13, bold: true, color: C.text2 });
+  box(s, { x: 0.9, y: 2.78, w: 5.6, h: 0.6, text: 'Web API — auth, role checks, CSRF, CSP (web/)' });
+  box(s, { x: 6.85, y: 2.78, w: 5.6, h: 0.6, text: 'Real-time Gateway — SSE, coalescing (realtime/)' });
   ['Identity & Access\n(identity/)', 'Network & routes\n(network/)', 'Tracking, ETA, GPS states\n(tracking/)', 'Demand & forecasting\n(demand/)'].forEach((t, i) =>
-    box(s, { x: 0.9 + i * 2.92, y: 3.9, w: 2.7, h: 0.95, text: t, fill: C.background1, color: C.text1 }));
-  box(s, { x: 0.9, y: 5.1, w: 5.6, h: 0.6, text: 'Event Bus — domain events, Observer (shared/)', fill: C.accent2 });
-  box(s, { x: 6.85, y: 5.1, w: 5.6, h: 0.6, text: 'Persistence — SQLite repositories (persistence/)', fill: C.text2 });
-  tb(s, 'test/architecture.test.ts fails if an import breaks these rules: tracking and demand never import each other · business code sees routes only through interfaces · only the composition root knows SQLite. (It checks imports, not every UML detail.)', { x: 0.9, y: 5.9, w: 11.5, h: 0.7, fontSize: 13, color: C.text1 });
-  s.addNotes('Proposed speaker: Abdullah. Each box is a folder you can open. Components talk through port interfaces and domain events. Point at the component diagram in the UML appendix for the UML notation (lollipops, required interfaces).');
+    box(s, { x: 0.9 + i * 2.92, y: 3.55, w: 2.7, h: 0.9, text: t, fill: C.background1, color: C.text1 }));
+  box(s, { x: 0.9, y: 4.65, w: 5.6, h: 0.55, text: 'Event Bus — domain events, Observer (shared/)', fill: C.accent2 });
+  box(s, { x: 6.85, y: 4.65, w: 5.6, h: 0.55, text: 'Persistence — SQLite repositories (persistence/)', fill: C.text2 });
+  tb(s, 'test/architecture.test.ts fails if an import breaks these rules (imports only, not every UML detail)', { x: 0.9, y: 5.32, w: 11.5, h: 0.4, fontSize: 12, color: C.text1 });
+  s.addShape(pres.ShapeType.roundRect, { x: M, y: 6.0, w: W - 2 * M, h: 0.8, fill: { color: 'F8FAFC' }, line: { color: 'E2E8F0' }, rectRadius: 0.1 });
+  tb(s, [{ text: 'Deployment  ', options: { bold: true, color: C.text2 } }, { text: 'one server runs the Node.js process and one SQLite database file; phones and laptops use a browser. No broker, no cloud service. HTTPS behind a reverse proxy is the next production step (UML A.12).' }], { x: M + 0.3, y: 6.0, w: W - 2 * M - 0.6, h: 0.8, fontSize: 14, valign: 'middle' });
+  s.addNotes([
+    'Speaker: Abdullah (0:50).',
+    'Each box is a folder in src/. Components talk through port interfaces and domain events; tracking and demand never import each other; only the composition root (src/container.ts) knows concrete classes and SQLite.',
+    'Diagrams to point at: component diagram A.11 (provided and required interfaces), deployment diagram A.12 (one server node, browser nodes), design sequence A.5 (one upload).',
+    'Trade-off: one process is simple to run, test and secure; the cost is that one server carries every viewer. Several campuses would need a broker behind EventPublisher.',
+  ].join('\n'));
+}
+
+// ---------- 6 · Patterns tied to behaviour ----------
+{
+  const s = content('Process and architecture');
+  s.addText('Five patterns, each tied to behaviour you will see', { placeholder: 'title' });
+  const rows = [
+    ['State', 'Live → Location delayed (20 s) → GPS lost (60 s) → Live; what passengers may be told', 'tracking/signal-state.ts — one class per state'],
+    ['Adapter', 'The demo drives the same upload path as a real phone', 'public/js/gps.js — simulated and device GPS, one contract'],
+    ['Observer', 'One upload reaches every browser and the waiting module', 'shared/event-bus.ts → SseHub, WaitingService'],
+    ['Repository', 'Positions stored before memory changes; tests run without a database', 'persistence/sqlite-*.ts, in-memory doubles'],
+    ['Strategy', 'Arrival-time and forecasting models swapped and compared', 'EtaStrategy, DemandPredictor (4 models)'],
+  ];
+  s.addTable([
+    [{ text: 'Pattern', options: { bold: true, color: 'FFFFFF', fill: { color: THEME.colors.dk2 } } }, { text: 'Behaviour in the prototype', options: { bold: true, color: 'FFFFFF', fill: { color: THEME.colors.dk2 } } }, { text: 'Where in the code', options: { bold: true, color: 'FFFFFF', fill: { color: THEME.colors.dk2 } } }],
+    ...rows.map(([p, b, c]) => [{ text: p, options: { bold: true, color: THEME.colors.dk2, fontFace: THEME.headFontFace, fontSize: 16 } }, b, { text: c, options: { fontFace: 'Consolas', fontSize: 12, color: THEME.colors.accent6 } }]),
+  ], { x: M, y: 1.45, w: W - 2 * M, colW: [1.9, 5.6, 4.63], fontSize: 14, color: THEME.colors.dk1, border: { type: 'solid', pt: 0.75, color: 'CBD5E1' }, fill: { color: 'FFFFFF' }, rowH: 0.72, valign: 'middle' });
+  tb(s, 'Class diagrams of all five: UML set A.13–A.17. One composition root (src/container.ts) wires them; tests swap the clock, the database and the strategies.', { x: M, y: 6.0, w: W - 2 * M, h: 0.6, fontSize: 13, color: C.accent6 });
+  s.addNotes([
+    'Speaker: Zuhair (0:50).',
+    'For each pattern say the problem first, then where it is: State is the GPS signal (the UML state machine A.6 maps one-to-one onto four classes); Adapter is why the simulator is honest: it uses exactly the same upload path; Observer is the event bus that feeds the SSE hub; Repository keeps business rules free of SQL; Strategy lets us compare four forecasting models and two ETA strategies.',
+    'The State pattern is the one you will see working in the video: Live, Location delayed, GPS lost, Live again.',
+  ].join('\n'));
+}
+
+// ---------- 7 · Demonstration ----------
+pres.addSection({ title: 'Demonstration' });
+{
+  const s = content('Demonstration');
+  s.addText('Demonstration: what happens when connectivity fails?', { placeholder: 'title' });
+  const frame = { x: M, y: 1.4, w: 7.6, h: 4.275 };
+  if (VIDEO) {
+    const cover = `data:image/jpeg;base64,${fs.readFileSync(SHOT('demo-video-poster.jpg')).toString('base64')}`;
+    s.addMedia({ type: 'video', path: VIDEO, cover, ...frame, objectName: 'Demonstration video' });
+  } else {
+    picture(s, SHOT('demo-video-poster.jpg'), frame, 'Frame from the demonstration video: network loss, trip not ended');
+  }
+  tb(s, VIDEO ? `Recorded demonstration, ${VIDEO_LENGTH} (embedded; also supplied as 06-Demo.mp4)` : `Recorded demonstration, ${VIDEO_LENGTH}: supplied separately as 06-Demo.mp4 with 06-Demo.srt`, { x: M, y: 5.75, w: 7.6, h: 0.3, fontSize: 12, color: C.accent6 });
+  card(s, { x: 8.55, y: 1.4, w: 4.18, h: 4.65, title: 'In the video and live', bodySize: 13, body: [
+    { text: 'Normal trip: driver starts, student sees Live, office sees the same trip', options: { bullet: true, breakLine: true } },
+    { text: 'Network loss: positions queued; "Trip NOT ended"; 10 positions delivered in one batch', options: { bullet: true, breakLine: true } },
+    { text: 'GPS outage: Live → Location delayed → GPS lost, no estimate → Live', options: { bullet: true, breakLine: true } },
+    { text: 'Waiting request → office count → served at the stop', options: { bullet: true, breakLine: true } },
+    { text: 'Forecast cell → how the number was calculated (synthetic history)', options: { bullet: true } },
+  ] });
+  tb(s, 'Real prototype, three browser windows, throw-away demo database. Simulated GPS; skipped waiting time is labelled TIME-LAPSE with the real elapsed time. Narration: synthetic voice.', { x: M, y: 6.15, w: W - 2 * M, h: 0.55, fontSize: 12, color: C.text1 });
+  s.addNotes([
+    'Speakers: Abdullah introduces (0:20); the live demonstration follows docs/demo-script.md (Abdullah drives use case 1, Zuhair use case 2).',
+    'Provisional plan (official time limit not yet published): show the video excerpt 0:51–1:54 (network loss and GPS outage, 1:03), then run the live demonstration of the waiting request, the office view and the forecast explanation (2:30). If the live system fails, play the rest of the video instead; if the instructor allows the video to replace the live demonstration, play it in full (4:11).',
+    'Say clearly: the video was recorded from the running prototype; GPS is simulated; waits were shortened only where the TIME-LAPSE box shows the real elapsed time; the voice is synthetic, not either of us.',
+    VIDEO ? 'The video is embedded. If it does not play, open 06-Demo.mp4 from the same folder.' : 'In this repository copy the video is not embedded (it is not kept in Git). Use the submission copy of the deck, or open 06-Demo.mp4.',
+  ].join('\n'));
+}
+
+// ---------- 8 · Verification, limitations, reflection ----------
+pres.addSection({ title: 'Evidence and conclusion' });
+{
+  const s = content('Evidence and conclusion');
+  s.addText('Verification, limitations and what we learned', { placeholder: 'title' });
+  stat(s, { x: M, y: 1.3, w: 2.9, value: '144', label: '119 Node + 25 Chromium tests, all passing (incl. accessibility)' });
+  stat(s, { x: 3.7, y: 1.3, w: 2.9, value: '26 × 4', label: 'endpoints × caller types checked for role access' });
+  stat(s, { x: 6.8, y: 1.3, w: 2.9, value: '35–37 ms', label: 'p95 to 1,000 simulated viewers — local benchmark, one PC' });
+  stat(s, { x: 9.9, y: 1.3, w: 2.9, value: '21', label: 'defects and corrections in the test plan, all resolved', color: C.accent2 });
+  card(s, { x: M, y: 3.35, w: 5.9, h: 3.4, title: 'Limitations', bodySize: 13, body: [
+    { text: 'GPS behaviour tested with the simulator only — no real phone or vehicle yet', options: { bullet: true, breakLine: true } },
+    { text: 'A driver page in a background tab stops reporting; a native app may be needed', options: { bullet: true, breakLine: true } },
+    { text: 'Forecasts shown on synthetic history: the method, not accuracy', options: { bullet: true, breakLine: true } },
+    { text: 'No HTTPS, university single sign-on, Arabic or screen-reader session yet; the benchmark is not a deployment test', options: { bullet: true } },
+  ] });
+  card(s, { x: 6.8, y: 3.35, w: 5.93, h: 3.4, title: 'Reflection (report §9)', bodySize: 13, body: [
+    { text: 'Spread the work: the record starts in Week 9', options: { bullet: true, breakLine: true } },
+    { text: 'Talk to stakeholders before fixing numbers such as 1 s, 20 s and 60 s', options: { bullet: true, breakLine: true } },
+    { text: 'Check content, not existence: an independent reviewer found what the author\'s own checks missed', options: { bullet: true, breakLine: true } },
+    { text: 'Keep claims at the strength of the evidence', options: { bullet: true } },
+  ], foot: 'Each member confirms or corrects this reflection in person.' });
+  s.addNotes([
+    'Speaker: Abdullah (1:10).',
+    'Numbers from docs/test-plan.md §4 and docs/evidence. The 25 Chromium tests drive the real pages against a fresh server, including accessibility checks of all three role pages; GitHub Actions runs them on every pull request. V-model pairing: unit ↔ module design, architecture test ↔ architectural design, integration ↔ system design, demo ↔ requirements.',
+    'Be precise about the benchmark: simulated viewers in the same process over loopback, one session, no browsers. It shows fan-out, not campus Wi-Fi.',
+    'Reflection: the report §9 draft was prepared from the project record. Before the presentation, each of you replaces these lines with what you would personally do differently, in your own words.',
+  ].join('\n'));
+}
+
+// ---------- 9 · Conclusion, contributions, questions ----------
+{
+  const s = pres.addSlide({ masterName: 'Closing dark', sectionTitle: 'Evidence and conclusion' });
+  s.addText('Conclusion', { placeholder: 'title' });
+  tb(s, [
+    { text: 'A modular monolith with server push gives fresh positions in milliseconds locally — and, more importantly, says "delayed" and "lost" instead of guessing when GPS or the network fails.', options: { breakLine: true } },
+    { text: ' ', options: { breakLine: true, fontSize: 8 } },
+    { text: 'Next: a field test with real phones, HTTPS and single sign-on, then real demand data before any trained model.' },
+  ], { x: M, y: 1.4, w: 6.6, h: 2.6, fontSize: 17, color: C.background1 });
+  s.addShape(pres.ShapeType.roundRect, { x: 7.55, y: 1.4, w: 5.18, h: 3.2, fill: { color: C.accent1 }, line: { color: C.accent1 }, rectRadius: 0.12 });
+  tb(s, 'Contributions (factual record, report §10)', { x: 7.8, y: 1.55, w: 4.7, h: 0.4, fontSize: 15, bold: true, color: C.background1 });
+  tb(s, [
+    { text: 'Abdullah: ', options: { bold: true } }, { text: 'repository and baseline import, pull requests #14–#17 and the submission pull request, merges and branch protection', options: { breakLine: true } },
+    { text: ' ', options: { breakLine: true, fontSize: 6 } },
+    { text: 'Zuhair Halawa: ', options: { bold: true } }, { text: 'pull requests #12 (median forecaster) and #13 (browser tests, accessibility, CI), reviews and approvals of #14–#17, first UML render', options: { breakLine: true } },
+    { text: ' ', options: { breakLine: true, fontSize: 6 } },
+    { text: 'AI tools and personal statements: report §10', options: { color: 'D1FAE5' } },
+  ], { x: 7.8, y: 2.0, w: 4.75, h: 2.5, fontSize: 13, color: C.background1 });
+  tb(s, 'Questions?', { x: M, y: 4.85, w: 12.1, h: 1.0, fontSize: 40, bold: true, color: C.background1, fontFace: THEME.headFontFace });
+  tb(s, 'Backup slides follow: GPS states and network loss · synthetic backtest · one upload, measured', { x: M, y: 5.95, w: 12.1, h: 0.5, fontSize: 13, color: C.background2 });
+  s.addNotes([
+    'Speakers: Zuhair gives the conclusion (0:30); Abdullah opens the questions (0:20).',
+    'Contributions: read only what the factual record shows (which account submitted, reviewed or merged what). Do not claim more. Each member\'s own statement and signature are in the private submission copy; tool use is declared in report §10.2.',
+    'Keep this slide up during questions. For detailed questions use the backup slides and docs/presentation/viva-sheet.md.',
+  ].join('\n'));
+}
+
+// ---------- Backup slides ----------
+pres.addSection({ title: 'Backup' });
+{
+  const s = content('Backup');
+  s.addText('Backup · When GPS fails, the system says so instead of guessing', { placeholder: 'title' });
+  const states = [
+    ['Awaiting fix', 'trip started, no position yet', C.accent6, '"waiting for first GPS position"'],
+    ['Live', 'newest position ≤ 20 s old', C.accent5, 'ETA: "4 min · at 08:14"'],
+    ['Delayed', '20–60 s without a position', C.accent2, 'ETA marked "~4 min", then "Due"'],
+    ['GPS lost', 'more than 60 s', C.accent4, 'no ETA — "last seen 2 min ago"'],
+  ];
+  states.forEach(([name, rule, color, sees], i) => {
+    const x = M + i * 3.1;
+    box(s, { x, y: 1.55, w: 2.75, h: 0.85, text: name, fill: color, fontSize: 18 });
+    tb(s, rule, { x, y: 2.5, w: 2.75, h: 0.45, fontSize: 13, color: C.accent6, align: 'center' });
+    tb(s, [{ text: 'Students see', options: { bold: true, breakLine: true } }, { text: sees }], { x, y: 3.0, w: 2.75, h: 0.9, fontSize: 14, align: 'center' });
+    if (i < states.length - 1) arrow(s, x + 2.77, 1.97, x + 3.08, 1.97);
+  });
+  tb(s, 'Any accepted position → Live again · no position for 30 min → trip closed automatically', { x: M, y: 4.0, w: 12.1, h: 0.4, fontSize: 14, bold: true, color: C.text2, align: 'center' });
+  card(s, { x: M, y: 4.6, w: 12.1, h: 1.75, title: 'Network loss on the driver\'s phone', body: 'Positions are queued in the open driver page (newest 500 kept) and retried with backoff (1 → 15 s). On reconnection the server corrects the phone\'s clock using sentAt, sorts them, and rejects duplicates, positions over 10 min old and impossible jumps. Ending the trip fails honestly while offline. Closing the page loses the queue.' });
+  s.addNotes('Backup for questions on the State pattern and QA-3/QA-4. The UML state machine A.6 maps one-to-one onto the four state classes in src/tracking/signal-state.ts.');
 }
 {
-  const s = content('Architecture');
-  s.addText('One GPS upload reaches every viewer in milliseconds', { placeholder: 'title' });
+  const s = content('Backup');
+  s.addText('Backup · Synthetic backtest: the method works, accuracy unproven', { placeholder: 'title' });
+  s.addChart(pres.ChartType.bar, [{ name: 'MAE (requests per stop-hour)', labels: ['Same-weekday median (6 weeks)', 'Weighted seasonal (6 weeks)', 'Seasonal average (4 weeks)', 'Hour-of-day mean (naive)'], values: [1.42, 1.44, 1.45, 1.98] }], {
+    x: M, y: 1.45, w: 6.8, h: 4.6, barDir: 'bar', catAxisOrientation: 'maxMin', chartColors: [THEME.colors.accent1],
+    showValue: true, dataLabelPosition: 'outEnd', dataLabelFormatCode: '0.00', dataLabelFontSize: 16, dataLabelColor: THEME.colors.dk1, dataLabelFontFace: '+mn-lt',
+    catAxisLabelFontSize: 14, catAxisLabelColor: THEME.colors.dk1, catAxisLabelFontFace: '+mn-lt', valAxisHidden: true, valAxisMinVal: 0, valAxisMaxVal: 2.5,
+    valGridLine: { style: 'none' }, catGridLine: { style: 'none' }, showLegend: false,
+    showTitle: true, title: 'Mean absolute error, last 14 days (lower is better)', titleFontSize: 14, titleColor: THEME.colors.dk1, titleFontFace: '+mn-lt',
+  });
+  tb(s, 'SYNTHETIC DATA', { x: 7.8, y: 1.55, w: 4.9, h: 0.5, fontSize: 20, bold: true, color: C.accent2 });
+  bullets(s, [
+    'History generated from our own written assumptions (weekday peaks, quiet weekends) — not from any university',
+    'Weekday-aware models beat the naive one because the data was built that way: this checks the pipeline, nothing more',
+    'With one semester of real requests, the same backtest decides whether a trained model is worth adding (RBC Borealis lifecycle: feasibility first)',
+  ], { x: 7.8, y: 2.15, w: 4.9, h: 4.2, fontSize: 15 });
+  s.addNotes('Backup for questions on forecasting (report §6.7). 1,890 stop-hours, rolling origin, no look-ahead (tested). Reproduce with npm run evaluate. Do not present this as accuracy.');
+}
+{
+  const s = content('Backup');
+  s.addText('Backup · One GPS upload reaches every viewer in milliseconds', { placeholder: 'title' });
   const steps = ['Driver app\nqueue + batch\n(sentAt)', 'Web API\nsession, role,\ntrip owner', 'TrackingService\nvalidate · snap\nto route · ETA', 'SQLite\nstore first,\nthen memory', 'Event Bus\ntrip.location', 'SSE Hub\none message per\ntrip, serialised once'];
   steps.forEach((t, i) => {
     const x = M + i * 2.07;
@@ -206,165 +435,7 @@ pres.addSection({ title: 'Architecture' });
     'A slow phone skips updates and is resynchronised — it cannot grow server memory',
     'Positions are stored before memory changes: a restart loses nothing',
   ], { x: 8.4, y: 3.45, w: 4.35, h: 3.2, fontSize: 15 });
-  s.addNotes('Proposed speaker: Abdullah. Walk through the design sequence diagram (UML appendix A.5). The load test is npm run load-test. Be precise about what it shows: the fan-out of the server with simulated viewers in the same process over loopback, sharing one session, with no browser rendering and no real network. It does not prove that 3,000 real students on campus Wi-Fi get the same latency; a deployment test from separate machines is still needed.');
-}
-{
-  const s = content('Architecture');
-  s.addText('When GPS fails, the system says so instead of guessing', { placeholder: 'title' });
-  const states = [
-    ['Awaiting fix', 'trip started, no position yet', C.accent6, '"waiting for first GPS position"'],
-    ['Live', 'newest position ≤ 20 s old', C.accent5, 'ETA: "4 min · at 08:14"'],
-    ['Delayed', '20–60 s without a position', C.accent2, 'ETA marked "~4 min", then "Due"'],
-    ['GPS lost', 'more than 60 s', C.accent4, 'no ETA — "last seen 2 min ago"'],
-  ];
-  states.forEach(([name, rule, color, sees], i) => {
-    const x = M + i * 3.1;
-    box(s, { x, y: 1.55, w: 2.75, h: 0.85, text: name, fill: color, fontSize: 18 });
-    tb(s, rule, { x, y: 2.5, w: 2.75, h: 0.45, fontSize: 13, color: C.accent6, align: 'center' });
-    tb(s, [{ text: 'Students see', options: { bold: true, breakLine: true } }, { text: sees }], { x, y: 3.0, w: 2.75, h: 0.9, fontSize: 14, align: 'center' });
-    if (i < states.length - 1) arrow(s, x + 2.77, 1.97, x + 3.08, 1.97);
-  });
-  tb(s, 'Any accepted position → Live again · no position for 30 min → trip closed automatically', { x: M, y: 4.0, w: 12.1, h: 0.4, fontSize: 14, bold: true, color: C.text2, align: 'center' });
-  card(s, { x: M, y: 4.6, w: 12.1, h: 1.75, title: 'Network loss on the driver\'s phone', body: 'Positions are queued in the open driver page (newest 500 kept) and retried with backoff (1 → 15 s). On reconnection the server corrects the phone\'s clock using sentAt, sorts them, rejects duplicates, positions over 10 min old and impossible jumps, and the shuttle jumps to its true position. Closing the page loses the queue.' });
-  s.addNotes('Proposed speaker: Zuhair. This is the State pattern: four classes, one per state, each deciding how to react and how much ETA information it is honest to show. The UML state machine (appendix A.6) maps one-to-one onto those classes.');
-}
-{
-  const s = content('Architecture');
-  s.addText('Five design patterns, each solving a concrete problem', { placeholder: 'title' });
-  const patterns = [
-    ['Strategy', 'ETA and forecasting algorithms change without touching the services; models compared side by side.', 'EtaStrategy · DemandPredictor'],
-    ['Observer', 'One update reaches hundreds of browsers and the waiting module; tracking knows none of them.', 'EventBus · callback subscribers'],
-    ['State', 'What passengers may be told depends on GPS freshness; no status switch statements.', 'SignalState: Live / Stale / Lost'],
-    ['Repository', 'Business rules independent of SQL; unit tests run without a database.', 'TripRepository → SQLite / in-memory'],
-    ['Adapter', 'Demo without vehicles, but through exactly the same upload path as a real phone.', 'DeviceGps · SimulatedGps (duck-typed)'],
-    ['Composition root', 'One place knows concrete classes; tests swap the clock, database and strategies.', 'src/container.ts'],
-  ];
-  patterns.forEach(([title, body, foot], i) => {
-    const x = M + (i % 3) * 4.12;
-    const y = 1.45 + Math.floor(i / 3) * 2.7;
-    card(s, { x, y, w: 3.85, h: 2.45, badge: String(i + 1), title, body, foot, fill: i === 5 ? 'F8FAFC' : C.background2 });
-  });
-  s.addNotes('Proposed speaker: Zuhair. The brief asks for at least three patterns with class diagrams; we have five (appendix A.13–A.17), plus the composition root. For each, say the problem first, then where it is in the code.');
-}
-
-pres.addSection({ title: 'Prototype' });
-{
-  const s = content('Prototype');
-  s.addText('Three roles, one live system', { placeholder: 'title' });
-  const shots = [
-    ['student.jpg', 'Student', 'Live map, arrivals with confidence, "I\'m waiting here"'],
-    ['driver.jpg', 'Driver', 'Trip status, what passengers see, GPS simulator'],
-    ['office-live.jpg', 'Transport office', 'Fleet, waiting demand, trips, routes, forecasts'],
-  ];
-  shots.forEach(([file, title, caption], i) => {
-    const x = M + i * 4.1;
-    picture(s, SHOT(file), { x, y: 1.5, w: 3.85, h: 2.44 });
-    tb(s, title, { x, y: 4.15, w: 3.85, h: 0.4, fontSize: 18, bold: true });
-    tb(s, caption, { x, y: 4.6, w: 3.85, h: 0.7, fontSize: 14, color: C.accent6 });
-  });
-  tb(s, 'Two primary use cases run end to end: run a trip → track it live, and waiting request → office demand view → forecast.', { x: M, y: 5.6, w: 12.1, h: 0.7, fontSize: 16, bold: true, color: C.text2 });
-  s.addNotes('Proposed speaker: Zuhair. These are real screenshots of the running prototype. Everything on them works: no mock screens. Next we demonstrate it live.');
-}
-{
-  const s = content('Prototype');
-  s.addText('Demand forecasts the office can explain', { placeholder: 'title' });
-  picture(s, SHOT('office-explanation.jpg'), { x: M, y: 1.5, w: 6.4, h: 4.0 });
-  tb(s, 'Each forecast shows the exact past values, weights and range it came from — and "no forecast" instead of a guessed zero.', { x: M, y: 5.7, w: 6.4, h: 0.8, fontSize: 14, color: C.accent6 });
-  const lifecycle = [
-    ['Discovery', 'Question: requests per stop and hour'],
-    ['Feasibility', 'No real data → no trained model yet'],
-    ['Design', 'Explanations and ranges for staff'],
-    ['Development', 'Naive → seasonal → weighted → median'],
-    ['Production', 'Live requests become history automatically'],
-    ['Maintenance', 'Backtest = monitoring; retrain only if it wins'],
-  ];
-  tb(s, 'ML lifecycle (RBC Borealis field guide)', { x: 7.4, y: 1.45, w: 5.3, h: 0.4, fontSize: 16, bold: true, color: C.text2 });
-  lifecycle.forEach(([stage, what], i) => {
-    const y = 1.95 + i * 0.75;
-    s.addShape(pres.ShapeType.ellipse, { x: 7.4, y, w: 0.5, h: 0.5, fill: { color: C.accent1 }, line: { color: C.accent1 } });
-    tb(s, String(i + 1), { x: 7.4, y, w: 0.5, h: 0.5, fontSize: 14, bold: true, color: C.background1, align: 'center', valign: 'middle' });
-    tb(s, [{ text: `${stage}  `, options: { bold: true } }, { text: what }], { x: 8.05, y, w: 4.7, h: 0.6, fontSize: 14, valign: 'middle' });
-  });
-  s.addNotes('Proposed speaker: Zuhair. Feasibility is the key stage: without real data a trained model would only learn our own assumptions. We built the pipeline, the explanations and the evaluation so a model can be added later as one more strategy.');
-}
-{
-  const s = content('Prototype');
-  s.addText('Synthetic backtest: the method works, accuracy unproven', { placeholder: 'title' });
-  s.addChart(pres.ChartType.bar, [{ name: 'MAE (requests per stop-hour)', labels: ['Same-weekday median (6 weeks)', 'Weighted seasonal (6 weeks)', 'Seasonal average (4 weeks)', 'Hour-of-day mean (naive)'], values: [1.42, 1.44, 1.45, 1.98] }], {
-    x: M, y: 1.45, w: 6.8, h: 4.6, barDir: 'bar', catAxisOrientation: 'maxMin', chartColors: [THEME.colors.accent1],
-    showValue: true, dataLabelPosition: 'outEnd', dataLabelFormatCode: '0.00', dataLabelFontSize: 16, dataLabelColor: THEME.colors.dk1, dataLabelFontFace: '+mn-lt',
-    catAxisLabelFontSize: 14, catAxisLabelColor: THEME.colors.dk1, catAxisLabelFontFace: '+mn-lt', valAxisHidden: true, valAxisMinVal: 0, valAxisMaxVal: 2.5,
-    valGridLine: { style: 'none' }, catGridLine: { style: 'none' }, showLegend: false,
-    showTitle: true, title: 'Mean absolute error, last 14 days (lower is better)', titleFontSize: 14, titleColor: THEME.colors.dk1, titleFontFace: '+mn-lt',
-  });
-  tb(s, 'SYNTHETIC DATA', { x: 7.8, y: 1.55, w: 4.9, h: 0.5, fontSize: 20, bold: true, color: C.accent2 });
-  bullets(s, [
-    'History generated from our own written assumptions (weekday peaks, quiet weekends) — not from any university',
-    'Weekday-aware models beat the naive one because the data was built that way: this checks the pipeline, nothing more',
-    'With one semester of real requests, the same backtest decides whether a trained model is worth adding',
-  ], { x: 7.8, y: 2.15, w: 4.9, h: 4.2, fontSize: 15 });
-  s.addNotes('Proposed speaker: Zuhair. Be explicit: we do not report this as accuracy. 1,890 stop-hours, rolling origin, no look-ahead (tested). Reproduce with npm run evaluate.');
-}
-{
-  const s = content('Prototype');
-  s.addText('Live demonstration', { placeholder: 'title' });
-  card(s, { x: M, y: 1.45, w: 5.9, h: 3.45, badge: '1', title: 'Run a trip and track it', body: [
-    { text: 'Driver starts a trip with simulated GPS', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
-    { text: 'Student sees the shuttle move and the ETA update', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
-    { text: 'Network loss → trip cannot end offline → queue delivered', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
-    { text: 'Injected GPS glitch is rejected', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
-    { text: 'GPS outage button → "delayed" (~20 s) → "GPS lost" (~60 s) → Live', options: { bullet: true, paraSpaceAfter: 8 } },
-  ] });
-  card(s, { x: 6.8, y: 1.45, w: 5.9, h: 3.45, badge: '2', title: 'Waiting request → demand → forecast', body: [
-    { text: 'Student taps "I\'m waiting here"', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
-    { text: 'Office map badge and KPI update live', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
-    { text: 'Shuttle reaches the stop → request closed', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
-    { text: 'Forecast cell → explanation of its basis', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
-    { text: 'Office ends a trip with a reason → audit log', options: { bullet: true, paraSpaceAfter: 8 } },
-  ] });
-  card(s, { x: M, y: 5.15, w: 12.1, h: 1.25, title: 'Set-up before the session', body: 'npm run seed  ·  npm start  ·  npm run simulate -- --outage --outage-at 30  ·  three windows; driver window always visible', fill: 'F8FAFC' });
-  tb(s, 'If anything fails live: the fallback table in docs/demo-script.md; evidence in docs/evidence/', { x: M, y: 6.55, w: 12.1, h: 0.3, fontSize: 12, color: C.accent6 });
-  s.addNotes('Proposed speakers: Abdullah drives demo 1 (driver and student windows), Zuhair drives demo 2 (student and office windows). Follow docs/demo-script.md. Use separate windows, not background tabs: a hidden driver page stops sending after about five minutes. The GPS-loss step is triggered with the Simulate GPS outage button in the driver window, so its timing is under your control; it needs about 60 s. If anything fails, use the fallback in the runbook.');
-}
-
-pres.addSection({ title: 'Evidence' });
-{
-  const s = content('Evidence');
-  s.addText('Tested, measured — and honest about the gaps', { placeholder: 'title' });
-  stat(s, { x: M, y: 1.35, w: 2.8, value: '144', label: '119 Node + 25 Chromium tests, all passing' });
-  stat(s, { x: 3.7, y: 1.35, w: 2.8, value: '26 × 4', label: 'endpoints × caller types checked for role access' });
-  stat(s, { x: 6.8, y: 1.35, w: 2.8, value: '113 ms', label: 'worst of 3,000 simulated viewers (local benchmark)' });
-  stat(s, { x: 9.9, y: 1.35, w: 2.8, value: '19', label: 'defects and corrections in the test plan, all resolved', color: C.accent2 });
-  card(s, { x: M, y: 3.6, w: 5.9, h: 2.6, title: 'Found by tests and independent review', body: [
-    { text: 'Shuttle snapped behind at route corners (load test); hub worked after shutdown (integration test)', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
-    { text: 'Driver app gave up a trip the server had not ended; live streams outlived their session (review)', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
-    { text: 'Stale waiting state, lost focus, office forecast not keyboard-operable (browser tests, walkthrough); reloaded GPS trip used the simulator (review)', options: { bullet: true, paraSpaceAfter: 8 } },
-  ] });
-  card(s, { x: 6.8, y: 3.6, w: 5.9, h: 2.6, title: 'Not done yet', body: [
-    { text: 'Field test with a real phone on a real shuttle', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
-    { text: 'HTTPS, university single sign-on, Arabic, a screen-reader session; a driver app that reports in the background', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
-    { text: 'Real demand data — forecasts shown on synthetic data only', options: { bullet: true, breakLine: true, paraSpaceAfter: 8 } },
-    { text: 'Team inspection of the UML on paper; deployment load test', options: { bullet: true, paraSpaceAfter: 8 } },
-  ] });
-  s.addNotes('Proposed speaker: Abdullah. Numbers from docs/evidence and docs/test-plan.md section 4. The 25 Chromium tests drive the real pages against a fresh server, including accessibility checks of all three role pages; the same checks run in GitHub Actions on every pull request. Mention the V-model pairing: unit ↔ module design, architecture test ↔ architectural design, integration ↔ system design, demo ↔ requirements.');
-}
-{
-  const s = pres.addSlide({ masterName: 'Closing dark', sectionTitle: 'Evidence' });
-  s.addText('What we would do next', { placeholder: 'title' });
-  const next = [
-    ['Field test', 'Real phones on a real route; tune the 20 s / 60 s thresholds and the speed blend'],
-    ['Production basics', 'HTTPS behind a reverse proxy, university single sign-on, backups'],
-    ['Real data, then ML', 'One semester of requests → rerun the backtest → add a model only if it wins'],
-  ];
-  next.forEach(([title, body], i) => {
-    const x = M + i * 4.12;
-    s.addShape(pres.ShapeType.roundRect, { x, y: 1.6, w: 3.85, h: 2.1, fill: { color: C.accent1 }, line: { color: C.accent1 }, rectRadius: 0.12 });
-    tb(s, title, { x: x + 0.3, y: 1.85, w: 3.25, h: 0.5, fontSize: 20, bold: true, color: C.background1 });
-    tb(s, body, { x: x + 0.3, y: 2.45, w: 3.25, h: 1.6, fontSize: 15, color: C.background1 });
-  });
-  tb(s, 'Questions?', { x: M, y: 4.3, w: 12.1, h: 1.0, fontSize: 40, bold: true, color: C.background1, fontFace: THEME.headFontFace });
-  tb(s, 'Who did what is recorded in the contribution statement (report section 10).', { x: M, y: 5.6, w: 12.1, h: 0.6, fontSize: 14, color: C.background2 });
-  s.addNotes('Proposed speakers: both; Abdullah takes the field test, Zuhair the data and model item. Keep this slide up during questions. Questions about how the work was produced are answered from report section 10.');
+  s.addNotes('Backup for questions on QA-1/QA-2 and the design sequence diagram A.5. It does not prove that 3,000 real students on campus Wi-Fi get the same latency; a deployment test from separate machines is still needed.');
 }
 
 // ---------- Write, then apply theme colours ----------
@@ -383,5 +454,5 @@ async function applyTheme(file, theme) {
 (async () => {
   await pres.writeFile({ fileName: OUT });
   await applyTheme(OUT, THEME);
-  console.log(`Wrote ${OUT}`);
+  console.log(`Wrote ${OUT}${VIDEO ? ` (video embedded: ${path.basename(VIDEO)})` : ''}`);
 })();

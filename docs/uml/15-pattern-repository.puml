@@ -3,6 +3,7 @@
 skinparam shadowing false
 skinparam defaultFontName Arial
 skinparam classAttributeIconSize 0
+skinparam classStereotypeFontSize 13
 title Design pattern 4 — Repository (ports and adapters for persistence)
 
 package "tracking (business rules)" {

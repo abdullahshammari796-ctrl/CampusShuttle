@@ -10,11 +10,11 @@ Team: **Abdullah** (GitHub `abdullahshammari796-ctrl`) · **Zuhair Halawa** (Git
 
 Student IDs: *added only in the private submission copy; not published in the public repository*
 
-Version: technically verified candidate of 7 November 2026
+Version: submission candidate of 10 November 2026
 
 </div>
 
-> **Status of this document.** This is a technically verified candidate, not the final submission. The architecture, models, prototype and test evidence it describes exist in the repository and were verified between 31 October and 7 November 2026. Items marked **OUTSTANDING** need facts or actions that only the team or the instructor can provide: student IDs and signatures (private copy only), the proposal approval date, each member's own confirmation of the reflection, contribution and AI-use statements, and the team's own inspection of the diagrams on paper. Section 10 records the factual contribution and tool-use history; the personal statements in it must be completed truthfully by each member before submission.
+> **Status of this document.** This is the submission candidate. The architecture, models, prototype and test evidence it describes exist in the repository and were verified between 31 October and 10 November 2026. Items marked **OUTSTANDING** need facts or actions that only the team or the instructor can provide: student IDs and signatures (private copy only), the proposal approval date, each member's own confirmation of the reflection, contribution and AI-use statements, and the team's own inspection of the diagrams on paper. Section 10 records the factual contribution and tool-use history; the personal statements in it must be completed truthfully by each member before submission.
 
 <div class="page-break"></div>
 
@@ -101,12 +101,22 @@ Module 03 asks the report to say which elicitation techniques were used and what
 
 ### 3.1 Process followed and why
 
-We used a **risk-driven incremental process**: a deliberately chosen architectural skeleton first, then increments that each pass through analysis, design, build and test — with the riskiest questions answered by prototypes before the features that depend on them, in the spirit of the spiral model (BCS 305 Module 02). This "middle path" — enough architecture up front to fix the quality attributes and the component boundaries, then incremental delivery inside that structure — suited this project because:
+Module 02 separates two ideas that are often mixed up: **incremental** development adds new parts in each slice, while **iterative** development improves the same part in each round. Spiral is iterative development in which each loop is chosen by the biggest thing the team does not yet know. The project record shows an incremental structure with risk-first prototypes, followed by iterative review rounds:
 
-* the quality attributes were known early (§2.3), and the expensive-to-reverse decisions (process structure, real-time transport, where ETAs are computed, how outages are represented) had to be made before building screens;
-* a two-person team cannot absorb the coordination cost of a heavyweight process, but the course has fixed gates (proposal, report, presentation) that reward documented decisions;
-* the demand-prediction part follows the ML lifecycle in the instructor's recommended reading (RBC Borealis field guide): discovery and feasibility first, a baseline before any model, and an explicit decision about whether data justifies more (§6.7);
-* the V-model idea from the module was applied to testing: each specification level has a matching test level (§3.4).
+* **Incremental, skeleton first (baseline, 31 October).** The baseline contains five slices (§3.2), each analysed, designed, built and tested. Increment 1 is the architectural skeleton that every later slice uses; the module's warning that increment 1 must carry increments nobody has designed yet is why its quality attributes were fixed first (§2.3). The baseline was imported as one commit (`8d11ad6`), so Git does not show the order inside it: §3.2 gives the dependency order of the slices, not a dated history.
+* **Risk first, in the spirit of spiral.** Four unknowns were tested with a prototype or a feasibility check before the features that depend on them (table below). These were risk-driven steps inside the incremental build, not separate spiral loops with their own plans and reviews.
+* **Iterative, through reviewed pull requests (1–10 November).** After the baseline, most rounds improved parts that already existed: GPS-source resumption and the waiting refresh (#14); the UML rendering and its validator, reworked after Zuhair requested changes (#15); records and wording (#16); the completion pass and its four review findings (#17); and the submission pass, which redrew the system sequence diagram and the UML print layout. Two pull requests added new parts, so they were increments: a fourth forecasting model (#12), and browser tests with a CI workflow (#13). Every round passed the same gate: a pull request to the protected `main` with an approving review and a passing `verify` check.
+* **V-model pairing for testing.** Each specification level has a matching test level (§3.4).
+
+**What we did not use.** The record shows no Scrum sprints, backlog, stand-ups or velocity, and no waterfall sign-off of the requirements before design. No interviews or observations were held (§2.4).
+
+**Why this fitted.**
+
+* The quality attributes were known early (§2.3), and the expensive-to-reverse decisions (process structure, real-time transport, where ETAs are computed, how outages are represented) had to be made before building screens.
+* A two-person team cannot absorb the coordination cost of a heavyweight process, but the course has fixed gates (proposal, checkpoint, report, presentation) that reward documented decisions.
+* The demand-prediction part follows the ML lifecycle in the instructor's recommended reading (RBC Borealis field guide): discovery and feasibility first, a baseline before any model, and an explicit decision about whether data justifies more (§6.7).
+
+**What the timeline shows (§3.3).** The course spreads the project over the semester, from the Week 3 topic studio to the Week 14–15 presentations. The repository record starts in Week 9, and the early course gates are not in it. The recorded build, reviews and corrections fall between 31 October and 10 November. §9 (point 1) records this as the first thing to do differently.
 
 | Risk (what we did not know) | How it was reduced | Result |
 |---|---|---|
@@ -116,6 +126,8 @@ We used a **risk-driven incremental process**: a deliberately chosen architectur
 | Is there data to justify machine learning? | Feasibility check (Borealis lifecycle) | No real data → explainable baselines + synthetic data clearly labelled |
 
 ### 3.2 Increments
+
+In dependency order (see §3.1):
 
 1. *Skeleton*: component structure, composition root, persistence, authentication, event bus.
 2. *Tracking*: trips, location ingestion, route snapping, ETA strategies, signal state machine, live feed.
@@ -129,7 +141,7 @@ The dated rows come from the repository, the pull requests and their reviews (ti
 
 | When | What happened | Evidence |
 |---|---|---|
-| Weeks 2–4 (11–25 Sep 2026) | Team formed and registered on Moodle (due Week 4); topic approved by the instructor (Week 4); one-page proposal due (Week 4) | **OUTSTANDING**: the actual dates of registration, proposal submission and approval are not in the project record. The proposal in `docs/01-proposal.md` was written on 31 Oct 2026 |
+| Weeks 2–4 (11–25 Sep 2026) | Week 3 team studio: team charter and proposal box on the studio worksheet, uploaded to Moodle; team registration on Moodle due before Week 4; one-paragraph topic proposal due before Week 4 and topic approved by the instructor in Week 4; one-page proposal due (Week 4) | Module 02 slides ("Team studio", "Before next week"); brief. **OUTSTANDING**: the actual dates of the studio upload, registration, proposal submission and approval are not in the project record. The proposal in `docs/01-proposal.md` was written on 31 Oct 2026 |
 | Week 6 (9 Oct) and Week 9 (30 Oct) | Model Set Studio sheet; Project Checkpoint 1 due (requirements, the four analysis models and the class diagram in one document) | **OUTSTANDING**: whether and what the team submitted is not recorded |
 | 31 Oct 2026 | Increments 1–5 (§3.2) built and tested; first load tests | `docs/evidence/load-test-1000.txt`, `load-test-3000.txt` |
 | 1 Nov, 14:37–15:42 | Public repository created; baseline imported (`8d11ad6`); work items opened as issues #1–#11 | commits `8d11ad6`, `404238e` |
@@ -139,7 +151,10 @@ The dated rows come from the repository, the pull requests and their reviews (ti
 | 2 Nov, 00:45 – 23:01 | #15: validated UML rendering and readable diagram pages. Zuhair requested changes at 01:05 (export validator accepted malformed files; A.3 layout); corrections pushed at 19:33; approved at 20:15; merged | reviews 5730257445, 5739614810; `5232999` |
 | 2 Nov, 23:06 – 23:53 | #16: documentation follow-up; approved by Zuhair at 23:34; merged; `main` CI passed | review 5742229877; `695eb88`; CI run 41514123139 |
 | 6–7 Nov 2026 | Final completion pass: requirement mapping, technical assessment, browser walkthroughs and a timed demo dry run, office accessibility fixes, UML-set print layout, retrospective draft, contribution and tool-use records, speaking script | branch `abdullah/final-completion` (PR #17) |
-| 7 Nov 2026 | Zuhair's review of PR #17 at `1a21cc6`, supplied as a review package (not posted on GitHub: the integration was refused with HTTP 403); four documentation findings corrected the same day (test plan item 19) | review package; PR #17; review on GitHub pending |
+| 7 Nov 2026 | Zuhair's review of PR #17 at `1a21cc6`, supplied as a review package (posting it on GitHub was refused with HTTP 403); four documentation findings corrected the same day (test plan item 19) | review package; PR #17 |
+| 8 Nov, 23:35 – 9 Nov, 00:19 | Zuhair's re-review of the corrected head `e040a17`, posted on GitHub as a comment review, then his approval of that head | reviews 5819352533, 5819503936; head CI run 42360091616 |
+| 9 Nov, 23:21 | PR #17 merged with a merge commit pinned to the approved head; `main` CI passed | `e989b97`; CI run 42682626360 |
+| 10 Nov 2026 | Submission pass: single-scenario system sequence diagram (A.4), UML-set PDF with every diagram's smallest text at 7 pt or more, this section, the recorded demonstration video, the nine-slide presentation (test plan items 20–21) | branch `abdullah/submission-package`; pull request awaiting Zuhair's review |
 | Week 12 (20 Nov, planned) | Presentation running order published; any contribution concerns raised with the instructor | brief §2 and §4.4 |
 | Week 14 (4 Dec, planned) | Presentations day 1. The instructor's note on the course-introduction slides says every team submits everything before Day 1 | course introduction, slide 11 |
 | Week 14 or 15 (4 or 11 Dec) | Presentation and live demonstration in the team's slot | **OUTSTANDING**: slot and time limit not yet published |
@@ -155,7 +170,7 @@ The dated rows come from the repository, the pull requests and their reviews (ti
 
 ## 4. Analysis models
 
-The full analysis models are in Appendix A: use case diagram (A.1), five fully dressed use case descriptions (A.2), activity diagram for *Run a trip* (A.3), system sequence diagram for *Run a trip and track it* (A.4), and state machines for the trip with its GPS signal (A.6) and for a waiting request (A.7). The primary use cases are:
+The full analysis models are in Appendix A: use case diagram (A.1), five fully dressed use case descriptions (A.2), activity diagram for *Run a trip* (A.3), system sequence diagram for the main success scenario of *Run a trip* (A.4), and state machines for the trip with its GPS signal (A.6) and for a waiting request (A.7). The primary use cases are:
 
 * **UC1 Track shuttles and view arrival times** (Student)
 * **UC2 Run a trip** — start, share location, end (Driver; GPS receiver as secondary actor)
@@ -351,24 +366,24 @@ We chose **TypeScript on Node.js 24 LTS with Express 5 and SQLite (Node's built-
 
 ### 8.5 Evidence
 
-| Check | Result (31 Oct – 7 Nov 2026, Windows 11, Node 24.14.1) |
+| Check | Result (31 Oct – 10 Nov 2026, Windows 11, Node 24.14.1) |
 |---|---|
 | `npm run typecheck` | passes, no errors |
 | `npm test` | 119 tests, 119 passed, 0 failed — `docs/evidence/test-run.txt` |
 | `npm run test:browser` | 25 Chromium tests, 25 passed (Playwright 1.64.1, Chrome for Testing 156) — `docs/evidence/browser-test-run.txt`. The three office-page tests added on 6 November failed before their fix (`docs/evidence/accessibility-office-2026-11-06.txt`) |
 | `npm audit` | 0 vulnerabilities in all dependencies, including development tools — `docs/evidence/npm-audit.txt` |
-| GitHub Actions (`verify`) | required for every merge into `main`; passed on `main` after each merge, most recently run 41514123139 after PR #16 (2 Nov) |
+| GitHub Actions (`verify`) | required for every merge into `main`; passed on `main` after each merge, most recently run 42682626360 after PR #17 (9 Nov) |
 | `npm run load-test` (1,000 viewers; local benchmark) | 31 Oct: p50 23 ms, p95 35 ms, p99 47 ms, max 56 ms. 1 Nov: p50 25 ms, p95 37 ms, p99 48 ms, max 55 ms; 60,000/60,000 delivered; 0 skipped — `docs/evidence/load-test-1000*.txt` |
 | `npm run load-test -- --viewers 3000 --rounds 10` | 31 Oct: p95 90 ms, max 108 ms. 1 Nov: p95 98 ms, max 113 ms; 90,000/90,000 delivered; 0 skipped — `docs/evidence/load-test-3000*.txt`. Same process, loopback, one shared session, no browsers |
 | `npm run evaluate` | see §6.7 — `docs/evidence/demand-evaluation.txt` |
 | Browser walkthrough (student, driver, office) | all three interfaces exercised against a running server with the fleet simulator (`docs/test-plan.md` §5), and automated in Chromium since PR #13. On 6 November an automated browser session observed UC1's full loop lap and UC4's historical trace, and ran the demonstration sequence with timings (`docs/evidence/walkthrough-2026-11-06.txt`). These are tool-driven sessions, not a walkthrough by either member |
-| `npm run uml` / `npm run uml:check` | 7 Nov: diagram 10 re-rendered after two of its interface labels were found printed over each other; the other 15 re-rendered byte-identical. 2 Nov: all 16 diagrams rendered with the checksum-verified PlantUML MIT 1.2026.9 (Java 21, Smetana) and validated: SVGs parsed as well-formed XML, PNGs fully decoded, none clipped, all from the current sources. Zuhair's review of PR #15 showed that the first validator accepted malformed content; it now rejects it. Zuhair's independent render of the same sources (Java 17, Linux) matched in structure. Appendix A prints every diagram at 62 % or more of its rendered size, with overview and detail pages for wide ones; there the smallest annotations print at 5.5 pt. The separate UML-set PDF ("full readable size") now enlarges each diagram towards a 7 pt minimum without cutting class boxes across rows of pages: 9 of the 16 diagrams reach 6.9 pt or more (5 before), and the smallest text is A.9's stereotype labels at 5.7 pt, limited by the A4 page (sizes measured from the build, `docs/evidence/uml-inspection-2026-11-06.txt`). The team's own visual check, including on paper, is still open (issue #1) |
+| `npm run uml` / `npm run uml:check` | 7 Nov: diagram 10 re-rendered after two of its interface labels were found printed over each other; the other 15 re-rendered byte-identical. 2 Nov: all 16 diagrams rendered with the checksum-verified PlantUML MIT 1.2026.9 (Java 21, Smetana) and validated: SVGs parsed as well-formed XML, PNGs fully decoded, none clipped, all from the current sources. Zuhair's review of PR #15 showed that the first validator accepted malformed content; it now rejects it. Zuhair's independent render of the same sources (Java 17, Linux) matched in structure. 10 Nov: diagram 03 redrawn as a single-scenario system sequence diagram (test plan item 20); diagrams 04, 08, 09 and 12–16 re-rendered with larger stereotype and guard labels (item 21). Appendix A prints every diagram at 62 % or more of its rendered size, with overview and detail pages for wide ones; there the smallest annotations print at 6.1 pt. The separate UML-set PDF ("full readable size") prints every diagram's smallest text at 7.0 pt or more, splitting large diagrams only between boxes and labels (sizes measured from the build, `docs/evidence/uml-inspection-2026-11-10.txt`). The team's own visual check, including on paper, is still open (issue #1) |
 
 ## 9. Reflection
 
 > **Draft retrospective — personal confirmation OUTSTANDING.** The brief asks what we would do differently, and rewards honesty. This draft was prepared from the project record (the decisions, defects and reviews in `docs/test-plan.md` §4 and the pull requests) with the tool declared in §10.2. It states no personal feelings or opinions. Each member must read it, correct what does not match their own experience and add their own reflection before submission.
 
-**1. Spread the work over the semester.** The repository record starts on 31 October (Week 9). Almost all recorded design, build and review work happened between 31 October and 2 November, with a completion pass on 6–7 November. The record does not show the Week 4 proposal approval or the Week 9 checkpoint (§3.3). Starting the repository at the proposal, with a dated log, would have left time for stakeholder input and a field test. It would also have produced the timeline the brief asks for.
+**1. Spread the work over the semester.** The repository record starts on 31 October (Week 9). Almost all recorded design, build and review work happened between 31 October and 2 November, with a completion pass on 6–7 November and a submission pass on 10 November. The record does not show the Week 4 proposal approval or the Week 9 checkpoint (§3.3). Starting the repository at the proposal, with a dated log, would have left time for stakeholder input and a field test. It would also have produced the timeline the brief asks for.
 
 **2. Talk to real stakeholders before fixing the numbers.** No interviews or observations are recorded (§2.4). The 1-second freshness target, the 20 s / 60 s signal thresholds and the 20-minute waiting expiry are reasoned, not elicited. They drive the architecture (§6.1), and §6.3 shows that the push-versus-polling decision depends on the first of them alone. A short interview with transport-office staff and a few students would be the first thing to do differently.
 
@@ -397,10 +412,10 @@ Other engineering observations: the load test found a corner-snapping defect (it
 | | Abdullah (`abdullahshammari796-ctrl`) | Zuhair Halawa (`zuhairhalawa`) |
 |---|---|---|
 | Baseline | Repository created and the baseline imported from this account on 1 Nov (`8d11ad6`). The baseline was generated with Claude Code (§10.2) and is not either member's own authored work | — |
-| Pull requests submitted | #14 (GPS-source resumption, waiting-refresh fix, dependency fix, UML source corrections); #15 (validated UML rendering, readable diagram pages, sign-in form fix, corrections after review); #16 (records and wording); the final completion pull request (6–7 Nov) | #12 (same-weekday median forecaster, issue #6); #13 (browser and simulator tests, accessibility and mobile fixes, waiting-state fixes, use-case evidence, ADR evidence review, CI workflow; issues #5, #7, #8, #9) |
+| Pull requests submitted | #14 (GPS-source resumption, waiting-refresh fix, dependency fix, UML source corrections); #15 (validated UML rendering, readable diagram pages, sign-in form fix, corrections after review); #16 (records and wording); #17 (final completion, 6–7 Nov); the submission pull request (10 Nov) | #12 (same-weekday median forecaster, issue #6); #13 (browser and simulator tests, accessibility and mobile fixes, waiting-state fixes, use-case evidence, ADR evidence review, CI workflow; issues #5, #7, #8, #9) |
 | Commits, excluding merges (to 2 Nov) | 14, including the baseline import and the set-up commit | 8 |
-| Reviews posted | Approvals of #12 and #13 (prepared with Claude Code; they record the checks that were run, not a personal line-by-line reading) | Approval of #14; changes requested on #15 (validator defect, A.3 layout) and approval of its corrections; approval of #16. Review of #17 supplied as a package on 7 Nov, not posted on GitHub |
-| Repository administration | Branch protection, issues, merges of #12–#16 | — |
+| Reviews posted | Approvals of #12 and #13 (prepared with Claude Code; they record the checks that were run, not a personal line-by-line reading) | Approval of #14; changes requested on #15 (validator defect, A.3 layout) and approval of its corrections; approval of #16. Review of #17 supplied as a package on 7 Nov (posting it was refused with HTTP 403); a comment review and an approval of its corrected head `e040a17` posted on 8 Nov (UTC) |
+| Repository administration | Branch protection, issues, merges of #12–#17 | — |
 | Independent verification | — | First render of the 16 UML sources (empty and clipped exports found); Linux reproductions with an independent decoder; visual inspection of PDFs and slides |
 
 **Personal statements and signatures — OUTSTANDING.** Each member lists only work they actually did, in their own words: design, models, code, tests, documentation and presentation. Student IDs and signatures are added only in the private submission copy, not in this public repository.
@@ -415,18 +430,19 @@ Other engineering observations: the load test found a corner-snapping defect (it
 The brief asks which AI tools were used, for what, and what was changed. The full record is in `docs/team/ai-use-statement.md`.
 
 * **Tools.** Claude Code (Anthropic), used from Abdullah's computer and GitHub account. ChatGPT (OpenAI), including its Work mode, connected to Zuhair's GitHub account. Any other tool a member used is **OUTSTANDING**.
-* **When.** 31 October – 7 November 2026.
+* **When.** 31 October – 10 November 2026.
 * **Which parts, and for what.**
 
 | Part | Claude Code (Abdullah's account) | ChatGPT (Zuhair's account) |
 |---|---|---|
 | Requirements, architecture and §6 analysis | Drafted §1–§3 and §6, the ADRs and the QA scenarios; produced the §6.3 technical assessment (6 Nov) | Evidence review of ADR-0001, 0002, 0003 and 0008 (PR #13) |
-| UML | Wrote and corrected the 16 PlantUML sources; rendered and validated them; built the PDF layout | First independent render; found export defects |
-| Prototype code and tests | Generated the baseline code and tests; fixed the defects numbered 1–19 in `docs/test-plan.md` §4 | PR #12 forecaster and tests; PR #13 browser tests and UI fixes |
-| Documents and presentation | Drafted the proposal, this report (including the §9 draft and the §10.1 factual record), the test plan, the deck, the speaking script and the demo runbook | Use-case evidence matrix; review findings on PDFs and slides |
-| Verification and repository | Ran checks, load tests and browser walkthroughs; created the repository; opened issues and pull requests; merged after approval | Reviewed PRs #14–#16 on a fresh Linux checkout and posted the reviews; reviewed PR #17 from its verified export and supplied the review as a package |
+| UML | Wrote and corrected the 16 PlantUML sources; rendered and validated them; built the PDF layout; on 10 Nov redrew the system sequence diagram and the UML-set print layout | First independent render; found export defects |
+| Prototype code and tests | Generated the baseline code and tests; fixed the defects numbered 1–21 in `docs/test-plan.md` §4 | PR #12 forecaster and tests; PR #13 browser tests and UI fixes |
+| Documents and presentation | Drafted the proposal, this report (including the §9 draft and the §10.1 factual record), the test plan, the deck, the speaking script, the demo runbook and the viva sheet | Use-case evidence matrix; review findings on PDFs and slides |
+| Demonstration video (10 Nov) | Wrote the scripts that record the running prototype in three browser windows (Playwright), generate the narration and assemble the video. The narration is synthetic speech from the open Kokoro-82M model with its published voice `af_heart`, generated on Abdullah's computer; it is not either member's voice and does not imitate any real person. Editing and subtitles with FFmpeg; the transcript printed to PDF with the project's Playwright Chromium | — |
+| Verification and repository | Ran checks, load tests and browser walkthroughs; created the repository; opened issues and pull requests; merged after approval | Reviewed PRs #14–#16 on a fresh Linux checkout and posted the reviews; reviewed PR #17 from its verified export and supplied the review as a package; approved its corrected head on GitHub (8 Nov) |
 
-* **What changed after the baseline.** Nineteen defects and corrections are recorded in `docs/test-plan.md` §4. Among them: two code defects and two overclaims found by an independent review on 1 November; UI defects found by Zuhair's browser tests (PR #13); two defects found in the owner review of PRs #12/#13; the export-validation defects found by Zuhair's render and his review of PR #15; the office-page accessibility failures and UML print sizes found on 6 November; and four wrong or inconsistent statements in the final-pass documents found in Zuhair's review of PR #17. The draft §6.3 scores were also corrected (§6.3).
+* **What changed after the baseline.** Twenty-one defects and corrections are recorded in `docs/test-plan.md` §4. Among them: two code defects and two overclaims found by an independent review on 1 November; UI defects found by Zuhair's browser tests (PR #13); two defects found in the owner review of PRs #12/#13; the export-validation defects found by Zuhair's render and his review of PR #15; the office-page accessibility failures and UML print sizes found on 6 November; four wrong or inconsistent statements in the final-pass documents found in Zuhair's review of PR #17; and, in the submission pass, a system sequence diagram with two actors and UML-set text below 7 pt (items 20–21). The draft §6.3 scores were also corrected (§6.3).
 * **What the tools did not do.** They did not register the team, choose the topic, contact the instructor or submit anything for marking. They did not invent rubric details, signatures, student IDs, dates, contributions, field observations or real-world data; missing facts are marked **OUTSTANDING** and demonstration data is labelled synthetic.
 * **What each member personally changed or verified: OUTSTANDING.** For example: which parts each member read, checked, decided or rewrote, and which decisions they disagree with.
 
