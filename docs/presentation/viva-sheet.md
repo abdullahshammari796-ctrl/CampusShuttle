@@ -1,6 +1,6 @@
 # Viva preparation sheet — Campus Shuttle (proposed, not rehearsed)
 
-The instructor may ask either member about any part of the work. Each answer below is a short, evidence-based starting point with the place to check it. **Answer in your own words, and only claim what you did yourself.** How the work was produced, including the AI tools used, is in report §10.2 and `docs/team/ai-use-statement.md`.
+The instructor may ask any of the four members about any part of the work. Each answer below is a short, evidence-based starting point with the place to check it. **Answer in your own words, and only claim what you did yourself.** How the work was produced, including the AI tools used, is in report §10.2 and `docs/team/ai-use-statement.md`.
 
 ## Architecture and decisions
 | Question | Short answer | Evidence | Lead |
@@ -37,6 +37,12 @@ The instructor may ask either member about any part of the work. Each answer bel
 | How is privacy handled? | Students' locations are never collected; a waiting request names only the stop. The requester is stored as a pseudonym, erased 24 h after closing. Raw GPS is deleted after 30 days, and privileged office actions are audited. | report §6.6; QA-6 | Zuhair |
 | Was the video edited? | It is a recording of the running prototype with a throw-away database and simulated GPS. Waiting time was skipped only where the TIME-LAPSE box shows the real elapsed time. Thresholds were not changed, no stretch is shown twice, and the narration is a synthetic voice. | `06-Demo-Transcript.pdf`; the media folder's README | Abdullah |
 | What did each of you do, and what did the AI tools do? | Answer from the factual record (report §10.1) and your own experience: which parts you read, checked, decided or changed yourself. **Do not claim more than you did.** | report §10; `docs/team/contribution-statement.md` | each member |
+
+## First run and forecast check
+| Question | Short answer | Evidence | Lead |
+|---|---|---|---|
+| How do you start the prototype from a fresh copy, and how do you know it worked? | Install Node.js 24, run `npm install` and `npm start`, open `http://localhost:3000` and sign in as `student1`. *[What you saw after sign-in, from your check.]* | README "Quick start" and "Verify your first run" | Mubarak |
+| Show how one forecast number is calculated. | The default model is the seasonal average: the mean of the same stop, weekday and hour over the previous four weeks. *[Your stop and hour, the four counts, their average and the value on screen.]* | `docs/demand-prediction.md` §3 and the worked example | Ali |
 
 ## Before the viva
 * Each member: complete your personal contribution and AI-use statements, and decide whether you agree with the §6.3 scores and the ADRs (issues #2 and #9).

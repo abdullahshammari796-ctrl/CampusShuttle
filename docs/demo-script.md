@@ -30,13 +30,13 @@ Optional, for more traffic on the map: `npm run simulate -- --outage --outage-at
 | Step | Speaker | What to do | Expected | Time |
 |---|---|---|---|---|
 | V | — | Slide 7: play the video from **0:51 to 1:54** (network loss, GPS outage) | Queue grows; "Trip NOT ended"; 10 positions in one batch; Live → Location delayed → GPS lost → Live | 1:03 |
-| L1 | Abdullah | Driver: route Campus Loop, Shuttle 01, *Simulated GPS* → *Start trip* | Driver: "Live" badge within about 1 s | 0:20 |
-| L2 | Abdullah | Student window: point at *Next arrivals* | Shuttle 01 with minutes, distance and a green "Live" | 0:30 |
+| L1 | Mubarak | Driver: route Campus Loop, Shuttle 01, *Simulated GPS* → *Start trip* | Driver: "Live" badge within about 1 s | 0:20 |
+| L2 | Mubarak | Student window: point at *Next arrivals* | Shuttle 01 with minutes, distance and a green "Live" | 0:30 |
 | L3 | Zuhair | Student: *I'm waiting here* | "You're on the waiting list at Sports Complex" | 0:20 |
 | L4 | Zuhair | Office: *Live operations* → point at "Students waiting" and the map badge | Count 1 at 1 stop, without a name | 0:25 |
-| L5 | Zuhair | Office: *Demand & forecast* → select a cell (mouse, or Tab and Enter) | Explanation: the past dates with counts, the expected value and range; the synthetic-data banner | 0:55 |
+| L5 | Ali | Office: *Demand & forecast* → select a cell (mouse, or Tab and Enter) | Explanation: the past dates with counts, the expected value and range; the synthetic-data banner | 0:55 |
 
-L1–L5 budget 2:30: Abdullah 0:50, Zuhair 1:40. In the recording session the script saw "Live" on both pages within 0.26 s of *Start trip*. It saw the office count rise 25 ms after the student's confirmation. The script checks about every 0.2 s, so these are upper bounds, not precise latencies.
+L1–L5 budget 2:30: Mubarak 0:50 (L1–L2), Zuhair 0:40 (L3–L4), Ali 1:00 (L5, with his worked example). In the recording session the script saw "Live" on both pages within 0.26 s of *Start trip*. It saw the office count rise 25 ms after the student's confirmation. The script checks about every 0.2 s, so these are upper bounds, not precise latencies.
 
 **If there is more time (15-minute slot).**
 * L6 (Abdullah): *Simulate network loss* → *End trip* → confirm. Expect "Trip NOT ended". Then *Simulate network loss* again: "Delivered N queued positions in one batch". About 0:40.
