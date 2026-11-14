@@ -121,14 +121,14 @@ pres.addSection({ title: 'Problem and requirements' });
     { text: 'Purpose  ', options: { bold: true, color: 'FCD34D' } },
     { text: 'Live positions and honest arrival estimates — honest above all when GPS or mobile data fails — and "I\'m waiting here" requests that become demand history and explainable forecasts.', options: { breakLine: true } },
     { text: ' ', options: { breakLine: true, fontSize: 8 } },
-    { text: 'Abdullah · Zuhair Halawa', options: { bold: true, breakLine: true } },
+    { text: 'Abdullah shammari · Zuhair Hussein Halawa · Mubarak Al Khyeli · Ali Yosuf Ameer', options: { bold: true, fontSize: 15, breakLine: true } },
     { text: 'BCS 305 Software Architecture · Dr. Khaled Ammar · Fall 2026', options: { fontSize: 13 } },
   ], { placeholder: 'body' });
   s.addImage({ path: SHOT('student.jpg'), x: 8.3, y: 1.9, w: 4.45, h: 2.81, altText: 'Student view of the prototype' });
   tb(s, 'Student view of the running prototype (demonstration data)', { x: 8.3, y: 4.8, w: 4.45, h: 0.3, fontSize: 11, color: C.background2 });
   s.addNotes([
     'Speaker: Abdullah (0:40).',
-    'Say: who we are, the problem in one sentence, and the purpose: timely and honest information, plus demand data for the office.',
+    'Say: who we are (all four members by name: Abdullah shammari, Zuhair Hussein Halawa, Mubarak Al Khyeli, Ali Yosuf Ameer), the problem in one sentence, and the purpose: timely and honest information, plus demand data for the office.',
     'Point at the screenshot: it is the real student page of the prototype, with demonstration data (no real university).',
   ].join('\n'));
 }
@@ -312,7 +312,7 @@ pres.addSection({ title: 'Demonstration' });
   ] });
   tb(s, 'Real prototype, three browser windows, throw-away demo database. Simulated GPS; skipped waiting time is labelled TIME-LAPSE with the real elapsed time. Narration: synthetic voice.', { x: M, y: 6.15, w: W - 2 * M, h: 0.55, fontSize: 12, color: C.text1 });
   s.addNotes([
-    'Speakers: Abdullah introduces (0:20); the live demonstration follows docs/demo-script.md (Abdullah drives use case 1, Zuhair use case 2).',
+    'Speakers: Abdullah introduces (0:20). The live demonstration follows docs/demo-script.md: Mubarak runs use case 1 (first run, trip start, the student sees it Live; L1–L2), Zuhair the waiting request and office count (L3–L4), and Ali the forecast explanation with his worked example (L5).',
     'Provisional plan (official time limit not yet published): show the video excerpt 0:51–1:54 (network loss and GPS outage, 1:03), then run the live demonstration of the waiting request, the office view and the forecast explanation (2:30). If the live system fails, play the rest of the video instead; if the instructor allows the video to replace the live demonstration, play it in full (4:11).',
     'Say clearly: the video was recorded from the running prototype; GPS is simulated; waits were shortened only where the TIME-LAPSE box shows the real elapsed time; the voice is synthetic, not either of us.',
     VIDEO ? 'The video is embedded. If it does not play, open 06-Demo.mp4 from the same folder.' : 'In this repository copy the video is not embedded (it is not kept in Git). Use the submission copy of the deck, or open 06-Demo.mp4.',
@@ -341,7 +341,7 @@ pres.addSection({ title: 'Evidence and conclusion' });
     { text: 'Keep claims at the strength of the evidence', options: { bullet: true } },
   ], foot: 'Each member confirms or corrects this reflection in person.' });
   s.addNotes([
-    'Speaker: Abdullah (1:10).',
+    'Speaker: Zuhair (1:10).',
     'Numbers from docs/test-plan.md §4 and docs/evidence. The 25 Chromium tests drive the real pages against a fresh server, including accessibility checks of all three role pages; GitHub Actions runs them on every pull request. V-model pairing: unit ↔ module design, architecture test ↔ architectural design, integration ↔ system design, demo ↔ requirements.',
     'Be precise about the benchmark: simulated viewers in the same process over loopback, one session, no browsers. It shows fan-out, not campus Wi-Fi.',
     'Reflection: the report §9 draft was prepared from the project record. Before the presentation, each of you replaces these lines with what you would personally do differently, in your own words.',
@@ -360,16 +360,20 @@ pres.addSection({ title: 'Evidence and conclusion' });
   s.addShape(pres.ShapeType.roundRect, { x: 7.55, y: 1.4, w: 5.18, h: 3.2, fill: { color: C.accent1 }, line: { color: C.accent1 }, rectRadius: 0.12 });
   tb(s, 'Contributions (factual record, report §10)', { x: 7.8, y: 1.55, w: 4.7, h: 0.4, fontSize: 15, bold: true, color: C.background1 });
   tb(s, [
-    { text: 'Abdullah: ', options: { bold: true } }, { text: 'repository and baseline import, pull requests #14–#17 and the submission pull request, merges and branch protection', options: { breakLine: true } },
-    { text: ' ', options: { breakLine: true, fontSize: 6 } },
-    { text: 'Zuhair Halawa: ', options: { bold: true } }, { text: 'pull requests #12 (median forecaster) and #13 (browser tests, accessibility, CI), reviews and approvals of #14–#17, first UML render', options: { breakLine: true } },
-    { text: ' ', options: { breakLine: true, fontSize: 6 } },
+    { text: 'Abdullah shammari: ', options: { bold: true } }, { text: 'repository and protected workflow; integration pull requests #14–#18; merges', options: { breakLine: true } },
+    { text: ' ', options: { breakLine: true, fontSize: 5 } },
+    { text: 'Zuhair Hussein Halawa: ', options: { bold: true } }, { text: 'forecasting model (#12); simulator, browser and accessibility tests (#13); reviews and approvals of #14–#18; README media', options: { breakLine: true } },
+    { text: ' ', options: { breakLine: true, fontSize: 5 } },
+    { text: 'Mubarak Al Khyeli: ', options: { bold: true } }, { text: 'first-run check of the setup instructions', options: { breakLine: true } },
+    { text: ' ', options: { breakLine: true, fontSize: 5 } },
+    { text: 'Ali Yosuf Ameer: ', options: { bold: true } }, { text: 'worked forecast example, checked against the dashboard', options: { breakLine: true } },
+    { text: ' ', options: { breakLine: true, fontSize: 5 } },
     { text: 'AI tools and personal statements: report §10', options: { color: 'D1FAE5' } },
-  ], { x: 7.8, y: 2.0, w: 4.75, h: 2.5, fontSize: 13, color: C.background1 });
+  ], { x: 7.8, y: 1.98, w: 4.75, h: 2.55, fontSize: 12, color: C.background1 });
   tb(s, 'Questions?', { x: M, y: 4.85, w: 12.1, h: 1.0, fontSize: 40, bold: true, color: C.background1, fontFace: THEME.headFontFace });
   tb(s, 'Backup slides follow: GPS states and network loss · synthetic backtest · one upload, measured', { x: M, y: 5.95, w: 12.1, h: 0.5, fontSize: 13, color: C.background2 });
   s.addNotes([
-    'Speakers: Zuhair gives the conclusion (0:30); Abdullah opens the questions (0:20).',
+    'Speakers: Abdullah gives the conclusion (0:20); then Zuhair, Mubarak and Ali each say one sentence on their own contribution (0:10 each), matching their signed statements.',
     'Contributions: read only what the factual record shows (which account submitted, reviewed or merged what). Do not claim more. Each member\'s own statement and signature are in the private submission copy; tool use is declared in report §10.2.',
     'Keep this slide up during questions. For detailed questions use the backup slides and docs/presentation/viva-sheet.md.',
   ].join('\n'));

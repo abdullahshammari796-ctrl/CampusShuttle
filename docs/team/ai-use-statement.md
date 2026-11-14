@@ -4,16 +4,16 @@ The project description (section 10) requires a statement of *which AI tools wer
 
 ## Tools
 * **Claude Code** (Anthropic), used from Abdullah's computer and, for GitHub, through the GitHub CLI that Abdullah signed in to himself.
-* **ChatGPT** (OpenAI), including its Work mode, connected to Zuhair's GitHub account.
+* **ChatGPT** (OpenAI), including its Work mode and Codex in ChatGPT Work, used by Zuhair and connected to his GitHub account.
 
 ## Which parts, and what for
-**Claude Code, at Abdullah's request (31 October – 10 November 2026):**
+**Claude Code, at Abdullah's request (31 October – 12 November 2026):**
 * **Baseline (31 Oct – 1 Nov):** read the project description, the Module 02 slides and the RBC Borealis article. Proposed the architecture recorded in the ADRs. Wrote the source code, automated tests, scripts and PlantUML sources. Drafted the proposal, report, UML set, ADRs, quality-attribute scenarios, test plan, demand, privacy and team documents, demo script and slides.
 * **Verification and corrections:** ran the type checker, tests, load tests and browser walkthroughs, and fixed the defects they revealed: items 1–21 in `docs/test-plan.md` §4, including the corrections after Zuhair's reviews.
 * **Repository:** ran the public-release audit, created the repository and made the commits from Abdullah's account (using his GitHub no-reply address). It also:
   * invited Zuhair and opened the issues;
-  * verified, reviewed and merged pull requests #12–#16 from Abdullah's account, merged #17 after Zuhair's approval, and configured branch protection;
-  * opened the owner pull requests #14–#17 and the submission pull request.
+  * verified, reviewed and merged pull requests #12–#16 from Abdullah's account, merged #17 and #18 after Zuhair's approvals, and configured branch protection;
+  * opened the owner pull requests #14–#18 and the documentation pull request of 12 November.
 
   Its reviews of #12 and #13 record the checks that were run; they do not claim that Abdullah read every line himself.
 * **UML:** rendered the 16 diagrams on Abdullah's computer with the verified PlantUML jar (2 November 2026), and built the export validation and the PDF layout.
@@ -30,8 +30,13 @@ The project description (section 10) requires a statement of *which AI tools wer
   * rewrote the report's process section (§3) and corrected the records to the merged state;
   * produced the demonstration video. It wrote the scripts that record the running prototype in three separate browser windows (Playwright) with a throw-away demonstration database, generate the English narration and assemble the video and subtitles (FFmpeg) and print the transcript (Playwright). The narration is synthetic speech from the open Kokoro-82M model with its published voice `af_heart`, generated on Abdullah's computer without any online service. It is not either member's voice and does not imitate any real person;
   * rebuilt the presentation (nine slides and backup slides with speaker notes) and wrote the speaking script, the live-demo runbook and the viva sheet.
+* **Handoff (12 November 2026):**
+  * merged PR #18 from Abdullah's account, pinned to the head Zuhair approved;
+  * added the README section with the animation `docs/media/gps-recovery.gif` and the screenshot gallery. The section text and the animation arrived in the media handoff that Zuhair supplied (see the ChatGPT part below);
+  * wrote the comparable contribution summaries from the pull requests and reviews, and applied the two notes from Zuhair's PR #18 review;
+  * prepared the private submission copy: the printed names, and a draft contribution paragraph for each member, built from the factual record, for that member to adopt or correct.
 
-**ChatGPT, at Zuhair's request (1–7 November 2026):**
+**ChatGPT, at Zuhair's request (1–12 November 2026):**
 * Prepared PR #12, the same-weekday median forecaster with tests and evaluation (issue #6).
 * Prepared PR #13: browser and simulator tests, accessibility and mobile fixes, waiting-state fixes, use-case evidence, the technical review of ADR-0001/0002/0003/0008 and the CI workflow (issues #5, #7, #8, #9).
 * Reviewed PRs #14, #15 and #16 on a fresh Linux checkout, and PR #17 from its verified export (7 Nov; supplied as a review package because posting the review was refused with HTTP 403). This included:
@@ -40,7 +45,8 @@ The project description (section 10) requires a statement of *which AI tools wer
   * independent decoder checks;
   * visual inspection of the PDFs and slides.
 
-  Zuhair's reviews, including the [approval of #15](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/15#pullrequestreview-5739614810), the [approval of #16](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/16#pullrequestreview-5742229877) and the comment review and [approval of PR #17's corrected head](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/17#pullrequestreview-5819503936) (8 Nov), were posted from his account. Whether a tool helped with the 8 November re-review is for him to state (**OUTSTANDING**).
+  Zuhair's reviews, including the [approval of #15](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/15#pullrequestreview-5739614810), the [approval of #16](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/16#pullrequestreview-5742229877) the comment review and [approval of PR #17's corrected head](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/17#pullrequestreview-5819503936) (8 Nov), and the [approval of PR #18](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/18#pullrequestreview-5864742717) (11 Nov), were posted from his account. Whether a tool helped with the 8 and 11 November reviews is for him to state (**OUTSTANDING**).
+* **README animation (by 12 November 2026):** at Zuhair's request, Codex in ChatGPT Work created `docs/media/gps-recovery.gif` from the verified demonstration video. FFmpeg extracted the four clips; Python and Pillow added the captions and encoded the animation. Zuhair supplied it, with the README section text, in the media handoff. The narrated video itself is declared in the Claude Code part above.
 
 ## What changed after the baseline, and what found it
 | Found by | What changed | Test plan §4 |
@@ -65,5 +71,7 @@ Complete this truthfully, in your own words. For example: which documents you re
 
 | Member | AI tools you used yourself (if any) | What you changed / verified |
 |---|---|---|
-| Abdullah | | |
-| Zuhair Halawa | | |
+| Abdullah shammari | | |
+| Zuhair Hussein Halawa | | |
+| Mubarak Al Khyeli | | |
+| Ali Yosuf Ameer | | |

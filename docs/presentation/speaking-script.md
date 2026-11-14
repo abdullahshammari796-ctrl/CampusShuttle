@@ -1,6 +1,14 @@
 # Speaking script — Campus Shuttle presentation (proposed, not rehearsed)
 
-**Status (10 November 2026).** This is a proposed script for the nine-slide deck (`campus-shuttle-presentation.pptx`, with three backup slides) and a proposed division between Abdullah and Zuhair. Neither member has rehearsed it, and it records no rehearsal. Put it into your own words: the brief says every member speaks, and the instructor may ask either of you about any slide.
+**Status (14 November 2026).** This is a proposed script for the nine-slide deck (`campus-shuttle-presentation.pptx`, with three backup slides) and a proposed division between the four members: Abdullah shammari, Zuhair Hussein Halawa, Mubarak Al Khyeli and Ali Yosuf Ameer. No member has rehearsed it, and it records no rehearsal. Put it into your own words: the brief says every member speaks, and the instructor may ask any of you about any slide.
+
+**Who covers what.**
+* **Abdullah:** integration and architecture.
+* **Zuhair:** forecasting choices, testing and review.
+* **Mubarak:** the first successful run and the student view.
+* **Ali:** his worked forecast example.
+
+Mubarak's and Ali's lines contain *[brackets]* to fill in from their own checks (`docs/demo-script.md` and the private handoff).
 
 **Time limit.** The official limit and running order are published in Week 12 and are **not yet known**. The plan below is fitted to a **provisional budget of 12:00**, with an 8-minute version and a video-only variant. None of them is an official limit, and none has been rehearsed. Speech is estimated at 130 words per minute. The video timings come from the finished file, and the live-demo timings from the tool-driven dry run of 6 November (`docs/evidence/walkthrough-2026-11-06.txt`).
 
@@ -13,66 +21,86 @@
 | 1 | Problem, purpose, team | Abdullah | 0:40 | 0:40 |
 | 2 | Stakeholders, use cases, quality | Zuhair | 1:00 | 1:40 |
 | 3 | Process and timeline | Abdullah | 1:00 | 2:40 |
-| 4 | Four architectures compared | Zuhair | 1:00 | 3:40 |
+| 4 | Four architectures compared | Abdullah | 1:00 | 3:40 |
 | 5 | Components and deployment | Abdullah | 0:50 | 4:30 |
-| 6 | Patterns tied to behaviour | Zuhair | 0:50 | 5:20 |
+| 6 | Patterns and forecasting choices | Zuhair | 0:50 | 5:20 |
 | 7a | Demonstration: introduction | Abdullah | 0:20 | 5:40 |
 | 7b | Video excerpt **0:51–1:54** (network loss and GPS outage) | — | 1:03 | 6:43 |
-| 7c | Live: use case 1 — start a trip, the student sees it Live | Abdullah | 0:50 | 7:33 |
-| 7d | Live: use case 2 — waiting request → office → forecast explanation | Zuhair | 1:40 | 9:13 |
-| 8 | Verification, limitations, reflection | Abdullah | 1:10 | 10:23 |
-| 9 | Conclusion (Zuhair 0:30), questions (Abdullah 0:20) | both | 0:50 | 11:13 |
+| 7c | Live: use case 1 — first run, start a trip, the student sees it Live (runbook L1–L2) | Mubarak | 0:50 | 7:33 |
+| 7d | Live: use case 2 — waiting request → office count (L3–L4) | Zuhair | 0:40 | 8:13 |
+| 7e | Live: use case 2 — forecast explanation and the worked example (L5) | Ali | 1:00 | 9:13 |
+| 8 | Verification, limitations, reflection | Zuhair | 1:10 | 10:23 |
+| 9 | Conclusion (Abdullah 0:20); one sentence each on own contribution (Zuhair, Mubarak, Ali, 0:10 each) | all | 0:50 | 11:13 |
 | | Slide changes and window switching | | 0:47 | **12:00** |
 
-Speaking time: Abdullah 5:10, Zuhair 5:00, video 1:03.
+Speaking time: Abdullah 4:10, Zuhair 3:50, Mubarak 1:00, Ali 1:10, video 1:03.
 
 **Plan B — the whole video replaces the live demonstration (only if permitted).**
 * Slides 1–6, 5:20.
 * Slide 7: introduction 0:20, then the full video, 4:11.
 * Slides 8–9, 2:00.
 
-Total **11:51**. Keep the live system running anyway, for questions.
+Total **11:51**. Mubarak and Ali then speak only on slide 9, so give each of them one slide-8 point if every member must speak at length. Keep the live system running anyway, for questions.
 
-**8-minute version.** Slides 1–6 each shortened to their first two sentences: 0:30, 0:40, 0:40, 0:40, 0:30 and 0:30, which makes 3:30. Then the slide 7 introduction 0:15, video excerpt 1:03, live use case 2 only 1:30, slide 8 0:40, slide 9 0:30. Total **7:28**, with 0:32 for changes.
+**8-minute version — both live demonstrations.** Use this if the slot is 8 minutes. The video excerpt shrinks to the GPS-outage chapter only, so both use cases still run live.
+
+| Part | Speaker | Time |
+|---|---|---|
+| Slides 1–6, each cut to its first two sentences (0:30, 0:40, 0:40, 0:40, 0:30, 0:30) | Abdullah 1, 3, 4, 5; Zuhair 2, 6 | 3:30 |
+| 7a Demonstration introduction | Abdullah | 0:15 |
+| 7b Video excerpt **1:20–1:55** (GPS outage: Live → Location delayed → GPS lost → Live) | — | 0:35 |
+| 7c Live use case 1: first run, start a trip, the student sees it Live (runbook L1–L2) | Mubarak | 0:40 |
+| 7d Live use case 2: waiting request → office count (L3–L4) | Zuhair | 0:30 |
+| 7e Live use case 2: forecast explanation and worked example (L5) | Ali | 0:50 |
+| 8 Verification, limitations, reflection (stats and one limitation) | Zuhair | 0:40 |
+| 9 Conclusion (Abdullah 0:15); one sentence each (Zuhair, Mubarak, Ali, 0:05 each) | all | 0:30 |
+| Slide changes and window switching | | 0:30 |
+| **Total** | Abdullah 2:50, Zuhair 2:25, Mubarak 0:45, Ali 0:55, video 0:35 | **8:00** |
+
+The network-loss part ("Trip NOT ended", queued positions in one batch) then appears only in Plan A, or on request from the video at 0:51–1:20.
 
 ## Slide by slide
 
 **1 · Problem, purpose, team — Abdullah (0:40)**
-"Good morning. I'm Abdullah, and this is Zuhair. Students on a campus cannot see where the shuttle is, so they wait outside or miss it, and the transport office plans its fleet without data. Our system shows live positions and arrival estimates — and, above all, it stays honest when GPS or mobile data fails. Students' 'I'm waiting here' requests become demand history and forecasts for the office. The screenshot is our running prototype with demonstration data."
+"Good morning. I'm Abdullah shammari, and with me are Zuhair Hussein Halawa, Mubarak Al Khyeli and Ali Yosuf Ameer. Students on a campus cannot see where the shuttle is, so they wait outside or miss it, and the transport office plans its fleet without data. Our system shows live positions and arrival estimates — and, above all, it stays honest when GPS or mobile data fails. Students' 'I'm waiting here' requests become demand history and forecasts for the office."
 
 **2 · Stakeholders, use cases, quality — Zuhair (1:00)**
 "Three groups use the system: students, drivers and the transport office. University IT, the data-protection officer and management are affected too, because driver locations and student identities are personal data. We modelled five primary use cases; two of them run end to end in the demonstration. Our quality requirements are measurable scenarios: a new position should reach every viewer within a second; after 20 seconds without one the student sees 'delayed', after 60 seconds 'GPS lost' and no estimate. The hard quality attribute is exactly that: timely and honest information under unreliable GPS and connectivity."
 
 **3 · Process and timeline — Abdullah (1:00)**
-"Module 02 separates incremental from iterative development. Incremental adds new parts each time; iterative improves the same parts. We did both. The baseline was built in five slices on a skeleton chosen first, because increment one has to carry every later one. The four riskiest unknowns were tested first, in the spirit of spiral: can one server push to thousands of viewers, how do we stay honest when GPS fails, can we snap positions to a two-way road, and is there data for machine learning. After that, the work was iterative: reviewed pull requests improving what existed. The timeline shows only what the record shows; our own dates for the early course gates are not recorded, and the main lesson is that the work started too late."
+"Module 02 separates incremental from iterative development. Incremental adds new parts each time; iterative improves the same parts. We did both. The baseline was built in five slices on a skeleton chosen first, because increment one has to carry every later one. The four riskiest unknowns were tested first, in the spirit of spiral: can one server push to thousands of viewers, how do we stay honest when GPS fails, can we snap positions to a two-way road, and is there data for machine learning. After that, the work was iterative: reviewed pull requests improving what existed. The timeline shows only what the record shows, and the main lesson is that the work started too late."
 
-**4 · Four architectures — Zuhair (1:00)**
+**4 · Four architectures — Abdullah (1:00)**
 "We compared four architectures against six weighted drivers. The modular monolith with server push scores 61 of 70. The interesting comparison is polling, at 52: it is equal on everything except freshness, and one-second polling would mean one to three thousand requests a second even when nothing moves. So the choice of push rests on that one requirement. Microservices give independent scaling one campus does not need, and the serverless option keeps location data with a third party. The scores are our judgement; only option A's freshness is measured."
-*[If either of you changed a score in your own review, say which and why.]*
+*[If any of you changed a score in your own review, say which and why.]*
 
 **5 · Components and deployment — Abdullah (0:50)**
 "Inside it is one Node.js process with eight components, each a folder in the source. They talk through interfaces and domain events; tracking and demand never import each other, and a test fails if an import breaks the component diagram. It is deployed as one process with one SQLite file: nothing else to install and nothing to pay for. The trade-off is that one server carries every viewer; several campuses would need a message broker."
 
-**6 · Patterns — Zuhair (0:50)**
-"Each pattern solves a problem you will see. State: Live, Location delayed and GPS lost are classes, and each decides what passengers may be told. Adapter: the simulator uses exactly the same upload path as a real phone. Observer: one upload reaches every browser through the event bus. Repository keeps SQL out of the business rules, and Strategy lets us compare four forecasting models. The class diagrams are in the UML appendix."
+**6 · Patterns and forecasting choices — Zuhair (0:50)**
+"Each pattern solves a problem you will see. State: Live, Location delayed and GPS lost are classes, and each decides what passengers may be told. Adapter: the simulator uses exactly the same upload path as a real phone. Observer: one upload reaches every browser through the event bus. Strategy lets us compare four forecasting models. Without real data we chose explainable baselines — averages and the six-week same-weekday median — instead of training a model. Repository keeps SQL out of the business rules."
 
 **7a · Demonstration introduction — Abdullah (0:20)**
 "The question is: what happens when connectivity fails? This recording is from our running prototype in three browser windows with simulated GPS. Where waiting time was skipped, the box at the top shows the real elapsed time. The narration is a synthetic voice."
 
 **7b · Video excerpt 0:51–1:54 (1:03).** Play it without talking over the narration.
 
-**7c · Live use case 1 — Abdullah (0:50)** *(runbook steps L1–L2)*
-"Now live. As the driver I start a trip on the Campus Loop with simulated GPS… and in the student window the shuttle appears with its arrival time, marked Live."
+**7c · Live use case 1 — Mubarak (0:50)** *(runbook steps L1–L2)*
+"I set the prototype up from a fresh copy of the source by following the README, and after signing in as a student I saw *[what you saw after sign-in]*. Now live: the driver starts a trip on the Campus Loop with simulated GPS, and in the student window the shuttle appears with its arrival time, marked Live."
 
-**7d · Live use case 2 — Zuhair (1:40)** *(runbook steps L3–L5)*
-"As a student I tap 'I'm waiting here'. In the office window the waiting count rises at once, on the map and in the counters — the office sees how many people wait, not who. In Demand and forecast I select a cell, and the office sees how the number was calculated: the past weeks, their counts and the range. The history is synthetic, so this shows the method, not accuracy."
+**7d · Live use case 2, first part — Zuhair (0:40)** *(runbook steps L3–L4)*
+"As a student I tap 'I'm waiting here'. In the office window the waiting count rises at once, on the map and in the counters — the office sees how many people wait, not who."
 
-**8 · Verification, limitations, reflection — Abdullah (1:10)**
-"144 automated tests pass, 119 in Node and 25 in a real browser, including accessibility checks of all three role pages, on every pull request. The test plan records 21 defects and corrections, each checked in the way that fits it. Our local benchmark reached a thousand simulated viewers in about 35 milliseconds at the 95th percentile, but that is one computer, not a campus network. The main limitations: GPS is tested only with the simulator, a hidden driver page stops reporting, and forecasts use synthetic data. What we learned: start earlier, talk to stakeholders before fixing numbers, and check content, not just existence."
+**7e · Live use case 2, forecast — Ali (1:00)** *(runbook step L5)*
+"In Demand and forecast I select *[stop]* at *[hour]*. The office sees how the number was calculated. The last four *[weekday]s* had *[a]*, *[b]*, *[c]* and *[d]* requests; their average is *[x]*, and the screen shows *[x]*. I checked that by hand. The history is synthetic, so this shows the method, not accuracy."
+
+**8 · Verification, limitations, reflection — Zuhair (1:10)**
+"144 automated tests pass, 119 in Node and 25 in a real browser, including accessibility checks of all three role pages, on every pull request. The test plan records 21 defects and corrections, each checked in the way that fits it; several were found in review. Our local benchmark reached a thousand simulated viewers in about 35 milliseconds at the 95th percentile, but that is one computer, not a campus network. The main limitations: GPS is tested only with the simulator, a hidden driver page stops reporting, and forecasts use synthetic data. What we learned: start earlier, talk to stakeholders before fixing numbers, and check content, not just existence."
 *[Each of you: replace the reflection sentence with your own words before presenting.]*
 
-**9 · Conclusion and questions — Zuhair (0:30), Abdullah (0:20)**
-*Zuhair:* "To conclude: a modular monolith with server push keeps students informed in real time, and — just as important — tells them when it does not know. Next would be a field test with real phones, then real demand data before any trained model."
+**9 · Conclusion and contributions — Abdullah (0:20), then Zuhair, Mubarak and Ali (0:10 each)**
+*Abdullah:* "To conclude: a modular monolith with server push keeps students informed in real time, and — just as important — tells them when it does not know. Next would be a field test with real phones, then real demand data before any trained model."
+*Each of the others, in one sentence that matches your own signed statement:* Zuhair on the forecasting model, tests and reviews; Mubarak on the first-run check; Ali on the forecast check.
 *Abdullah:* "Who did what is in the contribution statement, and the AI tools we used are declared in section 10 of the report. Thank you — we are happy to take questions."
 
 ## Diagram explanations (for slides 3–6 and questions)

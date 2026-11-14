@@ -6,15 +6,15 @@
 
 Canadian University Dubai · Fall 2026 · Instructor: Dr. Khaled Ammar
 
-Team: **Abdullah** (GitHub `abdullahshammari796-ctrl`) · **Zuhair Halawa** (GitHub `zuhairhalawa`)
+Team: **Abdullah shammari** (GitHub `abdullahshammari796-ctrl`) · **Zuhair Hussein Halawa** (GitHub `zuhairhalawa`) · **Mubarak Al Khyeli** · **Ali Yosuf Ameer**
 
 Student IDs: *added only in the private submission copy; not published in the public repository*
 
-Version: submission candidate of 10 November 2026
+Version: submission candidate of 14 November 2026
 
 </div>
 
-> **Status of this document.** This is the submission candidate. The architecture, models, prototype and test evidence it describes exist in the repository and were verified between 31 October and 10 November 2026. Items marked **OUTSTANDING** need facts or actions that only the team or the instructor can provide: student IDs and signatures (private copy only), the proposal approval date, each member's own confirmation of the reflection, contribution and AI-use statements, and the team's own inspection of the diagrams on paper. Section 10 records the factual contribution and tool-use history; the personal statements in it must be completed truthfully by each member before submission.
+> **Status of this document.** This is the submission candidate. The architecture, models, prototype and test evidence it describes exist in the repository and were verified between 31 October and 14 November 2026. Items marked **OUTSTANDING** need facts or actions that only the team or the instructor can provide: student IDs and signatures (private copy only), the proposal approval date, each member's own confirmation of the reflection, contribution and AI-use statements, and the team's own inspection of the diagrams on paper. Section 10 records the factual contribution and tool-use history; the personal statements in it must be completed truthfully by each member before submission.
 
 <div class="page-break"></div>
 
@@ -154,7 +154,8 @@ The dated rows come from the repository, the pull requests and their reviews (ti
 | 7 Nov 2026 | Zuhair's review of PR #17 at `1a21cc6`, supplied as a review package (posting it on GitHub was refused with HTTP 403); four documentation findings corrected the same day (test plan item 19) | review package; PR #17 |
 | 8 Nov, 23:35 – 9 Nov, 00:19 | Zuhair's re-review of the corrected head `e040a17`, posted on GitHub as a comment review, then his approval of that head | reviews 5819352533, 5819503936; head CI run 42360091616 |
 | 9 Nov, 23:21 | PR #17 merged with a merge commit pinned to the approved head; `main` CI passed | `e989b97`; CI run 42682626360 |
-| 10 Nov 2026 | Submission pass: single-scenario system sequence diagram (A.4), UML-set PDF with every diagram's smallest text at 7 pt or more, this section, the recorded demonstration video, the nine-slide presentation (test plan items 20–21) | branch `abdullah/submission-package`; pull request awaiting Zuhair's review |
+| 10 Nov 2026 | Submission pass: single-scenario system sequence diagram (A.4), UML-set PDF with every diagram's smallest text at about 7 pt, this section, the recorded demonstration video, the nine-slide presentation (test plan items 20–21) | branch `abdullah/submission-package`; PR #18 |
+| 11–12 Nov 2026 | Zuhair approved PR #18 with two non-blocking notes (an 8-minute plan keeping both live demonstrations; "about 7 pt" for the smallest UML labels); merged with a merge commit; `main` CI passed | review 5864742717; `e68a4b6`; CI run 43187586020 |
 | Week 12 (20 Nov, planned) | Presentation running order published; any contribution concerns raised with the instructor | brief §2 and §4.4 |
 | Week 14 (4 Dec, planned) | Presentations day 1. The instructor's note on the course-introduction slides says every team submits everything before Day 1 | course introduction, slide 11 |
 | Week 14 or 15 (4 or 11 Dec) | Presentation and live demonstration in the team's slot | **OUTSTANDING**: slot and time limit not yet published |
@@ -372,12 +373,12 @@ We chose **TypeScript on Node.js 24 LTS with Express 5 and SQLite (Node's built-
 | `npm test` | 119 tests, 119 passed, 0 failed — `docs/evidence/test-run.txt` |
 | `npm run test:browser` | 25 Chromium tests, 25 passed (Playwright 1.64.1, Chrome for Testing 156) — `docs/evidence/browser-test-run.txt`. The three office-page tests added on 6 November failed before their fix (`docs/evidence/accessibility-office-2026-11-06.txt`) |
 | `npm audit` | 0 vulnerabilities in all dependencies, including development tools — `docs/evidence/npm-audit.txt` |
-| GitHub Actions (`verify`) | required for every merge into `main`; passed on `main` after each merge, most recently run 42682626360 after PR #17 (9 Nov) |
+| GitHub Actions (`verify`) | required for every merge into `main`; passed on `main` after each merge, most recently run 43187586020 after PR #18 (12 Nov) |
 | `npm run load-test` (1,000 viewers; local benchmark) | 31 Oct: p50 23 ms, p95 35 ms, p99 47 ms, max 56 ms. 1 Nov: p50 25 ms, p95 37 ms, p99 48 ms, max 55 ms; 60,000/60,000 delivered; 0 skipped — `docs/evidence/load-test-1000*.txt` |
 | `npm run load-test -- --viewers 3000 --rounds 10` | 31 Oct: p95 90 ms, max 108 ms. 1 Nov: p95 98 ms, max 113 ms; 90,000/90,000 delivered; 0 skipped — `docs/evidence/load-test-3000*.txt`. Same process, loopback, one shared session, no browsers |
 | `npm run evaluate` | see §6.7 — `docs/evidence/demand-evaluation.txt` |
 | Browser walkthrough (student, driver, office) | all three interfaces exercised against a running server with the fleet simulator (`docs/test-plan.md` §5), and automated in Chromium since PR #13. On 6 November an automated browser session observed UC1's full loop lap and UC4's historical trace, and ran the demonstration sequence with timings (`docs/evidence/walkthrough-2026-11-06.txt`). These are tool-driven sessions, not a walkthrough by either member |
-| `npm run uml` / `npm run uml:check` | 7 Nov: diagram 10 re-rendered after two of its interface labels were found printed over each other; the other 15 re-rendered byte-identical. 2 Nov: all 16 diagrams rendered with the checksum-verified PlantUML MIT 1.2026.9 (Java 21, Smetana) and validated: SVGs parsed as well-formed XML, PNGs fully decoded, none clipped, all from the current sources. Zuhair's review of PR #15 showed that the first validator accepted malformed content; it now rejects it. Zuhair's independent render of the same sources (Java 17, Linux) matched in structure. 10 Nov: diagram 03 redrawn as a single-scenario system sequence diagram (test plan item 20); diagrams 04, 08, 09 and 12–16 re-rendered with larger stereotype and guard labels (item 21). Appendix A prints every diagram at 62 % or more of its rendered size, with overview and detail pages for wide ones; there the smallest annotations print at 6.1 pt. The separate UML-set PDF ("full readable size") prints every diagram's smallest text at 7.0 pt or more, splitting large diagrams only between boxes and labels (sizes measured from the build, `docs/evidence/uml-inspection-2026-11-10.txt`). The team's own visual check, including on paper, is still open (issue #1) |
+| `npm run uml` / `npm run uml:check` | 7 Nov: diagram 10 re-rendered after two of its interface labels were found printed over each other; the other 15 re-rendered byte-identical. 2 Nov: all 16 diagrams rendered with the checksum-verified PlantUML MIT 1.2026.9 (Java 21, Smetana) and validated: SVGs parsed as well-formed XML, PNGs fully decoded, none clipped, all from the current sources. Zuhair's review of PR #15 showed that the first validator accepted malformed content; it now rejects it. Zuhair's independent render of the same sources (Java 17, Linux) matched in structure. 10 Nov: diagram 03 redrawn as a single-scenario system sequence diagram (test plan item 20); diagrams 04, 08, 09 and 12–16 re-rendered with larger stereotype and guard labels (item 21). Appendix A prints every diagram at 62 % or more of its rendered size, with overview and detail pages for wide ones; there the smallest annotations print at 6.1 pt. The separate UML-set PDF ("full readable size") prints every diagram's smallest text at about 7 pt, splitting large diagrams only between boxes and labels. The built HTML measures 7.0 pt or more, and Zuhair's review of PR #18 measured about 6.93 pt in the PDF on some detail pages (`docs/evidence/uml-inspection-2026-11-10.txt`). The team's own visual check, including on paper, is still open (issue #1) |
 
 ## 9. Reflection
 
@@ -407,30 +408,51 @@ Other engineering observations: the load test found a corner-snapping defect (it
 
 ### 10.1 Contribution statement
 
+**Team.** Four members: Abdullah shammari, Zuhair Hussein Halawa, Mubarak Al Khyeli and Ali Yosuf Ameer.
+* The implementation and technical integration were done through Zuhair's and Abdullah's GitHub accounts, and the design decisions in §3 and §6 were made in that work. "Two-person team" there means these two implementers.
+* On 14 November Mubarak and Ali took on two documentation and verification tasks, listed below.
+* The record keeps every earlier commit and review under the account that made it.
+
 **Factual record.** From the Git history, the pull requests and their reviews. It records which account submitted or approved what. It does not say who personally wrote, read or checked each line; the tools used are in §10.2. The detailed log is in `docs/team/work-ownership-plan.md`, with Zuhair's record in `docs/team/zuhair-contributions.md`.
+
+In comparable detail, from each account's pull requests and reviews:
+
+* **Zuhair Halawa (`zuhairhalawa`).**
+  * PR #12 added the six-week same-weekday median forecaster, with six unit tests and its synthetic evaluation.
+  * PR #13 expanded the simulator, browser and accessibility coverage, fixed waiting-state and accessibility defects and added the CI workflow.
+  * His first render of the UML sources exposed empty and clipped exports. His reviews found the export-validator defect and the A.3 layout problem (#15), and four documentation errors (#17).
+  * His account approved #14–#17 and the corrected submission materials in #18.
+* **Abdullah (`abdullahshammari796-ctrl`).**
+  * He set up the repository, imported the generated baseline and protected `main`.
+  * His pull requests integrated GPS-trip recovery and waiting-list fixes (#14); corrected the UML validation, the print layout and the sign-in form (#15, #17, #18); fixed the office page's accessibility failures (#17); and delivered the report, the presentation and the demonstration materials (#16–#18).
+  * His account approved #12 and #13, and merged #12–#18 after the required approvals and checks.
+* **Mubarak Al Khyeli.** Assigned on 14 Nov: test the setup instructions from a fresh copy of the source, and document how to confirm the first run (README, "Verify your first run"). *Result pending.*
+* **Ali Yosuf Ameer.** Assigned on 14 Nov: check one displayed forecast against its four historical counts, and document it as a worked example (`docs/demand-prediction.md`). *Result pending.*
 
 | | Abdullah (`abdullahshammari796-ctrl`) | Zuhair Halawa (`zuhairhalawa`) |
 |---|---|---|
 | Baseline | Repository created and the baseline imported from this account on 1 Nov (`8d11ad6`). The baseline was generated with Claude Code (§10.2) and is not either member's own authored work | — |
-| Pull requests submitted | #14 (GPS-source resumption, waiting-refresh fix, dependency fix, UML source corrections); #15 (validated UML rendering, readable diagram pages, sign-in form fix, corrections after review); #16 (records and wording); #17 (final completion, 6–7 Nov); the submission pull request (10 Nov) | #12 (same-weekday median forecaster, issue #6); #13 (browser and simulator tests, accessibility and mobile fixes, waiting-state fixes, use-case evidence, ADR evidence review, CI workflow; issues #5, #7, #8, #9) |
+| Pull requests submitted | #14 (GPS-source resumption, waiting-refresh fix, dependency fix, UML source corrections); #15 (validated UML rendering, readable diagram pages, sign-in form fix, corrections after review); #16 (records and wording); #17 (final completion, 6–7 Nov); #18 (submission pass, 10 Nov; merged 12 Nov) | #12 (same-weekday median forecaster, issue #6); #13 (browser and simulator tests, accessibility and mobile fixes, waiting-state fixes, use-case evidence, ADR evidence review, CI workflow; issues #5, #7, #8, #9) |
 | Commits, excluding merges (to 2 Nov) | 14, including the baseline import and the set-up commit | 8 |
-| Reviews posted | Approvals of #12 and #13 (prepared with Claude Code; they record the checks that were run, not a personal line-by-line reading) | Approval of #14; changes requested on #15 (validator defect, A.3 layout) and approval of its corrections; approval of #16. Review of #17 supplied as a package on 7 Nov (posting it was refused with HTTP 403); a comment review and an approval of its corrected head `e040a17` posted on 8 Nov (UTC) |
-| Repository administration | Branch protection, issues, merges of #12–#17 | — |
+| Reviews posted | Approvals of #12 and #13 (prepared with Claude Code; they record the checks that were run, not a personal line-by-line reading) | Approval of #14; changes requested on #15 (validator defect, A.3 layout) and approval of its corrections; approval of #16. Review of #17 supplied as a package on 7 Nov (posting it was refused with HTTP 403); a comment review and an approval of its corrected head `e040a17` posted on 8 Nov (UTC); approval of #18 at `92c2066` on 11 Nov (UTC) |
+| Repository administration | Branch protection, issues, merges of #12–#18 | — |
 | Independent verification | — | First render of the 16 UML sources (empty and clipped exports found); Linux reproductions with an independent decoder; visual inspection of PDFs and slides |
 
-**Personal statements and signatures — OUTSTANDING.** Each member lists only work they actually did, in their own words: design, models, code, tests, documentation and presentation. Student IDs and signatures are added only in the private submission copy, not in this public repository.
+**Personal statements and signatures.** Each member lists only work they actually did, in their own words, and confirms their own entry. Student IDs and signatures are added only in the private submission copy, not in this public repository.
 
 | Member | What I personally did | Signature | Date |
 |---|---|---|---|
-| Abdullah | *OUTSTANDING* | *(private copy)* | |
-| Zuhair Halawa | *OUTSTANDING* | *(private copy)* | |
+| Abdullah shammari | I set up the project repository and managed its review and merge workflow. Through my GitHub account, I submitted the fixes for GPS trip recovery, UML export validation, and diagram layout. I reviewed and merged the team’s changes and coordinated preparation of the report, presentation, recorded demo, and submission package. *(Confirmed by Abdullah, 14 Nov 2026.)* | *(private copy)* | |
+| Zuhair Hussein Halawa | *OUTSTANDING: wording prepared, awaiting his confirmation* | *(private copy)* | |
+| Mubarak Al Khyeli | *OUTSTANDING: after his first-run check* | *(private copy)* | |
+| Ali Yosuf Ameer | *OUTSTANDING: after his forecast check* | *(private copy)* | |
 
 ### 10.2 AI-use statement
 
 The brief asks which AI tools were used, for what, and what was changed. The full record is in `docs/team/ai-use-statement.md`.
 
-* **Tools.** Claude Code (Anthropic), used from Abdullah's computer and GitHub account. ChatGPT (OpenAI), including its Work mode, connected to Zuhair's GitHub account. Any other tool a member used is **OUTSTANDING**.
-* **When.** 31 October – 10 November 2026.
+* **Tools.** Claude Code (Anthropic), used from Abdullah's computer and GitHub account. ChatGPT (OpenAI), including its Work mode and Codex in ChatGPT Work, connected to Zuhair's GitHub account. Any other tool a member used, including any tool Mubarak or Ali use for their tasks, is **OUTSTANDING**.
+* **When.** 31 October – 12 November 2026.
 * **Which parts, and for what.**
 
 | Part | Claude Code (Abdullah's account) | ChatGPT (Zuhair's account) |
@@ -440,6 +462,7 @@ The brief asks which AI tools were used, for what, and what was changed. The ful
 | Prototype code and tests | Generated the baseline code and tests; fixed the defects numbered 1–21 in `docs/test-plan.md` §4 | PR #12 forecaster and tests; PR #13 browser tests and UI fixes |
 | Documents and presentation | Drafted the proposal, this report (including the §9 draft and the §10.1 factual record), the test plan, the deck, the speaking script, the demo runbook and the viva sheet | Use-case evidence matrix; review findings on PDFs and slides |
 | Demonstration video (10 Nov) | Wrote the scripts that record the running prototype in three browser windows (Playwright), generate the narration and assemble the video. The narration is synthetic speech from the open Kokoro-82M model with its published voice `af_heart`, generated on Abdullah's computer; it is not either member's voice and does not imitate any real person. Editing and subtitles with FFmpeg; the transcript printed to PDF with the project's Playwright Chromium | — |
+| README animation (12 Nov) | Inserted the README section and the screenshot gallery from the media handoff | At Zuhair's request, Codex in ChatGPT Work created `docs/media/gps-recovery.gif` from the verified demonstration video: FFmpeg extracted the four clips, and Python with Pillow added the captions and encoded the animation. Zuhair supplied it in the media handoff |
 | Verification and repository | Ran checks, load tests and browser walkthroughs; created the repository; opened issues and pull requests; merged after approval | Reviewed PRs #14–#16 on a fresh Linux checkout and posted the reviews; reviewed PR #17 from its verified export and supplied the review as a package; approved its corrected head on GitHub (8 Nov) |
 
 * **What changed after the baseline.** Twenty-one defects and corrections are recorded in `docs/test-plan.md` §4. Among them: two code defects and two overclaims found by an independent review on 1 November; UI defects found by Zuhair's browser tests (PR #13); two defects found in the owner review of PRs #12/#13; the export-validation defects found by Zuhair's render and his review of PR #15; the office-page accessibility failures and UML print sizes found on 6 November; four wrong or inconsistent statements in the final-pass documents found in Zuhair's review of PR #17; and, in the submission pass, a system sequence diagram with two actors and UML-set text below 7 pt (items 20–21). The draft §6.3 scores were also corrected (§6.3).

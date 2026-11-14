@@ -22,6 +22,8 @@ Microsoft Edge (headless) for the PDFs. Branch abdullah/submission-package, from
    Method: printed size = rendered font size (px) x print scale x 0.75 pt/px, measured from the built HTML for every
    reading page (the detail pages where a diagram has them, otherwise its single figure). Not measured on paper.
    Target: smallest text of every diagram at 7.0 pt or more.
+   Note (12 Nov): Zuhair's review of PR #18 measured about 6.93 pt in the PDF itself on some detail pages. The
+   documents therefore say "about 7 pt": the measurement below is taken from the built HTML.
 
      Figure  Source                               Reading pages            Scale   Smallest text
      A.1     01-use-case-diagram                  2 detail pages           82.9 %  13 px = 8.08 pt
