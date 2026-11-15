@@ -1,13 +1,23 @@
 # Campus Shuttle Tracking & Demand Prediction
 
 BCS 305 Software Architecture — course project prototype (Canadian University Dubai, Fall 2026).
-Team: **Abdullah** (`abdullahshammari796-ctrl`) and **Zuhair Halawa** (`zuhairhalawa`).
+Team: **Abdullah shammari** (`abdullahshammari796-ctrl`), **Zuhair Hussein Halawa** (`zuhairhalawa`), **Mubarak Al Khyeli** and **Ali Yosuf Ameer**. Zuhair and Abdullah did the implementation and technical integration. Mubarak and Ali took on the setup and forecast documentation and verification ([contribution statement](docs/team/contribution-statement.md)).
 
 A locally runnable web system with three roles:
 
 * **Students** see shuttles live on a campus map, get arrival estimates for their stop (clearly marked when a shuttle's location is delayed or lost), and can say "I'm waiting here".
 * **Drivers** start and end trips and share their location — from the phone's GPS or a built-in **GPS simulator** — with offline buffering and recovery.
 * **Transport-office staff** monitor the fleet and waiting demand live, end trips remotely (audited), manage routes, inspect trip GPS tracks, and view demand trends and **explainable forecasts** with a model backtest.
+
+## Shuttle tracking in action
+
+When a shuttle stops sending positions, the student sees a delayed estimate after 20 seconds. At 60 seconds the estimate disappears. A fresh position brings it back. The animation shows selected moments from the prototype using simulated GPS.
+
+![The student sees a live estimate, a delay warning, no estimate during GPS loss, then a live estimate after recovery.](docs/media/gps-recovery.gif)
+
+| Student arrivals | Driver trip controls | Office forecast explanation |
+| --- | --- | --- |
+| [![Campus route map and the next shuttle arrival at the student's stop](docs/presentation/screenshots/student.jpg)](docs/presentation/screenshots/student.jpg) | [![Driver dashboard with the active trip and location controls](docs/presentation/screenshots/driver.jpg)](docs/presentation/screenshots/driver.jpg) | [![Transport office dashboard showing how a stop's forecast was calculated from synthetic demand history](docs/presentation/screenshots/office-explanation.jpg)](docs/presentation/screenshots/office-explanation.jpg) |
 
 > All routes, stops, vehicles, accounts and historical demand are **demonstration data**. The historical demand is **synthetic** and labelled as such everywhere; nothing here describes a real university's operations.
 
