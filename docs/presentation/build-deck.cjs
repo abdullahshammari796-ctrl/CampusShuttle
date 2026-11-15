@@ -312,7 +312,7 @@ pres.addSection({ title: 'Demonstration' });
   ] });
   tb(s, 'Real prototype, three browser windows, throw-away demo database. Simulated GPS; skipped waiting time is labelled TIME-LAPSE with the real elapsed time. Narration: synthetic voice.', { x: M, y: 6.15, w: W - 2 * M, h: 0.55, fontSize: 12, color: C.text1 });
   s.addNotes([
-    'Speakers: Abdullah introduces (0:20). The live demonstration follows docs/demo-script.md: Mubarak runs use case 1 (first run, trip start, the student sees it Live; L1–L2), Zuhair the waiting request and office count (L3–L4), and Ali the forecast explanation with his worked example (L5).',
+    'Speakers: Abdullah introduces (0:20). The live demonstration follows docs/demo-script.md: Mubarak runs use case 1 (first run, trip start, the student sees it Live; L1–L2), Zuhair the waiting request and office count (L3–L4), and Ali the forecast explanation (L5), using his own dashboard comparison once he has done it.',
     'Provisional plan (official time limit not yet published): show the video excerpt 0:51–1:54 (network loss and GPS outage, 1:03), then run the live demonstration of the waiting request, the office view and the forecast explanation (2:30). If the live system fails, play the rest of the video instead; if the instructor allows the video to replace the live demonstration, play it in full (4:11).',
     'Say clearly: the video was recorded from the running prototype; GPS is simulated; waits were shortened only where the TIME-LAPSE box shows the real elapsed time; the voice is synthetic, not either of us.',
     VIDEO ? 'The video is embedded. If it does not play, open 06-Demo.mp4 from the same folder.' : 'In this repository copy the video is not embedded (it is not kept in Git). Use the submission copy of the deck, or open 06-Demo.mp4.',
@@ -359,22 +359,25 @@ pres.addSection({ title: 'Evidence and conclusion' });
   ], { x: M, y: 1.4, w: 6.6, h: 2.6, fontSize: 17, color: C.background1 });
   s.addShape(pres.ShapeType.roundRect, { x: 7.55, y: 1.4, w: 5.18, h: 3.2, fill: { color: C.accent1 }, line: { color: C.accent1 }, rectRadius: 0.12 });
   tb(s, 'Contributions (factual record, report §10)', { x: 7.8, y: 1.55, w: 4.7, h: 0.4, fontSize: 15, bold: true, color: C.background1 });
+  // Mubarak's and Ali's lines name their assigned tasks. When a member's result arrives, replace that line with what
+  // the member actually checked or corrected (report §10.1), and update the signature status in the notes below.
   tb(s, [
-    { text: 'Abdullah shammari: ', options: { bold: true } }, { text: 'repository and protected workflow; integration pull requests #14–#18; merges', options: { breakLine: true } },
+    { text: 'Abdullah shammari: ', options: { bold: true } }, { text: 'repository and protected workflow; integration pull requests #14–#19; merges', options: { breakLine: true } },
     { text: ' ', options: { breakLine: true, fontSize: 5 } },
-    { text: 'Zuhair Hussein Halawa: ', options: { bold: true } }, { text: 'forecasting model (#12); simulator, browser and accessibility tests (#13); reviews and approvals of #14–#18; README media', options: { breakLine: true } },
+    { text: 'Zuhair Hussein Halawa: ', options: { bold: true } }, { text: 'forecasting model (#12); simulator, browser and accessibility tests (#13); reviews of #14–#19; README animation', options: { breakLine: true } },
     { text: ' ', options: { breakLine: true, fontSize: 5 } },
-    { text: 'Mubarak Al Khyeli: ', options: { bold: true } }, { text: 'first-run check of the setup instructions', options: { breakLine: true } },
+    { text: 'Mubarak Al Khyeli: ', options: { bold: true } }, { text: 'Setup instructions — first-run check assigned (result pending)', options: { breakLine: true } },
     { text: ' ', options: { breakLine: true, fontSize: 5 } },
-    { text: 'Ali Yosuf Ameer: ', options: { bold: true } }, { text: 'worked forecast example, checked against the dashboard', options: { breakLine: true } },
+    { text: 'Ali Yosuf Ameer: ', options: { bold: true } }, { text: 'Demand forecast — dashboard comparison assigned (result pending)', options: { breakLine: true } },
     { text: ' ', options: { breakLine: true, fontSize: 5 } },
     { text: 'AI tools and personal statements: report §10', options: { color: 'D1FAE5' } },
   ], { x: 7.8, y: 1.98, w: 4.75, h: 2.55, fontSize: 12, color: C.background1 });
   tb(s, 'Questions?', { x: M, y: 4.85, w: 12.1, h: 1.0, fontSize: 40, bold: true, color: C.background1, fontFace: THEME.headFontFace });
   tb(s, 'Backup slides follow: GPS states and network loss · synthetic backtest · one upload, measured', { x: M, y: 5.95, w: 12.1, h: 0.5, fontSize: 13, color: C.background2 });
   s.addNotes([
-    'Speakers: Abdullah gives the conclusion (0:20); then Zuhair, Mubarak and Ali each say one sentence on their own contribution (0:10 each), matching their signed statements.',
-    'Contributions: read only what the factual record shows (which account submitted, reviewed or merged what). Do not claim more. Each member\'s own statement and signature are in the private submission copy; tool use is declared in report §10.2.',
+    'Speakers: Abdullah gives the conclusion (0:20); then Zuhair, Mubarak and Ali each say one sentence on their own contribution (0:10 each), in their own words. Mubarak and Ali describe their check only once they have done it; until then, each says the task is assigned and the result is pending.',
+    'Contributions: read only what the factual record shows (which account submitted, reviewed or merged what). Do not claim more.',
+    'Signature status on 15 November 2026: no one has signed yet. Abdullah\'s statement is confirmed; Zuhair\'s is prepared for him to adopt or correct; Mubarak\'s and Ali\'s are proposed and wait for their checks. Each member signs and dates only their own entry on sheet 07 in the private submission copy. Do not call any statement signed until it is. Tool use is declared in report §10.2.',
     'Keep this slide up during questions. For detailed questions use the backup slides and docs/presentation/viva-sheet.md.',
   ].join('\n'));
 }

@@ -41,8 +41,8 @@ The instructor may ask any of the four members about any part of the work. Each 
 ## First run and forecast check
 | Question | Short answer | Evidence | Lead |
 |---|---|---|---|
-| How do you start the prototype from a fresh copy, and how do you know it worked? | Install Node.js 24, run `npm install` and `npm start`, open `http://localhost:3000` and sign in as `student1`. *[What you saw after sign-in, from your check.]* | README "Quick start" and "Verify your first run" | Mubarak |
-| Show how one forecast number is calculated. | The default model is the seasonal average: the mean of the same stop, weekday and hour over the previous four weeks. *[Your stop and hour, the four counts, their average and the value on screen.]* | `docs/demand-prediction.md` §3 and the worked example | Ali |
+| How do you start the prototype from a fresh copy, and how do you know it worked? | Install Node.js 24, run `npm install` and `npm start`, open `http://localhost:3000` and sign in as `student1`. *[What you saw after sign-in, from your check.]* | README "Quick start"; "Verify your first run" once his result is added | Mubarak |
+| Show how one forecast number is calculated. | The default model is the seasonal average: the mean of the same stop, weekday and hour over the previous four weeks. *[Your stop and hour, the four counts, their average and the value on screen.]* | `docs/demand-prediction.md` §3; the worked example once his result is added | Ali |
 
 ## Before the viva
 * Each member: complete your personal contribution and AI-use statements, and decide whether you agree with the §6.3 scores and the ADRs (issues #2 and #9).

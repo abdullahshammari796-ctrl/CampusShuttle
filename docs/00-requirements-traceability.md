@@ -1,6 +1,6 @@
 # Requirements traceability: submission conditions and their evidence
 
-Updated 7 November 2026. Sources read on this machine:
+Updated 7 November 2026; the team row (Brief §2) updated on 15 November 2026. Sources read on this machine:
 * **Brief**: the official *BCS 305 Course Project* description (`Project_description.docx`; all three local copies are identical). The copy ends at §4.4. It refers to a grading rubric in "Section 8" and to presentation timing that it does not contain; it states that 17 of the 30 marks are for planning, modelling and architectural reasoning and that report §6 carries 5 marks.
 * **Course slides**: the instructor's decks for Modules 00–04 and 06 and the Week 6 Model Set Studio sheet, as distributed on Moodle. They add later instructions (marked **I** below). Their schedule dates are marked "indicative" by the instructor.
 * **Local copies used** (dates are the files' dates on this computer; slide numbers are the numbers printed on the slides): `Project_description.docx` (31 Oct 2026), `BCS305_00_Course_Introduction.pptx` (24 Sep 2026), `BCS305_03_Requirements_Engineering.pptx`, `BCS305_04_System_Analysis_Models.pptx`, `BCS305_06.pptx` and `BCS305_Week6_Model_Set_Studio.docx` (29 Oct 2026). These course files are not published in this repository. Zuhair's review of PR #17 did not have them, so the instructions marked **I** have been checked against them only on Abdullah's computer.
@@ -16,7 +16,7 @@ Updated 7 November 2026. Sources read on this machine:
 | Brief §4; slides 00 (slides 7, 11) | R, I | Deadlines: proposal Week 4; report and prototype Week 15; presentations Week 14 (4 Dec) or 15 (11 Dec). The instructor's note says every team submits everything before Day 1 (Week 14) | — | ⏳ confirm the binding date on Moodle; plan for the earlier one |
 | Brief §1, §8 | R | Grading rubric ("Section 8") | Not in the available copy | ⏳ obtain from Moodle or the instructor |
 | Brief §1 | R | A real UAE problem with genuine stakeholders, quality attributes and trade-offs | Report §1–2, §6 | ✅ |
-| Brief §2 | R | Team of 3 (± 1 allowed), registered on Moodle by Week 4 | A team of two is within ± 1 | ⏳ registration not recorded |
+| Brief §2 | R | Team of 3 (± 1 allowed), registered on Moodle by Week 4 | Four members (Abdullah shammari, Zuhair Hussein Halawa, Mubarak Al Khyeli, Ali Yosuf Ameer; report §10.1): within the permitted range of three ± one. The original proposal (`docs/01-proposal.md`) keeps its historical two-member roster | ⏳ Moodle registration not confirmed |
 | Brief §2, §4.1(10) | R | Signed contribution statement listing what each member did; every member contributes to the design | Report §10.1 factual record; `docs/team/contribution-statement.md` | ⏳ personal statements and signatures (private copy) |
 | Brief §2; slides 00 (slide 13) | R, I | Any member can explain any diagram or decision in the viva; the mark is adjusted otherwise | Explain-it checklist; `docs/architecture/technical-assessment.md`; speaking script; viva sheet (`docs/presentation/viva-sheet.md`) | ⏳ each member's own preparation |
 | Brief §3 | R | Topic approved in Week 4 (one paragraph on Moodle and a two-minute conversation) | `docs/01-proposal.md` | ⏳ approval date not recorded |

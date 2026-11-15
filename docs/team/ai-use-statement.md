@@ -7,7 +7,7 @@ The project description (section 10) requires a statement of *which AI tools wer
 * **ChatGPT** (OpenAI), including its Work mode and Codex in ChatGPT Work, used by Zuhair and connected to his GitHub account.
 
 ## Which parts, and what for
-**Claude Code, at Abdullah's request (31 October – 12 November 2026):**
+**Claude Code, at Abdullah's request (31 October – 15 November 2026):**
 * **Baseline (31 Oct – 1 Nov):** read the project description, the Module 02 slides and the RBC Borealis article. Proposed the architecture recorded in the ADRs. Wrote the source code, automated tests, scripts and PlantUML sources. Drafted the proposal, report, UML set, ADRs, quality-attribute scenarios, test plan, demand, privacy and team documents, demo script and slides.
 * **Verification and corrections:** ran the type checker, tests, load tests and browser walkthroughs, and fixed the defects they revealed: items 1–21 in `docs/test-plan.md` §4, including the corrections after Zuhair's reviews.
 * **Repository:** ran the public-release audit, created the repository and made the commits from Abdullah's account (using his GitHub no-reply address). It also:
@@ -35,6 +35,10 @@ The project description (section 10) requires a statement of *which AI tools wer
   * added the README section with the animation `docs/media/gps-recovery.gif` and the screenshot gallery. The section text and the animation arrived in the media handoff that Zuhair supplied (see the ChatGPT part below);
   * wrote the comparable contribution summaries from the pull requests and reviews, and applied the two notes from Zuhair's PR #18 review;
   * prepared the private submission copy: the printed names, and a draft contribution paragraph for each member, built from the factual record, for that member to adopt or correct.
+* **Four-member update (14–15 November 2026):**
+  * updated the roster, the credit records and the speaking plan for four members, listing Mubarak's and Ali's checks as assigned with their results pending;
+  * corrected slide 9, its speaker notes and the requirements table after Zuhair's review of PR #19;
+  * prepared the private signing sheet with the four printed names and student IDs, and the handoff of the two checks.
 
 **ChatGPT, at Zuhair's request (1–12 November 2026):**
 * Prepared PR #12, the same-weekday median forecaster with tests and evaluation (issue #6).
@@ -45,7 +49,9 @@ The project description (section 10) requires a statement of *which AI tools wer
   * independent decoder checks;
   * visual inspection of the PDFs and slides.
 
-  Zuhair's reviews, including the [approval of #15](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/15#pullrequestreview-5739614810), the [approval of #16](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/16#pullrequestreview-5742229877) the comment review and [approval of PR #17's corrected head](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/17#pullrequestreview-5819503936) (8 Nov), and the [approval of PR #18](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/18#pullrequestreview-5864742717) (11 Nov), were posted from his account. Whether a tool helped with the 8 and 11 November reviews is for him to state (**OUTSTANDING**).
+  Zuhair's reviews, including the [approval of #15](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/15#pullrequestreview-5739614810), the [approval of #16](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/16#pullrequestreview-5742229877) the comment review and [approval of PR #17's corrected head](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/17#pullrequestreview-5819503936) (8 Nov), and the [approval of PR #18](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/18#pullrequestreview-5864742717) (11 Nov), were posted from his account. ChatGPT Work also assisted with the 8 and 11 November reviews.
+
+  His [changes-requested review of PR #19](https://github.com/abdullahshammari796-ctrl/CampusShuttle/pull/19#pullrequestreview-5903668950) (14 Nov) was also posted from his account. Whether a tool helped with that review is for him to state (**OUTSTANDING**).
 * **README animation (by 12 November 2026):** at Zuhair's request, Codex in ChatGPT Work created `docs/media/gps-recovery.gif` from the verified demonstration video. FFmpeg extracted the four clips; Python and Pillow added the captions and encoded the animation. Zuhair supplied it, with the README section text, in the media handoff. The narrated video itself is declared in the Claude Code part above.
 
 ## What changed after the baseline, and what found it
@@ -60,6 +66,7 @@ The project description (section 10) requires a statement of *which AI tools wer
 | Final pass walkthrough and measurements (6–7 Nov) | Office accessibility failures; UML-set print sizes; draft §6.3 scores corrected | items 17–18; report §6.3 |
 | Zuhair's review of PR #17 (7 Nov, supplied as a package) | Authentication trade-off wording; the claim that every defect has a regression test; inconsistent slide times; "sign-on" wording on slide 13 | item 19 |
 | Submission-pass checks against the Week 6 sheet and the printed sizes (10 Nov) | A system sequence diagram with two actors; UML-set text below 7 pt | items 20–21 |
+| Zuhair's review of PR #19 (14 Nov) | Slide 9 listed the two assigned checks as done and its notes referred to signed statements; the requirements table still described a team of two | — (records only) |
 
 ## What the tools did not do
 * They did not register the team, choose the topic, contact the instructor or submit anything for marking. Git and GitHub actions were taken only at the account owner's explicit request; nothing was committed as the other student. The app was not deployed, and no licence was chosen.

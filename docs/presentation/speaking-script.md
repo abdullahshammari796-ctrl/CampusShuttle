@@ -100,7 +100,7 @@ The network-loss part ("Trip NOT ended", queued positions in one batch) then app
 
 **9 · Conclusion and contributions — Abdullah (0:20), then Zuhair, Mubarak and Ali (0:10 each)**
 *Abdullah:* "To conclude: a modular monolith with server push keeps students informed in real time, and — just as important — tells them when it does not know. Next would be a field test with real phones, then real demand data before any trained model."
-*Each of the others, in one sentence that matches your own signed statement:* Zuhair on the forecasting model, tests and reviews; Mubarak on the first-run check; Ali on the forecast check.
+*Each of the others, in one sentence in your own words. No statement is signed yet (15 Nov), so say only what you have actually done:* Zuhair on the forecasting model, tests and reviews; Mubarak on the first-run check of the setup instructions; Ali on the dashboard comparison of one forecast. Until a check is done, its owner says that it is assigned and the result is pending.
 *Abdullah:* "Who did what is in the contribution statement, and the AI tools we used are declared in section 10 of the report. Thank you — we are happy to take questions."
 
 ## Diagram explanations (for slides 3–6 and questions)
